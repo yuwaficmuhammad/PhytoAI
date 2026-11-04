@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Animasi 3D Rekayasa Genetik OsDREB2A | PhytoAI-Genetics</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: #0b1329;
+      color: #f1f5f9;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+    }
+    #canvas-container {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+    }
+    /* Top Header Bar */
+    .top-bar {
+      position: absolute;
+      top: 14px;
+      left: 18px;
+      right: 18px;
+      z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      pointer-events: none;
+    }
+    .top-title {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 10px;
+      padding: 10px 16px;
+      pointer-events: auto;
+    }
+    .top-title h2 {
+      font-size: 15px;
+      font-weight: 700;
+      color: #38bdf8;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .top-title p {
+      font-size: 11.5px;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+    .badge-target {
+      background: rgba(16, 185, 129, 0.2);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 10.5px;
+      font-weight: 600;
+      font-family: monospace;
+    }
+    /* Controls Bar */
+    .controls-overlay {
+      position: absolute;
+      bottom: 18px;
+      left: 18px;
+      right: 18px;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+    .stage-buttons {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+      pointer-events: auto;
+    }
+    .stage-btn {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      color: #cbd5e1;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .stage-btn:hover {
+      background: rgba(30, 41, 59, 0.95);
+      border-color: #38bdf8;
+      color: #38bdf8;
+    }
+    .stage-btn.active {
+      background: linear-gradient(135deg, rgba(6, 182, 212, 0.3), rgba(16, 185, 129, 0.3));
+      border: 1.5px solid #10b981;
+      color: #f8fafc;
+      box-shadow: 0 0 14px rgba(16, 185, 129, 0.35);
+    }
+    /* Info Card */
+    .info-card {
+      background: rgba(15, 23, 42, 0.88);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 10px;
+      padding: 12px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      pointer-events: auto;
+    }
+    .info-content h3 {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #f1f5f9;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .info-content p {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-top: 4px;
+      line-height: 1.4;
+      max-width: 820px;
+    }
+    .info-badges {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .control-actions {
+      display: flex;
+      gap: 6px;
+    }
+    .action-btn {
+      background: rgba(30, 41, 59, 0.85);
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      color: #e2e8f0;
+      padding: 7px 12px;
+      border-radius: 6px;
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s;
+    }
+    .action-btn:hover {
+      background: #0284c7;
+      color: white;
+      border-color: #38bdf8;
+    }
+    /* 3D Legend */
+    .legend-box {
+      position: absolute;
+      top: 14px;
+      right: 18px;
+      z-index: 10;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 11px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      pointer-events: auto;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #cbd5e1;
+    }
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+  </style>
+</head>
+<body>
+  <div id="canvas-container"></div>
+
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <div class="top-title">
+      <h2>🧬 Simulasi 3D Rekayasa Genetik Padi (OsDREB2A) <span class="badge-target">CRISPR Base Editing</span></h2>
+      <p>Target Locus: <i>OsDREB2A</i> (Chr 1: 4324418) • Target Modifikasi: <b>C→T (Pro168Leu / P168L)</b></p>
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend-box">
+    <div style="font-weight: 700; color: #94a3b8; margin-bottom: 2px;">Komponen Molekuler:</div>
+    <div class="legend-item"><span class="legend-dot" style="background:#0284c7;"></span> Heliks DNA Target (OsDREB2A)</div>
+    <div class="legend-item"><span class="legend-dot" style="background:#06b6d4;"></span> Kompleks dCas9-Deaminase</div>
+    <div class="legend-item"><span class="legend-dot" style="background:#ec4899;"></span> Guide RNA (gRNA 20-nt)</div>
+    <div class="legend-item"><span class="legend-dot" style="background:#f59e0b;"></span> Basa Sasaran (Sitidin / Kodon 168)</div>
+    <div class="legend-item"><span class="legend-dot" style="background:#10b981;"></span> Basa Hasil Edit (Uracil/Timin)</div>
+  </div>
+
+  <!-- Bottom Controls & Stage Info -->
+  <div class="controls-overlay">
+    <div class="stage-buttons">
+      <button class="stage-btn active" id="btn-stage-1" onclick="setStage(1)">
+        <span>1️⃣</span> Pengikatan PAM 5'-NGG-3'
+      </button>
+      <button class="stage-btn" id="btn-stage-2" onclick="setStage(2)">
+        <span>2️⃣</span> Pembentukan R-Loop & Strand Unwinding
+      </button>
+      <button class="stage-btn" id="btn-stage-3" onclick="setStage(3)">
+        <span>3️⃣</span> Deaminasi Basa C→U (Base Editing)
+      </button>
+      <button class="stage-btn" id="btn-stage-4" onclick="setStage(4)">
+        <span>4️⃣</span> Replikasi Sel & Fiksasi Mutasi P168L
+      </button>
+      <button class="stage-btn" id="btn-stage-5" onclick="setStage(5)">
+        <span>5️⃣</span> Aktivasi Transkripsi Regulon Stres
+      </button>
+    </div>
+
+    <div class="info-card">
+      <div class="info-content">
+        <h3 id="stage-title">Tahap 1: Pengikatan Kompleks CRISPR-Cas9 & Pengenalan PAM</h3>
+        <p id="stage-desc">
+          Kompleks ribonukleoprotein dCas9-Deaminase yang dipandu oleh single guide RNA (sgRNA 20-nt) memindai rantai ganda DNA <i>OsDREB2A</i> padi hingga mengenali motif PAM 5'-NGG-3' di dekat kodon target P168.
+        </p>
+      </div>
+      <div class="control-actions">
+        <button class="action-btn" id="btn-play-pause" onclick="togglePlayPause()">⏸️ Jeda</button>
+        <button class="action-btn" onclick="toggleAutoRotate()">🔄 Putar 360°</button>
+        <button class="action-btn" onclick="resetCamera()">🎯 Reset Kamera</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Three.js and OrbitControls from CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+  <script>
+    // --- STAGE DEFINITIONS ---
+    const STAGES = {
+      1: {
+        title: "Tahap 1: Pengikatan Kompleks CRISPR-Cas9 & Pengenalan PAM",
+        desc: "Kompleks ribonukleoprotein dCas9-Deaminase yang dipandu sgRNA memindai rantai DNA OsDREB2A hingga mengenali motif PAM 5'-NGG-3' yang berdekatan dengan kodon target Pro168.",
+        cas9TargetPos: { x: 0, y: 0, z: 8 },
+        rLoopOpen: 0.0,
+        deaminaseActive: false,
+        mutationComplete: false,
+        factorBinding: false,
+        camPos: { x: 0, y: 4, z: 32 }
+      },
+      2: {
+        title: "Tahap 2: Pembentukan R-Loop & Strand Unwinding",
+        desc: "Domain helikase dCas9 membuka pilinan ganda DNA sekitar 20 pasang basa. Guide RNA melakukan hibridisasi basa komplementer pada rantai target, membentuk struktur R-Loop dan memaparkan untai tunggal DNA pada jendela editing (posisi 4-8).",
+        cas9TargetPos: { x: 0, y: 0, z: 2 },
+        rLoopOpen: 1.0,
+        deaminaseActive: false,
+        mutationComplete: false,
+        factorBinding: false,
+        camPos: { x: 0, y: 2, z: 24 }
+      },
+      3: {
+        title: "Tahap 3: Reaksi Katalitik Deaminasi Sitidin (CBE)",
+        desc: "Domain enzim Cytidine Deaminase (evoAPOBEC1) mengkatalisis pelepasan gugus amina dari sitosin spesifik pada kodon CCG (posisi 168), mengubah sitidin (C) menjadi urasil (U). Terjadi emisi biofisika penataan ulang ikatan kimia tanpa memotong untai ganda DNA (bebas DSB).",
+        cas9TargetPos: { x: 0, y: 0, z: 1.5 },
+        rLoopOpen: 1.0,
+        deaminaseActive: true,
+        mutationComplete: false,
+        factorBinding: false,
+        camPos: { x: 0, y: 0, z: 18 }
+      },
+      4: {
+        title: "Tahap 4: Replikasi DNA & Fiksasi Mutasi Kodon P168L",
+        desc: "Enzim UGI menghambat eksisi urasil oleh UNG sel inang. Melalui replikasi DNA seluler berikutnya, pasangan antara U:G diselesaikan menjadi pasangan permanen T:A (kodon CCG berubah menjadi CTG / Proline 168 Leucine). Struktur heliks DNA kembali stabil.",
+        cas9TargetPos: { x: 12, y: 15, z: 12 },
+        rLoopOpen: 0.0,
+        deaminaseActive: false,
+        mutationComplete: true,
+        factorBinding: false,
+        camPos: { x: 0, y: 4, z: 28 }
+      },
+      5: {
+        title: "Tahap 5: Aktivasi Transkripsi Regulon Ketahanan Kekeringan",
+        desc: "Protein faktor transkripsi OsDREB2A terdisain (P168L) memiliki stabilitas konformasi tinggi. Domain AP2/ERF mengikat cis-elemen DRE/CRT (5'-TACCGACAT-3') pada promotor gen target downstream (OsLEA3, OsP5CS, OsRab16) untuk memicu toleransi kekeringan ekstrem.",
+        cas9TargetPos: { x: 25, y: 30, z: 20 },
+        rLoopOpen: 0.0,
+        deaminaseActive: false,
+        mutationComplete: true,
+        factorBinding: true,
+        camPos: { x: 0, y: -2, z: 22 }
+      }
+    };
+
+    let currentStage = 1;
+    let isPlaying = true;
+    let autoRotate = true;
+    let stageTimer = 0;
+    const STAGE_DURATION = 360; // frames per stage in auto-play (~6 seconds)
+
+    // --- THREE.JS SCENE SETUP ---
+    const container = document.getElementById('canvas-container');
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x0b1329, 0.02);
+
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 4, 32);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.maxDistance = 60;
+    controls.minDistance = 8;
+
+    // Lights
+    const ambientLight = new THREE.AmbientLight(0x334155, 1.8);
+    scene.add(ambientLight);
+
+    const dirLight1 = new THREE.DirectionalLight(0xffffff, 1.5);
+    dirLight1.position.set(15, 20, 15);
+    scene.add(dirLight1);
+
+    const dirLight2 = new THREE.DirectionalLight(0x06b6d4, 1.2);
+    dirLight2.position.set(-15, -10, -10);
+    scene.add(dirLight2);
+
+    const pointLightTarget = new THREE.PointLight(0xf59e0b, 2.5, 15);
+    pointLightTarget.position.set(0, 0, 0);
+    scene.add(pointLightTarget);
+
+    // --- MOLECULAR ASSETS ---
+    const dnaGroup = new THREE.Group();
+    scene.add(dnaGroup);
+
+    const NUM_PAIRS = 36;
+    const HELIX_RADIUS = 3.6;
+    const PITCH = 0.42;
+    const basePairs = [];
+    const strand1Nodes = [];
+    const strand2Nodes = [];
+
+    // Materials
+    const matBackbone1 = new THREE.MeshPhongMaterial({ color: 0x0284c7, shininess: 80 });
+    const matBackbone2 = new THREE.MeshPhongMaterial({ color: 0x6366f1, shininess: 80 });
+    const matBaseA = new THREE.MeshLambertMaterial({ color: 0xef4444 }); // Adenine
+    const matBaseT = new THREE.MeshLambertMaterial({ color: 0x3b82f6 }); // Thymine
+    const matBaseG = new THREE.MeshLambertMaterial({ color: 0xeab308 }); // Guanine
+    const matBaseC = new THREE.MeshLambertMaterial({ color: 0x10b981 }); // Cytosine
+    const matTargetC = new THREE.MeshStandardMaterial({ 
+      color: 0xf59e0b, 
+      emissive: 0xd97706, 
+      emissiveIntensity: 0.6, 
+      roughness: 0.3 
+    }); // Target Cytosine
+    const matEditedT = new THREE.MeshStandardMaterial({ 
+      color: 0x06b6d4, 
+      emissive: 0x0891b2, 
+      emissiveIntensity: 0.8, 
+      roughness: 0.2 
+    }); // Edited Uracil/Thymine
+
+    const sphereGeom = new THREE.SphereGeometry(0.38, 16, 16);
+    const rungGeom = new THREE.CylinderGeometry(0.14, 0.14, 1, 12);
+
+    // Construct DNA Double Helix
+    for (let i = 0; i < NUM_PAIRS; i++) {
+      const angle = i * PITCH;
+      const y = (i - NUM_PAIRS / 2) * 0.9;
+      const isTarget = (i === Math.floor(NUM_PAIRS / 2)); // Middle base pair (Codon 168)
+
+      // Backbone 1 node
+      const b1 = new THREE.Mesh(sphereGeom, matBackbone1);
+      b1.origPos = new THREE.Vector3(Math.cos(angle) * HELIX_RADIUS, y, Math.sin(angle) * HELIX_RADIUS);
+      b1.position.copy(b1.origPos);
+      dnaGroup.add(b1);
+      strand1Nodes.push(b1);
+
+      // Backbone 2 node
+      const b2 = new THREE.Mesh(sphereGeom, matBackbone2);
+      b2.origPos = new THREE.Vector3(Math.cos(angle + Math.PI) * HELIX_RADIUS, y, Math.sin(angle + Math.PI) * HELIX_RADIUS);
+      b2.position.copy(b2.origPos);
+      dnaGroup.add(b2);
+      strand2Nodes.push(b2);
+
+      // Base Pair Rungs
+      const rungGroup = new THREE.Group();
+      rungGroup.position.set(0, y, 0);
+
+      // Half rung 1
+      let matRung1 = (i % 4 === 0) ? matBaseA : (i % 4 === 1) ? matBaseG : (i % 4 === 2) ? matBaseT : matBaseC;
+      if (isTarget) matRung1 = matTargetC;
+
+      const r1 = new THREE.Mesh(rungGeom, matRung1);
+      r1.scale.set(1, HELIX_RADIUS * 0.95, 1);
+      r1.position.set((Math.cos(angle) * HELIX_RADIUS) / 2, 0, (Math.sin(angle) * HELIX_RADIUS) / 2);
+      r1.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), new THREE.Vector3(Math.cos(angle), 0, Math.sin(angle)));
+      rungGroup.add(r1);
+
+      // Half rung 2 (complementary)
+      let matRung2 = (i % 4 === 0) ? matBaseT : (i % 4 === 1) ? matBaseC : (i % 4 === 2) ? matBaseA : matBaseG;
+      const r2 = new THREE.Mesh(rungGeom, matRung2);
+      r2.scale.set(1, HELIX_RADIUS * 0.95, 1);
+      r2.position.set((Math.cos(angle + Math.PI) * HELIX_RADIUS) / 2, 0, (Math.sin(angle + Math.PI) * HELIX_RADIUS) / 2);
+      r2.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), new THREE.Vector3(Math.cos(angle + Math.PI), 0, Math.sin(angle + Math.PI)));
+      rungGroup.add(r2);
+
+      dnaGroup.add(rungGroup);
+
+      basePairs.push({
+        index: i,
+        angle: angle,
+        y: y,
+        isTarget: isTarget,
+        rungGroup: rungGroup,
+        rungMesh1: r1,
+        rungMesh2: r2,
+        b1: b1,
+        b2: b2
+      });
+    }
+
+    // Connective Cylinders between backbone spheres
+    function createBackboneStrand(nodes, mat) {
+      for (let i = 0; i < nodes.length - 1; i++) {
+        const link = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 1, 8), mat);
+        dnaGroup.add(link);
+        nodes[i].nextLink = link;
+        nodes[i].nextNode = nodes[i + 1];
+      }
+    }
+    createBackboneStrand(strand1Nodes, matBackbone1);
+    createBackboneStrand(strand2Nodes, matBackbone2);
+
+    // Codon 168 Indicator Beacon Ring
+    const ringGeom = new THREE.TorusGeometry(HELIX_RADIUS + 0.8, 0.1, 16, 40);
+    const ringMat = new THREE.MeshBasicMaterial({ color: 0xf59e0b, transparent: true, opacity: 0.75 });
+    const targetRing = new THREE.Mesh(ringGeom, ringMat);
+    targetRing.rotation.x = Math.PI / 2;
+    dnaGroup.add(targetRing);
+
+    // --- CRISPR-dCas9 & DEAMINASE COMPLEX ---
+    const cas9Group = new THREE.Group();
+    scene.add(cas9Group);
+
+    // Cas9 REC Lobe
+    const cas9RecMat = new THREE.MeshStandardMaterial({
+      color: 0x06b6d4,
+      roughness: 0.35,
+      metalness: 0.15,
+      transparent: true,
+      opacity: 0.88
+    });
+    const recLobe = new THREE.Mesh(new THREE.SphereGeometry(2.4, 24, 24), cas9RecMat);
+    recLobe.scale.set(1.4, 1.8, 1.2);
+    recLobe.position.set(-1.8, 0, 0);
+    cas9Group.add(recLobe);
+
+    // Cas9 NUC Lobe
+    const nucLobe = new THREE.Mesh(new THREE.SphereGeometry(2.0, 24, 24), cas9RecMat);
+    nucLobe.scale.set(1.2, 1.5, 1.1);
+    nucLobe.position.set(1.6, -0.4, 0.3);
+    cas9Group.add(nucLobe);
+
+    // gRNA Ribbon (Magenta)
+    const grnaCurve = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(-2.8, -1.8, 0.5),
+      new THREE.Vector3(-1.0, -0.6, 1.2),
+      new THREE.Vector3(0, 0, 1.4),
+      new THREE.Vector3(1.2, 0.8, 1.0),
+      new THREE.Vector3(2.6, 1.6, 0.4)
+    ]);
+    const grnaGeom = new THREE.TubeGeometry(grnaCurve, 32, 0.22, 12, false);
+    const grnaMat = new THREE.MeshStandardMaterial({ color: 0xec4899, emissive: 0xbe185d, emissiveIntensity: 0.5 });
+    const grnaMesh = new THREE.Mesh(grnaGeom, grnaMat);
+    cas9Group.add(grnaMesh);
+
+    // Deaminase Catalytic Domain (evoAPOBEC1 / TadA-8e)
+    const deamMat = new THREE.MeshStandardMaterial({
+      color: 0x10b981,
+      emissive: 0x047857,
+      emissiveIntensity: 0.6,
+      roughness: 0.2
+    });
+    const deaminaseMesh = new THREE.Mesh(new THREE.DodecahedronGeometry(1.3, 1), deamMat);
+    deaminaseMesh.position.set(0.2, 1.9, 1.4);
+    cas9Group.add(deaminaseMesh);
+
+    // Flexible Tether Linker
+    const linkerGeom = new THREE.CylinderGeometry(0.1, 0.1, 1.6, 8);
+    const linkerMat = new THREE.MeshLambertMaterial({ color: 0x94a3b8 });
+    const linkerMesh = new THREE.Mesh(linkerGeom, linkerMat);
+    linkerMesh.position.set(0.1, 1.0, 1.0);
+    linkerMesh.rotation.z = 0.4;
+    cas9Group.add(linkerMesh);
+
+    // Spark Particles for Deamination Reaction
+    const particleCount = 60;
+    const sparkGeom = new THREE.BufferGeometry();
+    const sparkPositions = new Float32Array(particleCount * 3);
+    for (let i = 0; i < particleCount * 3; i++) {
+      sparkPositions[i] = (Math.random() - 0.5) * 1.8;
+    }
+    sparkGeom.setAttribute('position', new THREE.BufferAttribute(sparkPositions, 3));
+    const sparkMat = new THREE.PointsMaterial({
+      color: 0x38bdf8,
+      size: 0.25,
+      transparent: true,
+      opacity: 0.0,
+      blending: THREE.AdditiveBlending
+    });
+    const sparkParticles = new THREE.Points(sparkGeom, sparkMat);
+    sparkParticles.position.set(0, 0, 0);
+    scene.add(sparkParticles);
+
+    // --- TRANSCRIPTION FACTOR OsDREB2A (AP2/ERF Domain Model) ---
+    const tfGroup = new THREE.Group();
+    scene.add(tfGroup);
+    tfGroup.position.set(0, -25, 0); // starts off-screen
+
+    const tfMat = new THREE.MeshStandardMaterial({
+      color: 0x8b5cf6,
+      emissive: 0x6d28d9,
+      emissiveIntensity: 0.4,
+      roughness: 0.3
+    });
+    // AP2/ERF Alpha Helix Clamp
+    const tfHelix = new THREE.Mesh(new THREE.TorusGeometry(3.8, 0.6, 16, 32, Math.PI * 1.2), tfMat);
+    tfHelix.rotation.x = Math.PI / 2;
+    tfGroup.add(tfHelix);
+
+    // DNA Major Groove Insertion Pin (Arg/Lys basic residues)
+    const pinGeom = new THREE.ConeGeometry(0.4, 1.4, 12);
+    const pinMat = new THREE.MeshLambertMaterial({ color: 0xa855f7 });
+    for (let i = -1; i <= 1; i++) {
+      const pin = new THREE.Mesh(pinGeom, pinMat);
+      pin.position.set(i * 1.1, 0, -2.6);
+      pin.rotation.x = -Math.PI / 2;
+      tfGroup.add(pin);
+    }
+
+    // Set initial Cas9 position
+    cas9Group.position.set(STAGES[1].cas9TargetPos.x, STAGES[1].cas9TargetPos.y, STAGES[1].cas9TargetPos.z);
+
+    // --- STAGE SELECTION LOGIC ---
+    function setStage(num) {
+      currentStage = num;
+      stageTimer = 0;
+
+      // Update UI buttons
+      document.querySelectorAll('.stage-btn').forEach((b, idx) => {
+        b.classList.toggle('active', (idx + 1) === num);
+      });
+
+      // Update Info Card
+      const s = STAGES[num];
+      document.getElementById('stage-title').textContent = s.title;
+      document.getElementById('stage-desc').innerHTML = s.desc;
+
+      // Highlight target base depending on stage
+      const targetPair = basePairs.find(p => p.isTarget);
+      if (targetPair) {
+        if (num >= 4) {
+          targetPair.rungMesh1.material = matEditedT;
+          targetRing.material.color.setHex(0x06b6d4);
+        } else {
+          targetPair.rungMesh1.material = matTargetC;
+          targetRing.material.color.setHex(0xf59e0b);
+        }
+      }
+    }
+
+    function togglePlayPause() {
+      isPlaying = !isPlaying;
+      document.getElementById('btn-play-pause').textContent = isPlaying ? '⏸️ Jeda' : '▶️ Putar';
+    }
+
+    function toggleAutoRotate() {
+      autoRotate = !autoRotate;
+    }
+
+    function resetCamera() {
+      const s = STAGES[currentStage];
+      camera.position.set(s.camPos.x, s.camPos.y, s.camPos.z);
+      controls.target.set(0, 0, 0);
+    }
+
+    // --- ANIMATION LOOP ---
+    let clock = new THREE.Clock();
+
+    function updateBackboneLinks(nodes) {
+      for (let i = 0; i < nodes.length - 1; i++) {
+        const n1 = nodes[i];
+        const n2 = nodes[i + 1];
+        if (n1.nextLink) {
+          const mid = new THREE.Vector3().addVectors(n1.position, n2.position).multiplyScalar(0.5);
+          const dist = n1.position.distanceTo(n2.position);
+          n1.nextLink.position.copy(mid);
+          n1.nextLink.scale.set(1, dist, 1);
+          n1.nextLink.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), new THREE.Vector3().subVectors(n2.position, n1.position).normalize());
+        }
+      }
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+      const delta = clock.getDelta();
+      const time = clock.getElapsedTime();
+      const s = STAGES[currentStage];
+
+      // Handle Auto-Play progression
+      if (isPlaying) {
+        stageTimer++;
+        if (stageTimer >= STAGE_DURATION) {
+          let next = currentStage + 1;
+          if (next > 5) next = 1;
+          setStage(next);
+        }
+      }
+
+      // Smooth camera interpolation
+      camera.position.lerp(new THREE.Vector3(s.camPos.x, s.camPos.y, s.camPos.z), 0.035);
+
+      // Smooth Cas9 interpolation
+      cas9Group.position.lerp(new THREE.Vector3(s.cas9TargetPos.x, s.cas9TargetPos.y, s.cas9TargetPos.z), 0.04);
+
+      // Subtle Cas9 breathing / enzymatic movement
+      cas9Group.rotation.y = Math.sin(time * 1.5) * 0.08;
+      cas9Group.rotation.z = Math.cos(time * 1.2) * 0.05;
+
+      // Handle R-Loop Unwinding in DNA
+      const targetRLoop = s.rLoopOpen;
+      basePairs.forEach(p => {
+        const distFromCenter = Math.abs(p.index - NUM_PAIRS / 2);
+        let unwindFactor = 0;
+        if (distFromCenter < 8) {
+          unwindFactor = Math.cos((distFromCenter / 8) * (Math.PI / 2)) * targetRLoop;
+        }
+
+        const angle = p.angle;
+        const currentR = HELIX_RADIUS * (1.0 + unwindFactor * 0.85);
+
+        // Strand 1 node position
+        p.b1.position.x = Math.cos(angle) * currentR;
+        p.b1.position.z = Math.sin(angle) * currentR;
+
+        // Strand 2 node position (displaced more in R-loop)
+        p.b2.position.x = Math.cos(angle + Math.PI) * (currentR + unwindFactor * 1.4);
+        p.b2.position.z = Math.sin(angle + Math.PI) * (currentR + unwindFactor * 1.4);
+
+        // Adjust base pair rungs
+        p.rungMesh1.scale.y = currentR * 0.95;
+        p.rungMesh2.scale.y = currentR * 0.95;
+
+        // In active R-loop, break hydrogen bonds between center bases
+        if (unwindFactor > 0.4) {
+          p.rungMesh1.material.opacity = 0.5;
+          p.rungMesh2.material.opacity = 0.5;
+        } else {
+          p.rungMesh1.material.opacity = 1.0;
+          p.rungMesh2.material.opacity = 1.0;
+        }
+      });
+
+      updateBackboneLinks(strand1Nodes);
+      updateBackboneLinks(strand2Nodes);
+
+      // Stage 3: Deaminase Active Sparks
+      if (s.deaminaseActive) {
+        sparkMat.opacity = 0.8 + Math.sin(time * 15) * 0.2;
+        sparkParticles.rotation.y += 0.06;
+        pointLightTarget.intensity = 3.5 + Math.sin(time * 20) * 1.5;
+        pointLightTarget.color.setHex(0x38bdf8);
+      } else {
+        sparkMat.opacity = 0.0;
+        pointLightTarget.intensity = 1.5;
+        pointLightTarget.color.setHex(0xf59e0b);
+      }
+
+      // Stage 5: OsDREB2A Transcription Factor Binding
+      if (s.factorBinding) {
+        tfGroup.position.lerp(new THREE.Vector3(0, 0, 0), 0.05);
+        tfGroup.rotation.y = time * 0.2;
+      } else {
+        tfGroup.position.lerp(new THREE.Vector3(0, -28, 0), 0.05);
+      }
+
+      // Rotating indicator ring
+      targetRing.rotation.z += 0.02;
+      targetRing.scale.setScalar(1 + Math.sin(time * 3) * 0.06);
+
+      // Slow Auto-Rotation of entire scene when enabled
+      if (autoRotate) {
+        dnaGroup.rotation.y += 0.003;
+      }
+
+      controls.update();
+      renderer.render(scene, camera);
+    }
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    animate();
+  </script>
+</body>
+</html>
+

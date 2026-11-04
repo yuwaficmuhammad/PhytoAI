@@ -1,0 +1,45 @@
+# Kredensial — JANGAN masuk ke Docker image
+.env
+
+# Virtual environment Python — tidak diperlukan, pip install dari requirements.txt
+.venv/
+venv/
+
+# Cache Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.so
+
+# Test files — tidak diperlukan saat runtime produksi
+tests/
+
+# Dokumentasi
+*.md
+README*
+
+# macOS
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
+
+# Git
+.git/
+.gitignore
+
+# Pytest / Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Docker files (tidak perlu menyertakan dirinya sendiri)
+.dockerignore
+docker-compose.yml
+docker-compose.override.yml
+
+# Logs
+*.log
+
