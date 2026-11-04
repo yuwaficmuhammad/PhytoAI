@@ -136,11 +136,11 @@ with st.sidebar:
     view_mode = st.radio(
         "Pilih Mode Tampilan:",
         [
-            "📊 Mode Dashboard Streamlit (Native)",
             "🖥️ Tampilan Sama Persis (FastAPI Web Studio)",
+            "📊 Mode Dashboard Streamlit (Native Cloud)",
         ],
         index=0,
-        help="Mode Dashboard Native berjalan 100% mandiri di browser (siap untuk cloud share.streamlit.io). Mode FastAPI Web Studio menampilkan Single Page App identik di port 8000.",
+        help="Default: Tampilan web studio responsif 100% sama persis dengan FastAPI (:8000). Pilih 'Mode Dashboard Streamlit (Native Cloud)' untuk widget native Python atau saat deploy ke share.streamlit.io.",
     )
 
     st.markdown("---")
