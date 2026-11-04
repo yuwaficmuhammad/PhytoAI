@@ -1565,6 +1565,151 @@
           </div>
         </div>
 
+        <!-- INTERACTIVE RESEARCH WORKFLOW STEPPER (RINGKASAN ALUR PENELITIAN) -->
+        <div class="card" style="margin-bottom: 22px; border-left: 4px solid var(--primary); background: #ffffff; box-shadow: var(--shadow-sm);">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
+            <div>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span style="background:var(--primary-subtle); color:var(--primary-dark); font-weight:800; font-size:11px; padding:3px 8px; border-radius:999px; border:1px solid var(--primary-border);">
+                  🧭 RINGKASAN RESMI
+                </span>
+                <h3 style="font-size:16px; font-weight:800; color:var(--text-main); margin:0;">
+                  Alur Proses Penelitian PhytoAI-Genetics Step-by-Step
+                </h3>
+              </div>
+              <p style="font-size:12.5px; color:var(--text-muted); margin-top:4px; margin-bottom:0;">
+                Panduan komprehensif alur riset dari analisis spasial BNPB, penarikan sekuens NCBI, pemodelan AI Transformer, hingga presisi CRISPR padi lokal.
+              </p>
+            </div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <a href="/Panduan_Alur_Penelitian_Step_by_Step_A4.pdf" target="_blank" class="btn btn-primary" style="font-size:12px; padding:6px 12px; text-decoration:none; display:inline-flex; align-items:center; gap:5px;">
+                📥 Unduh PDF Alur Riset (A4)
+              </a>
+              <button class="btn btn-secondary" style="font-size:12px; padding:6px 12px;" onclick="toggleWorkflowDetails()" id="btn-toggle-workflow">
+                🔽 Buka Penjelasan Rinci
+              </button>
+            </div>
+          </div>
+
+          <!-- GRID 6 TAHAP PENELITIAN -->
+          <div class="workflow-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:12px;">
+            <!-- Step 1 -->
+            <div class="workflow-card" style="background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:13px 14px; display:flex; flex-direction:column; justify-content:space-between;">
+              <div>
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+                  <span style="background:var(--primary); color:#fff; font-size:10.5px; font-weight:800; padding:2px 7px; border-radius:4px;">TAHAP 1</span>
+                  <span style="font-size:11px; font-weight:700; color:var(--accent-dark);">GIS InaRISK</span>
+                </div>
+                <div style="font-weight:800; font-size:13px; color:var(--text-main); margin-bottom:4px;">📍 Deteksi Titik Kritis Lapangan</div>
+                <p style="font-size:11.8px; color:var(--text-body); line-height:1.5; margin-bottom:10px;">
+                  Menganalisis 5 sentra padi paling kritis (Demak-Pati, Indramayu, Bojonegoro, Timor NTT, Lombok NTB) menggunakan data kebencanaan spasial resolusi 100m BNPB.
+                </p>
+              </div>
+              <button class="btn btn-secondary" style="font-size:11px; padding:5px 10px; width:100%; justify-content:center;" onclick="switchTab('map')">
+                Buka Peta InaRISK &rarr;
+              </button>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="workflow-card" style="background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:13px 14px; display:flex; flex-direction:column; justify-content:space-between;">
+              <div>
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+                  <span style="background:var(--accent); color:#fff; font-size:10.5px; font-weight:800; padding:2px 7px; border-radius:4px;">TAHAP 2</span>
+                  <span style="font-size:11px; font-weight:700; color:var(--primary-dark);">NCBI Real Data</span>
+                </div>
+                <div style="font-weight:800; font-size:13px; color:var(--text-main); margin-bottom:4px;">🧬 Ekstraksi DNA & Protein Asli</div>
+                <p style="font-size:11.8px; color:var(--text-body); line-height:1.5; margin-bottom:10px;">
+                  Mengekstrak sekuens CDS 825 bp dan protein 274 asam amino lokus gen <em>OsDREB2A</em> (NCBI ID: 4324418) serta 9 gen regulon pendukung toleransi kekeringan.
+                </p>
+              </div>
+              <button class="btn btn-secondary" style="font-size:11px; padding:5px 10px; width:100%; justify-content:center;" onclick="switchTab('ncbi-live')">
+                Buka Modul NCBI &rarr;
+              </button>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="workflow-card" style="background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:13px 14px; display:flex; flex-direction:column; justify-content:space-between;">
+              <div>
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+                  <span style="background:#d97706; color:#fff; font-size:10.5px; font-weight:800; padding:2px 7px; border-radius:4px;">TAHAP 3</span>
+                  <span style="font-size:11px; font-weight:700; color:#b45309;">Transformer AI</span>
+                </div>
+                <div style="font-weight:800; font-size:13px; color:var(--text-main); margin-bottom:4px;">🤖 Pemindaian Mutasi Emas (DMS)</div>
+                <p style="font-size:11.8px; color:var(--text-body); line-height:1.5; margin-bottom:10px;">
+                  Model AI ESM-2 memindai 5.206 mutasi & menemukan mutasi emas <strong>P168L</strong> yang melumpuhkan degron NRD (indeks toleransi naik drastis dari 0.42 ke 0.94).
+                </p>
+              </div>
+              <button class="btn btn-secondary" style="font-size:11px; padding:5px 10px; width:100%; justify-content:center;" onclick="switchTab('phytoai')">
+                Jalankan Transformer &rarr;
+              </button>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="workflow-card" style="background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:13px 14px; display:flex; flex-direction:column; justify-content:space-between;">
+              <div>
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+                  <span style="background:#7c3aed; color:#fff; font-size:10.5px; font-weight:800; padding:2px 7px; border-radius:4px;">TAHAP 4</span>
+                  <span style="font-size:11px; font-weight:700; color:#6d28d9;">Base Editing</span>
+                </div>
+                <div style="font-weight:800; font-size:13px; color:var(--text-main); margin-bottom:4px;">✂️ Desain sgRNA CRISPR Presisi</div>
+                <p style="font-size:11.8px; color:var(--text-body); line-height:1.5; margin-bottom:10px;">
+                  Merancang sgRNA 20 nt (PAM AGG) untuk mengubah 1 huruf kodon (CCG &rarr; CTG) tanpa pemotongan rantai ganda & tanpa DNA bakteri asing (non-transgenik).
+                </p>
+              </div>
+              <button class="btn btn-secondary" style="font-size:11px; padding:5px 10px; width:100%; justify-content:center;" onclick="switchTab('base-editing')">
+                Desain sgRNA &rarr;
+              </button>
+            </div>
+
+            <!-- Step 5 -->
+            <div class="workflow-card" style="background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:13px 14px; display:flex; flex-direction:column; justify-content:space-between;">
+              <div>
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+                  <span style="background:#db2777; color:#fff; font-size:10.5px; font-weight:800; padding:2px 7px; border-radius:4px;">TAHAP 5</span>
+                  <span style="font-size:11px; font-weight:700; color:#be185d;">WebGL 3D</span>
+                </div>
+                <div style="font-weight:800; font-size:13px; color:var(--text-main); margin-bottom:4px;">🎬 Simulasi 3D Molekuler Interaktif</div>
+                <p style="font-size:11.8px; color:var(--text-body); line-height:1.5; margin-bottom:10px;">
+                  Visualisasi 3D perapatan kompleks Cas9-sgRNA pada heliks ganda DNA padi, memastikan aksesibilitas sterik sebelum tahapan sintesis basah.
+                </p>
+              </div>
+              <button class="btn btn-secondary" style="font-size:11px; padding:5px 10px; width:100%; justify-content:center;" onclick="switchTab('3d-anim')">
+                Lihat Animasi 3D &rarr;
+              </button>
+            </div>
+
+            <!-- Step 6 -->
+            <div class="workflow-card" style="background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:13px 14px; display:flex; flex-direction:column; justify-content:space-between;">
+              <div>
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+                  <span style="background:#059669; color:#fff; font-size:10.5px; font-weight:800; padding:2px 7px; border-radius:4px;">TAHAP 6</span>
+                  <span style="font-size:11px; font-weight:700; color:var(--primary-dark);">Padi Lokal RI</span>
+                </div>
+                <div style="font-weight:800; font-size:13px; color:var(--text-main); margin-bottom:4px;">🌾 Penyesuaian ke 8 Kultivar Lokal</div>
+                <p style="font-size:11.8px; color:var(--text-body); line-height:1.5; margin-bottom:10px;">
+                  Menyesuaikan strategi ke varietas Ciherang, Inpari 32, Situ Bagendit, Jatiluhur, IR64, Rojolele, dll., mempertahankan rasa pulen & aroma wangi.
+                </p>
+              </div>
+              <button class="btn btn-secondary" style="font-size:11px; padding:5px 10px; width:100%; justify-content:center;" onclick="switchTab('cultivars')">
+                Eksplorasi Kultivar &rarr;
+              </button>
+            </div>
+          </div>
+
+          <!-- COLLAPSIBLE DETAILS PANEL -->
+          <div id="workflow-details-panel" style="display:none; margin-top:16px; padding-top:14px; border-top:1px dashed var(--border);">
+            <div style="background:var(--primary-subtle); border:1px solid var(--primary-border); border-radius:8px; padding:12px 16px; margin-bottom:12px;">
+              <div style="font-weight:800; color:var(--primary-dark); font-size:13px; margin-bottom:4px;">💡 Inti Penelitian dalam 1 Kalimat:</div>
+              <div style="font-size:12.5px; color:var(--text-main); line-height:1.6;">
+                <em>"Penelitian ini mendeteksi sawah paling terancam kekeringan menggunakan data satelit BNPB, memanfaatkan kecerdasan buatan (AI) untuk menemukan saklar gen padi terkuat, dan mendesain pisau bedah presisi CRISPR untuk mengubah 1 huruf DNA alami agar padi lokal tangguh kemarau panjang tanpa memasukkan gen asing."</em>
+              </div>
+            </div>
+            <div style="font-size:12.5px; color:var(--text-body); line-height:1.6;">
+              <strong>Kesiapan Protokol Laboratorium:</strong> Hasil komputasi ini siap diunduh dalam format <strong>Dokumen PDF A4 Resmi</strong> dan dikonversi ke vektor kloning <code>pRGEB32 / pCAMBIA</code> di bawah promotor <code>OsU3/OsU6</code> untuk transformasi kalus padi menggunakan <em>Agrobacterium tumefaciens</em>.
+            </div>
+          </div>
+        </div>
+
         <!-- TAB 1: PRESENTATION MAP SLIDE -->
         <div id="tab-map" class="tab-pane active">
           <div class="card">
@@ -3295,6 +3440,19 @@ server {
         sidebar.classList.remove('open');
         if (backdrop) backdrop.classList.remove('active');
         document.body.style.overflow = '';
+      }
+    }
+
+    function toggleWorkflowDetails() {
+      const panel = document.getElementById('workflow-details-panel');
+      const btn = document.getElementById('btn-toggle-workflow');
+      if (!panel) return;
+      if (panel.style.display === 'none' || panel.style.display === '') {
+        panel.style.display = 'block';
+        if (btn) btn.innerHTML = '🔼 Tutup Penjelasan';
+      } else {
+        panel.style.display = 'none';
+        if (btn) btn.innerHTML = '🔽 Buka Penjelasan Rinci';
       }
     }
 

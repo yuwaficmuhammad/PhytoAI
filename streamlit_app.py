@@ -370,6 +370,88 @@ else:
                 unsafe_allow_html=True,
             )
 
+        st.markdown("---")
+        st.markdown("### 🧭 Alur Proses Penelitian 6 Tahap (Bahasa Mudah Dipahami)")
+        st.caption("Alur metodologi penelitian komprehensif dari analisis kebencanaan lapangan InaRISK BNPB hingga rekayasa presisi CRISPR base editing pada plasma nutfah padi lokal.")
+
+        wf_c1, wf_c2, wf_c3 = st.columns(3)
+        with wf_c1:
+            st.markdown(
+                """
+            <div class='card'>
+                <span style='background:#059669; color:#fff; font-size:10px; font-weight:800; padding:2px 6px; border-radius:4px;'>TAHAP 1</span>
+                <h4 style='margin-top:6px; margin-bottom:4px;'>📍 Deteksi Lapangan Rawan</h4>
+                <p style='font-size:12px; color:#475569;'>Pemetaan 5 sentra kritis (Demak-Pati, Indramayu, Bojonegoro, Timor NTT, Lombok NTB) berbasis data spasial 100m InaRISK BNPB.</p>
+            </div>
+            <div class='card'>
+                <span style='background:#7c3aed; color:#fff; font-size:10px; font-weight:800; padding:2px 6px; border-radius:4px;'>TAHAP 4</span>
+                <h4 style='margin-top:6px; margin-bottom:4px;'>✂️ Desain sgRNA CRISPR</h4>
+                <p style='font-size:12px; color:#475569;'>Desain sgRNA 20 nt (PAM AGG) untuk mengubah kodon CCG &rarr; CTG tanpa memotong untai ganda & bebas DNA asing (non-transgenik).</p>
+            </div>
+            """,
+                unsafe_allow_html=True,
+            )
+
+        with wf_c2:
+            st.markdown(
+                """
+            <div class='card'>
+                <span style='background:#0284c7; color:#fff; font-size:10px; font-weight:800; padding:2px 6px; border-radius:4px;'>TAHAP 2</span>
+                <h4 style='margin-top:6px; margin-bottom:4px;'>🧬 Ekstraksi DNA Asli Padi</h4>
+                <p style='font-size:12px; color:#475569;'>Penarikan CDS 825 bp dan 274 asam amino gen acuan <em>OsDREB2A</em> (NCBI ID: 4324418) serta 9 gen regulon pelindung sel.</p>
+            </div>
+            <div class='card'>
+                <span style='background:#db2777; color:#fff; font-size:10px; font-weight:800; padding:2px 6px; border-radius:4px;'>TAHAP 5</span>
+                <h4 style='margin-top:6px; margin-bottom:4px;'>🎬 Simulasi 3D WebGL</h4>
+                <p style='font-size:12px; color:#475569;'>Visualisasi 3D Three.js kompleks Cas9-sgRNA pada heliks ganda DNA padi, memastikan aksesibilitas sterik sebelum sintesis basah.</p>
+            </div>
+            """,
+                unsafe_allow_html=True,
+            )
+
+        with wf_c3:
+            st.markdown(
+                """
+            <div class='card'>
+                <span style='background:#d97706; color:#fff; font-size:10px; font-weight:800; padding:2px 6px; border-radius:4px;'>TAHAP 3</span>
+                <h4 style='margin-top:6px; margin-bottom:4px;'>🤖 AI Transformer & DMS</h4>
+                <p style='font-size:12px; color:#475569;'>AI ESM-2 memindai 5.206 mutasi & menemukan mutasi emas <strong>P168L</strong> yang menaikkan indeks toleransi dari 0.42 ke 0.94.</p>
+            </div>
+            <div class='card'>
+                <span style='background:#059669; color:#fff; font-size:10px; font-weight:800; padding:2px 6px; border-radius:4px;'>TAHAP 6</span>
+                <h4 style='margin-top:6px; margin-bottom:4px;'>🌾 Padi Lokal Nusantara</h4>
+                <p style='font-size:12px; color:#475569;'>Penyelarasan ke 8 varietas (Ciherang, Inpari 32, Situ Bagendit, Jatiluhur, IR64, Rojolele, dll.), mempertahankan rasa pulen & aroma.</p>
+            </div>
+            """,
+                unsafe_allow_html=True,
+            )
+
+        with st.expander("📖 Baca Rangkuman Lengkap & Inti Penelitian (Bahasa Mudah Dipahami)"):
+            st.markdown(
+                """
+            **💡 Rangkuman Inti Riset dalam 1 Kalimat:**  
+            > *"Penelitian ini mendeteksi sawah paling terancam kekeringan menggunakan data satelit BNPB, memanfaatkan kecerdasan buatan (AI) untuk menemukan saklar gen padi terkuat, dan mendesain pisau bedah presisi CRISPR untuk mengubah 1 huruf DNA alami agar padi lokal tangguh kemarau panjang tanpa memasukkan gen asing."*
+
+            **Alur Kerja 6 Langkah:**
+            1. **📍 Tahap 1 (GIS InaRISK BNPB):** Deteksi sawah kritis tanah vertisol berisiko retak di Demak, Pati, Karawang, Bojonegoro, Timor NTT, dan Lombok NTB.
+            2. **🧬 Tahap 2 (NCBI GenBank Live API):** Unduh sekuens asli CDS 825 bp dan 274 AA lokus *OsDREB2A* (Gene ID: 4324418).
+            3. **🤖 Tahap 3 (AI Transformer & DMS):** Model AI mengidentifikasi mutasi emas **P168L** yang melumpuhkan degron perusak sehingga tanaman selalu siaga (*konstitutif aktif*).
+            4. **✂️ Tahap 4 (CRISPR Base Editing):** Desain sgRNA presisi (`5'-GATGAGAAGGATGAGCTGGA-3'`) untuk mengubah kodon CCG &rarr; CTG tanpa memotong DNA untai ganda (*DSB-free*).
+            5. **🎬 Tahap 5 (Simulasi 3D WebGL):** Uji spasial sterik 3D Three.js pada heliks ganda DNA padi sebelum tahapan laboratorium basah.
+            6. **🌾 Tahap 6 (Plasma Nutfah Lokal):** Terapkan ke Ciherang, Inpari 32, Situ Bagendit, dll., menjaga kualitas bulir padi pulen dan bebas hampa.
+            """
+            )
+            if os.path.exists(STEP_PDF_PATH):
+                with open(STEP_PDF_PATH, "rb") as f:
+                    pdf_step_bytes = f.read()
+                st.download_button(
+                    label="📥 Unduh Buku Panduan Alur Riset Step-by-Step (PDF 6 Halaman)",
+                    data=pdf_step_bytes,
+                    file_name="Panduan_Alur_Penelitian_Step_by_Step_A4.pdf",
+                    mime="application/pdf",
+                    use_container_width=True,
+                )
+
     # 2. TAB PETA SPASIAL INARISK
     with tab_drought:
         st.markdown("### 🗺️ Eksplorasi Geospasial InaRISK BNPB (Resolusi 100 Meter)")

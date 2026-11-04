@@ -774,3 +774,4 @@ if __name__ == "__main__":
         dest_pdf = os.path.join(artifact_dir, "Panduan_Alur_Penelitian_Step_by_Step_A4.pdf")
         shutil.copyfile(out_pdf, dest_pdf)
         print(f"PDF berhasil disalin ke direktori artifact: {dest_pdf}")
+
