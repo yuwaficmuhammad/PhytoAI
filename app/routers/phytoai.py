@@ -23,6 +23,7 @@ from app.services.phytoai_service import (
 )
 from app.services.crispr_service import analyze_crispr_targets
 from app.services.ncbi_client import ncbi_client
+from app.services.db_service import get_db_gene
 
 router = APIRouter(prefix="/phytoai", tags=["PhytoAI-Genetics: Pemodelan Transformer DREB2A & Kekeringan Padi"])
 
@@ -226,14 +227,22 @@ async def design_base_editing_for_dreb2a(
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-    # Fetch live CDS for OsDREB2A (Gene ID: 4324418) with graceful fallback to reference CDS
+    # Fetch live CDS for OsDREB2A (Gene ID: 4324418) via SQLite local cache or NCBI API fallback
     cds = None
     try:
-        seqs = await ncbi_client.extract_gene_sequences(4324418, "OsDREB2A")
-        if seqs and seqs.cds_sequence and seqs.cds_sequence.sequence:
-            cds = seqs.cds_sequence.sequence
+        db_gene = get_db_gene(4324418)
+        if db_gene and db_gene.get("cds_sequence"):
+            cds = db_gene["cds_sequence"]
     except Exception:
         pass
+
+    if not cds:
+        try:
+            seqs = await ncbi_client.extract_gene_sequences(4324418, "OsDREB2A")
+            if seqs and seqs.cds_sequence and seqs.cds_sequence.sequence:
+                cds = seqs.cds_sequence.sequence
+        except Exception:
+            pass
 
     if not cds:
         cds = OSDREB2A_CDS_NCBI

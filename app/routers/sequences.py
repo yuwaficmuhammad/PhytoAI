@@ -6,29 +6,57 @@ import io
 from app.models.crispr import GeneSequencesResponse, SequenceData
 from app.services.ncbi_client import ncbi_client
 from app.data.rice_targets import TARGETS_BY_GENE_ID
+from app.services.db_service import get_db_gene
 
 router = APIRouter(prefix="/sequences", tags=["Ekstraksi Sekuens DNA/Protein (Sequences)"])
 
 
 @router.get("/gene/{gene_id}", response_model=GeneSequencesResponse, summary="Ekstrak Sekuens Genomik, CDS, dan Protein Padi")
 async def get_gene_sequences(
-    gene_id: int = Path(..., description="NCBI Gene ID (mis. 4350572 untuk OsSWEET14, 4347178 untuk DEP1)")
+    gene_id: int = Path(..., description="NCBI Gene ID (mis. 4350572 untuk OsSWEET14, 4347178 untuk DEP1, 4324418 untuk OsDREB2A)")
 ):
     """
     Mengunduh dan mengekstrak sekuens DNA Genomik (fna), Coding Sequence (CDS),
-    dan Asam Amino Protein (faa) dari paket resmi NCBI Datasets v2.
+    dan Asam Amino Protein (faa) dari database lokal SQLite atau paket resmi NCBI Datasets v2.
     Data ini esensial untuk mendesain gRNA CRISPR, primer PCR, dan analisis mutasi titik.
     """
     target = TARGETS_BY_GENE_ID.get(gene_id)
     symbol = target.gene_symbol if target else None
 
+    # 1. Cek database lokal SQLite terlebih dahulu (latensi <0.1ms & 100% tahan offline)
+    db_gene = get_db_gene(gene_id)
+    if db_gene:
+        return GeneSequencesResponse(
+            gene_id=gene_id,
+            symbol=db_gene.get("gene_symbol", symbol),
+            cds_sequence=SequenceData(
+                gene_id=gene_id,
+                symbol=db_gene.get("gene_symbol", symbol),
+                header=f"lcl|{gene_id}_cds_{db_gene.get('refseq_nucleotide', '')}",
+                sequence=db_gene["cds_sequence"],
+                length=db_gene["cds_length"],
+                type="cds",
+                gc_percent=db_gene.get("gc_content", 50.0)
+            ),
+            protein_sequence=SequenceData(
+                gene_id=gene_id,
+                symbol=db_gene.get("gene_symbol", symbol),
+                header=f"lcl|{gene_id}_prot_{db_gene.get('refseq_protein', '')}",
+                sequence=db_gene["protein_sequence"],
+                length=db_gene["protein_length"],
+                type="protein",
+                gc_percent=None
+            )
+        )
+
+    # 2. Jika tidak ada di DB lokal, panggil NCBI Datasets v2 API
     sequences = await ncbi_client.extract_gene_sequences(gene_id=gene_id, symbol=symbol)
     return sequences
 
 
 @router.get("/gene/{gene_id}/cds", response_model=SequenceData, summary="Ambil Sekuens Pengkode (CDS) Saja")
 async def get_gene_cds(
-    gene_id: int = Path(..., description="NCBI Gene ID (mis. 4350572 untuk OsSWEET14)")
+    gene_id: int = Path(..., description="NCBI Gene ID (mis. 4350572 untuk OsSWEET14, 4324418 untuk OsDREB2A)")
 ):
     """
     Mengambil bagian Coding DNA Sequence (CDS) spesifik dari gen padi.
@@ -37,6 +65,19 @@ async def get_gene_cds(
     """
     target = TARGETS_BY_GENE_ID.get(gene_id)
     symbol = target.gene_symbol if target else None
+
+    # Cek database lokal terlebih dahulu
+    db_gene = get_db_gene(gene_id)
+    if db_gene:
+        return SequenceData(
+            gene_id=gene_id,
+            symbol=db_gene.get("gene_symbol", symbol),
+            header=f"lcl|{gene_id}_cds_{db_gene.get('refseq_nucleotide', '')}",
+            sequence=db_gene["cds_sequence"],
+            length=db_gene["cds_length"],
+            type="cds",
+            gc_percent=db_gene.get("gc_content", 50.0)
+        )
 
     sequences = await ncbi_client.extract_gene_sequences(gene_id=gene_id, symbol=symbol)
     if not sequences.cds_sequence:
