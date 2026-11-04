@@ -38,12 +38,15 @@ async def find_crispr_targets(
     - **Deteksi Sinyal Terminasi Pol III (TTTT)**: Memperingatkan jika guide RNA mengandung
       rentetan 4+ Timin (TTTT) yang memicu penghentian transkripsi dini pada promotor U6/U3 padi.
     """
-    return analyze_crispr_targets(
-        sequence=request.sequence,
-        nuclease=request.nuclease,
-        min_gc=request.min_gc,
-        max_gc=request.max_gc
-    )
+    try:
+        return analyze_crispr_targets(
+            sequence=request.sequence,
+            nuclease=request.nuclease,
+            min_gc=request.min_gc,
+            max_gc=request.max_gc
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=413, detail=str(e))
 
 
 @router.post("/design-for-gene/{gene_id}", response_model=CRISPRAnalysisResponse, summary="Otomasi Desain gRNA CRISPR Langsung dari NCBI Gene ID")

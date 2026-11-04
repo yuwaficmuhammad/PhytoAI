@@ -130,3 +130,4 @@ def test_api_db_endpoints():
     resp = client.get("/api/v1/db/crispr-guides?target_mutation=P168L")
     assert resp.status_code == 200
     assert len(resp.json()) >= 1
+

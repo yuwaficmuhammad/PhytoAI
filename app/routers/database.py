@@ -85,3 +85,4 @@ async def list_database_crispr_guides(
     Mengambil calon sgRNA 20-nt protospacer, skor efisiensi, dan primer oligo forward/reverse untuk kloning ke vektor pRGEB32/pCAMBIA.
     """
     return get_db_crispr_guides(target_mutation)
+

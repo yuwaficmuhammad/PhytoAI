@@ -31,10 +31,10 @@ from app.services.phytoai_service import (
     LOCAL_CULTIVARS,
     OSDREB2A_DOMAINS,
     OSDREB2A_PROTEIN,
+    OSDREB2A_CDS_NCBI,
 )
 from app.services.crispr_service import analyze_crispr_targets
 from app.data.rice_targets import RICE_TARGETS
-from app.routers.phytoai import OSDREB2A_CDS_NCBI
 from app.services.db_service import (
     get_db_stats,
     get_all_db_genes,
@@ -465,17 +465,32 @@ else:
         st.caption("Database alel dan varian alami OsDREB2A pada kultivar landrace dan varietas unggul nasional.")
 
         cult_rows = []
-        for k, v in LOCAL_CULTIVARS.items():
-            cult_rows.append(
-                {
-                    "Varietas Padi": v.get("name", k),
-                    "Asal": v.get("origin", ""),
-                    "Ekosistem": v.get("ecosystem", ""),
-                    "Haplotipe Kunci (SNPs)": ", ".join(v.get("key_snps", [])),
-                    "Ekspresi mRNA": v.get("relative_expression", ""),
-                    "Fenotipe Cekaman": v.get("phenotype", ""),
-                }
-            )
+        db_cultivars = get_all_db_cultivars()
+        if db_cultivars:
+            for c in db_cultivars:
+                cult_rows.append(
+                    {
+                        "Varietas Padi": c.get("name", ""),
+                        "Asal Daerah": c.get("origin", ""),
+                        "Tipe Kultivar": c.get("cultivar_type", ""),
+                        "Alel DREB2A": c.get("dreb2a_allele", ""),
+                        "Toleransi Dasar": c.get("baseline_tolerance", ""),
+                        "Rekomendasi Edit": c.get("recommended_edit", ""),
+                    }
+                )
+        elif isinstance(LOCAL_CULTIVARS, list):
+            for item in LOCAL_CULTIVARS:
+                c_dict = item.model_dump() if hasattr(item, "model_dump") else (item if isinstance(item, dict) else vars(item))
+                cult_rows.append(
+                    {
+                        "Varietas Padi": c_dict.get("cultivar_name", ""),
+                        "Asal Daerah": c_dict.get("origin", ""),
+                        "Tipe Kultivar": c_dict.get("rice_type", ""),
+                        "Alel DREB2A": ", ".join(c_dict.get("key_snps_haplotype", [])),
+                        "Toleransi Dasar": c_dict.get("drought_phenotype", ""),
+                        "Rekomendasi Edit": c_dict.get("recommended_crispr_edit", ""),
+                    }
+                )
         render_table(cult_rows)
         f4 = get_image_path("rice_cultivar_panicle.png")
         if f4:
@@ -518,7 +533,7 @@ else:
             w_start = max(0, c_start - 30)
             w_end = min(len(cds), c_end + 30)
             w_seq = cds[w_start:w_end]
-            crispr_res = analyze_crispr_targets(w_seq, pam_type="SpCas9")
+            crispr_res = analyze_crispr_targets(w_seq, nuclease="SpCas9")
 
             st.markdown(f"**Target Mutasi:** `{selected_crispr_mut}` | **Kodon Asal NCBI:** `posisi {pos} ({wt_cod})`")
             st.info(f"**Rekomendasi Editor:** {mut_obj.crispr_base_editing_candidate or 'Base Editor'}")
@@ -543,7 +558,7 @@ else:
             height=100,
         )
         if st.button("🧪 Rancang Panduan gRNA (Sekuens Bebas)", use_container_width=True):
-            c_obj = analyze_crispr_targets(dna_seq, pam_type="SpCas9")
+            c_obj = analyze_crispr_targets(dna_seq, nuclease="SpCas9")
             c_res = c_obj.model_dump()
             t_rows = []
             for t in c_res["sites"]:

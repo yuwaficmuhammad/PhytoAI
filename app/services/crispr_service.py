@@ -1,5 +1,5 @@
 import re
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 from app.models.crispr import CRISPRTargetSite, CRISPRAnalysisResponse
 
 
@@ -39,17 +39,17 @@ def analyze_crispr_targets(
     sequence: str,
     nuclease: str = "SpCas9",
     min_gc: float = 35.0,
-    max_gc: float = 70.0
+    max_gc: float = 70.0,
+    pam_type: Optional[str] = None
 ) -> CRISPRAnalysisResponse:
+    effective_nuclease = pam_type if pam_type is not None else nuclease
     clean_seq = re.sub(r"\s+", "", sequence).upper()
     seq_len = len(clean_seq)
 
     # Guard: tolak sekuens terlalu panjang untuk mencegah CPU exhaustion
     if seq_len > MAX_SEQUENCE_LENGTH:
-        from fastapi import HTTPException
-        raise HTTPException(
-            status_code=413,
-            detail=f"Sekuens terlalu panjang ({seq_len:,} nt). Batas maksimum adalah {MAX_SEQUENCE_LENGTH:,} nt."
+        raise ValueError(
+            f"Sekuens terlalu panjang ({seq_len:,} nt). Batas maksimum adalah {MAX_SEQUENCE_LENGTH:,} nt."
         )
 
     overall_gc = calculate_gc(clean_seq)
@@ -57,7 +57,7 @@ def analyze_crispr_targets(
     sites: List[CRISPRTargetSite] = []
     site_id = 1
     
-    nuclease_lower = nuclease.lower()
+    nuclease_lower = effective_nuclease.lower()
     
     if "cas12" in nuclease_lower or "cpf1" in nuclease_lower:
         # Cas12a (Cpf1): PAM is 5'-TTTV-3' (V = A, C, G) followed by 20-24 nt protospacer (default 23 nt)
