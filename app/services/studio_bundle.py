@@ -281,4 +281,14 @@ def build_standalone_studio_html() -> str:
     else:
         html = adapter_script + html
 
+    # 4. Tambahkan opsi switch ke Mode Native di sidebar Web Studio (target="_top")
+    native_nav_link = """
+        <div class="sidebar-section-title">Mode Alternatif</div>
+        <a class="sidebar-link" href="?view=native" target="_top" style="color: #0284c7; font-weight: 600;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 3v18h18"/><path d="M18 9l-5 5-4-4-3 3"/></svg>
+          Dashboard Native Python
+        </a>
+      </nav>"""
+    html = html.replace("</nav>", native_nav_link, 1)
+
     return html

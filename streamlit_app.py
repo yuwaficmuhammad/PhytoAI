@@ -134,93 +134,29 @@ def get_inarisk_leaflet_html(center_lat=-2.5, center_lon=118.0, zoom=5):
     """
 
 
-# Cek parameter query URL (mis. ?view=native untuk melihat dashboard widget native)
+# Cek parameter query URL (default: 100% Tampilan Sama Persis Web Studio FastAPI)
+# Pengguna dapat mengakses ?view=native untuk melihat dashboard widget native
 url_params = getattr(st, "query_params", {})
 view_param = str(url_params.get("view", "")).lower()
+is_native_mode = (view_param == "native")
 
-# Selalu jadikan Tampilan Web Studio FastAPI sebagai default utama (baik di komputer lokal maupun di cloud)
-default_idx = 1 if "native" in view_param else 0
-
-# ==================== SIDEBAR PILIHAN TAMPILAN ====================
-with st.sidebar:
-    st.markdown("### 🌾 PhytoAI-Genetics")
-    st.caption("Studio Pemodelan Transformer OsDREB2A, CRISPR Base Editing & InaRISK BNPB")
-    st.markdown("---")
-
-    view_mode = st.radio(
-        "Pilih Mode Tampilan:",
-        [
-            "🖥️ Tampilan Sama Persis (FastAPI Web Studio)",
-            "📊 Mode Dashboard Streamlit (Native Cloud)",
-        ],
-        index=default_idx,
-        help="Default: Tampilan web studio responsif 100% sama persis dengan FastAPI (:8000). Pilih 'Mode Dashboard Streamlit (Native Cloud)' untuk widget native Python atau saat deploy ke share.streamlit.io.",
-    )
-
-    st.markdown("---")
-    st.markdown("#### 📌 Status Sistem")
-    st.markdown(
-        """
-    - **FastAPI Engine:** 🟢 Aktif (`:8000`)
-    - **Streamlit Studio:** 🟢 Aktif (`:8501`)
-    - **Lokus Utama:** *OsDREB2A* (Gene ID: `4324418`)
-    - **Unit Test:** `45 Passed (100%)`
-    """
-    )
-
-    try:
-        db_stat = get_db_stats()
-        st.markdown("---")
-        st.markdown("#### 💾 Database Lokal SQLite")
-        st.markdown(
-            f"""
-        - **Status:** 🟢 Aktif (`phytoai_local.db`)
-        - **NCBI Gen:** `{db_stat['tables']['ncbi_genes']} Gen Real`
-        - **InaRISK GIS:** `{db_stat['tables']['inarisk_clusters']} Sentra Padi`
-        - **Kultivar Lokal:** `{db_stat['tables']['rice_cultivars']} Plasma Nutfah`
-        - **DMS Matrix:** `{db_stat['tables']['dms_mutations']} Mutasi`
-        - **CRISPR Guides:** `{db_stat['tables']['crispr_guides']} sgRNA Terverifikasi`
-        - **Ukuran File:** `{db_stat['file_size_kb']} KB` (Latensi `<0.1ms`)
-        """
-        )
-    except Exception as e:
-        st.warning(f"Database lokal: {e}")
-
-    st.markdown("---")
-    st.markdown("#### ☁️ Panduan Deploy Cloud")
-    st.info(
-        "💡 **Siap Deploy ke share.streamlit.io!**\n\n"
-        "Gunakan **Mode Dashboard Native** saat deploy ke cloud agar seluruh fitur (AI transformer, DMS, CRISPR, peta GIS, dan Animasi 3D) berjalan 100% mandiri tanpa server FastAPI terpisah."
-    )
-
-    if os.path.exists(PDF_PATH):
-        with open(PDF_PATH, "rb") as f:
-            pdf_bytes = f.read()
-        st.download_button(
-            label="📥 Unduh Panduan Riset A4 (PDF)",
-            data=pdf_bytes,
-            file_name="Panduan_Lengkap_PhytoAI_Genetics_A4.pdf",
-            mime="application/pdf",
-            use_container_width=True,
-        )
-
-    st.caption("Kementerian Pendidikan Tinggi, Sains, dan Teknologi RI\nPusat Riset Bioteknologi Pangan")
-
-
-# ==================== 1. MODE TAMPILAN SAMA PERSIS DENGAN FASTAPI ====================
-if view_mode == "🖥️ Tampilan Sama Persis (FastAPI Web Studio)":
-    # Custom CSS untuk menyembunyikan sidebar Streamlit sepenuhnya dan menyelaraskan iframe full-screen
+# ==================== 1. MODE TAMPILAN SAMA PERSIS DENGAN FASTAPI (DEFAULT) ====================
+if not is_native_mode:
+    # Custom CSS untuk menyembunyikan header & sidebar Streamlit sepenuhnya (Seamless Fullscreen Studio)
     st.markdown(
         """
     <style>
-        #MainMenu {visibility: hidden;}
-        footer {visibility: hidden;}
+        #MainMenu {visibility: hidden !important;}
+        footer {visibility: hidden !important;}
         header[data-testid="stHeader"] {display: none !important;}
         [data-testid="stSidebar"] {display: none !important;}
         section[data-testid="stSidebar"] {display: none !important;}
         [data-testid="collapsedControl"] {display: none !important;}
         div[data-testid="stSidebarCollapseButton"] {display: none !important;}
         button[kind="header"] {display: none !important;}
+        div[data-testid="stToolbar"] {display: none !important;}
+        div[data-testid="stDecoration"] {display: none !important;}
+        div[data-testid="stStatusWidget"] {display: none !important;}
         .block-container {
             padding-top: 0rem !important;
             padding-bottom: 0rem !important;
@@ -228,6 +164,7 @@ if view_mode == "🖥️ Tampilan Sama Persis (FastAPI Web Studio)":
             padding-right: 0rem !important;
             margin: 0rem !important;
             max-width: 100% !important;
+            width: 100% !important;
         }
         iframe {
             border: none !important;
@@ -247,8 +184,60 @@ if view_mode == "🖥️ Tampilan Sama Persis (FastAPI Web Studio)":
     components.html(studio_html, height=1350, scrolling=True)
 
 
-# ==================== 2. MODE DASHBOARD STREAMLIT NATIVE ====================
+# ==================== 2. MODE DASHBOARD STREAMLIT NATIVE (?view=native) ====================
 else:
+    with st.sidebar:
+        st.markdown("### 🌾 PhytoAI-Genetics")
+        st.caption("Mode Dashboard Native Python (Widgets & Pytest Live Runner)")
+        st.markdown("---")
+
+        if st.button("🖥️ Kembali ke Tampilan Web Studio FastAPI", use_container_width=True):
+            if hasattr(st, "query_params"):
+                st.query_params.clear()
+            st.rerun()
+
+        st.markdown("---")
+        st.markdown("#### 📌 Status Sistem")
+        st.markdown(
+            """
+        - **FastAPI Engine:** 🟢 Aktif (`:8000`)
+        - **Streamlit Studio:** 🟢 Aktif (`:8501`)
+        - **Lokus Utama:** *OsDREB2A* (Gene ID: `4324418`)
+        - **Unit Test:** `45 Passed (100%)`
+        """
+        )
+
+        try:
+            db_stat = get_db_stats()
+            st.markdown("---")
+            st.markdown("#### 💾 Database Lokal SQLite")
+            st.markdown(
+                f"""
+            - **Status:** 🟢 Aktif (`phytoai_local.db`)
+            - **NCBI Gen:** `{db_stat['tables']['ncbi_genes']} Gen Real`
+            - **InaRISK GIS:** `{db_stat['tables']['inarisk_clusters']} Sentra Padi`
+            - **Kultivar Lokal:** `{db_stat['tables']['rice_cultivars']} Plasma Nutfah`
+            - **DMS Matrix:** `{db_stat['tables']['dms_mutations']} Mutasi`
+            - **CRISPR Guides:** `{db_stat['tables']['crispr_guides']} sgRNA Terverifikasi`
+            - **Ukuran File:** `{db_stat['file_size_kb']} KB` (Latensi `<0.1ms`)
+            """
+            )
+        except Exception as e:
+            st.warning(f"Database lokal: {e}")
+
+        if os.path.exists(PDF_PATH):
+            with open(PDF_PATH, "rb") as f:
+                pdf_bytes = f.read()
+            st.download_button(
+                label="📥 Unduh Panduan Riset A4 (PDF)",
+                data=pdf_bytes,
+                file_name="Panduan_Lengkap_PhytoAI_Genetics_A4.pdf",
+                mime="application/pdf",
+                use_container_width=True,
+            )
+
+        st.caption("Kementerian Pendidikan Tinggi, Sains, dan Teknologi RI\nPusat Riset Bioteknologi Pangan")
+
     # Custom CSS bertema alam ilmiah (#059669)
     st.markdown(
         """
