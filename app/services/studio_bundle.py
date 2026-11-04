@@ -63,32 +63,68 @@ def generate_client_side_adapter_js() -> str:
         return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
       }}
 
+      function safeParseUrl(urlStr) {{
+        try {{
+          if (typeof urlStr === 'string' && (urlStr.startsWith('http://') || urlStr.startsWith('https://'))) {{
+            return new URL(urlStr);
+          }}
+          return new URL(urlStr, 'https://phytoai.local');
+        }} catch (e) {{
+          const parts = String(urlStr).split('?');
+          return {{
+            pathname: parts[0] || '',
+            searchParams: new URLSearchParams(parts[1] || '')
+          }};
+        }}
+      }}
+
+      function createJsonResponse(data) {{
+        if (typeof Response !== 'undefined') {{
+          try {{
+            return new Response(JSON.stringify(data), {{
+              status: 200,
+              headers: {{ 'Content-Type': 'application/json' }}
+            }});
+          }} catch (e) {{}}
+        }}
+        return {{
+          ok: true,
+          status: 200,
+          headers: {{ get: () => 'application/json' }},
+          json: async () => data,
+          text: async () => JSON.stringify(data)
+        }};
+      }}
+
       function handleLocalApi(urlStr, options) {{
-        const url = new URL(urlStr, window.location.origin);
+        const url = safeParseUrl(urlStr);
         const path = url.pathname;
 
         // 1. Regions list
         if (path === '/api/v1/phytoai/drought-regions') {{
-          return new Response(JSON.stringify(EMBEDDED_REGIONS), {{
-            status: 200, headers: {{ 'Content-Type': 'application/json' }}
-          }});
+          const prov = url.searchParams.get('province') || '';
+          const search = (url.searchParams.get('search') || '').toLowerCase();
+          let filtered = EMBEDDED_REGIONS;
+          if (prov) {{
+            filtered = filtered.filter(r => (r.provinces || []).includes(prov) || (r.region_name || '').includes(prov));
+          }}
+          if (search) {{
+            filtered = filtered.filter(r => (r.region_name || '').toLowerCase().includes(search) || (r.provinces || []).some(p => p.toLowerCase().includes(search)));
+          }}
+          return createJsonResponse(filtered);
         }}
 
         // 2. Cultivars list
         if (path === '/api/v1/phytoai/dreb2a/local-cultivars') {{
-          return new Response(JSON.stringify(EMBEDDED_CULTIVARS), {{
-            status: 200, headers: {{ 'Content-Type': 'application/json' }}
-          }});
+          return createJsonResponse(EMBEDDED_CULTIVARS);
         }}
 
         // 3. Targets list
         if (path === '/api/v1/targets') {{
-          return new Response(JSON.stringify({{ total: EMBEDDED_TARGETS.length, categories: [], targets: EMBEDDED_TARGETS }}), {{
-            status: 200, headers: {{ 'Content-Type': 'application/json' }}
-          }});
+          return createJsonResponse({{ total: EMBEDDED_TARGETS.length, categories: [], targets: EMBEDDED_TARGETS }});
         }}
 
-        // 4. Coordinate assessment
+        // 4. Dynamic Coordinate assessment (selaras penuh dengan CoordinateAssessmentResponse)
         if (path === '/api/v1/phytoai/assess-coordinates') {{
           const lat = parseFloat(url.searchParams.get('lat') || '-6.8944');
           const lon = parseFloat(url.searchParams.get('lon') || '110.6386');
@@ -98,14 +134,55 @@ def generate_client_side_adapter_js() -> str:
             const d = haversineDist(lat, lon, r.latitude, r.longitude);
             if (d < minD) {{ minD = d; nearest = r; }}
           }}
-          const res = Object.assign({{}}, nearest, {{
-            distance_km: Math.round(minD * 10) / 10,
+
+          let island = "Indonesia";
+          if (lon >= 95.0 && lon <= 106.0 && lat >= -6.0 && lat <= 6.0) island = "Sumatera";
+          else if (lon >= 105.0 && lon <= 115.0 && lat >= -9.0 && lat <= -5.5) island = "Jawa & Madura";
+          else if (lon >= 108.5 && lon <= 119.5 && lat >= -4.5 && lat <= 4.5) island = "Kalimantan";
+          else if (lon >= 118.5 && lon <= 125.5 && lat >= -6.0 && lat <= 2.5) island = "Sulawesi";
+          else if (lon >= 114.5 && lon <= 125.5 && lat >= -11.0 && lat <= -8.0) island = "Bali & Nusa Tenggara";
+          else if (lon >= 125.5 && lon <= 135.0 && lat >= -9.0 && lat <= 3.0) island = "Kepulauan Maluku";
+          else if (lon >= 130.0 && lon <= 141.5 && lat >= -9.5 && lat <= 1.0) island = "Papua";
+
+          const baseHazard = nearest.inarisk_hazard_score || 0.85;
+          let calScore = baseHazard;
+          if (minD > 400) calScore = Math.max(0.50, Math.round((baseHazard - 0.12) * 100) / 100);
+          else if (minD > 200) calScore = Math.max(0.58, Math.round((baseHazard - 0.06) * 100) / 100);
+
+          let hazLevel = "TINGGI (High Hazard)";
+          if (calScore >= 0.85) hazLevel = "SANGAT TINGGI (Extreme Hazard)";
+          else if (calScore >= 0.70) hazLevel = "TINGGI (High Hazard)";
+          else if (calScore >= 0.50) hazLevel = "SEDANG (Moderate Hazard)";
+          else hazLevel = "RENDAH (Low Hazard)";
+
+          let primaryMut = (nearest.recommended_mutations && nearest.recommended_mutations[0]) ? nearest.recommended_mutations[0] : "P168L";
+          let strat = nearest.dreb2a_target_strategy || "Diperlukan pembentukan DREB2A-CA konstitutif aktif melalui mutasi titik P168L (CBE) untuk mengeliminasi sinyal degradasi proteasom 26S.";
+          if (calScore < 0.70) {{
+            primaryMut = "S167A";
+            strat = "Kekeringan fluktuatif di daerah " + island + ". Disarankan penyuntingan residu fosforilasi S167A atau P168L untuk mengamankan stabilitas faktor transkripsi.";
+          }} else if (calScore < 0.80) {{
+            primaryMut = "V79I";
+            strat = "Kekeringan musiman di agroekosistem " + (nearest.agroecosystem_type || 'padi') + ". Disarankan mutasi V79I (ABE) pada domain AP2/ERF untuk meningkatkan afinitas pengikatan DRE/CRT.";
+          }}
+
+          const res = {{
+            latitude: Math.round(lat * 1000000) / 1000000,
+            longitude: Math.round(lon * 1000000) / 1000000,
             nearest_region_id: nearest.region_id,
-            nearest_region_name: nearest.region_name
-          }});
-          return new Response(JSON.stringify(res), {{
-            status: 200, headers: {{ 'Content-Type': 'application/json' }}
-          }});
+            nearest_region_name: nearest.region_name,
+            province: (nearest.provinces && nearest.provinces[0]) || island,
+            island_group: island,
+            distance_km: Math.round(minD * 10) / 10,
+            inarisk_hazard_level: hazLevel,
+            inarisk_hazard_score: calScore,
+            agroecosystem_type: nearest.agroecosystem_type || 'Sawah Irigasi',
+            annual_rainfall_mm: nearest.annual_rainfall_mm || 1800,
+            recommended_cultivars: nearest.predominant_local_cultivars || ['Ciherang', 'Inpari 32 HDB', 'Situ Bagendit'],
+            recommended_mutations: nearest.recommended_mutations || ['P168L'],
+            primary_mutation: primaryMut,
+            dreb2a_strategy: strat
+          }};
+          return createJsonResponse(res);
         }}
 
         // 5. Predict mutation
@@ -114,9 +191,7 @@ def generate_client_side_adapter_js() -> str:
           try {{ body = JSON.parse(options.body || '{{}}'); }} catch(e) {{}}
           const variant = (body.variant || 'P168L').toUpperCase();
           const cached = MUTATIONS_CACHE[variant] || MUTATIONS_CACHE['P168L'];
-          return new Response(JSON.stringify(cached), {{
-            status: 200, headers: {{ 'Content-Type': 'application/json' }}
-          }});
+          return createJsonResponse(cached);
         }}
 
         // 6. Deep mutational scan
@@ -134,9 +209,7 @@ def generate_client_side_adapter_js() -> str:
               mutations: [{{ mutant_aa: "L", delta_llr: 1.84, tolerance_index: 0.94 }}]
             }});
           }}
-          return new Response(JSON.stringify({{ region_scanned: `Posisi ${{start}}-${{end}}`, positions: positions }}), {{
-            status: 200, headers: {{ 'Content-Type': 'application/json' }}
-          }});
+          return createJsonResponse({{ region_scanned: `Posisi ${{start}}-${{end}}`, positions: positions }});
         }}
 
         // 7. Base editing design
@@ -178,9 +251,7 @@ def generate_client_side_adapter_js() -> str:
             base_editor_recommendation: cached.crispr_base_editing_candidate || "CBE (Cytosine Base Editor)",
             protocol_summary: "Kloning sgRNA ke vektor pRGEB32/pCAMBIA di bawah promotor OsU3/OsU6 untuk konversi kodon target."
           }};
-          return new Response(JSON.stringify(res), {{
-            status: 200, headers: {{ 'Content-Type': 'application/json' }}
-          }});
+          return createJsonResponse(res);
         }}
 
         // 8. Gene sequences
@@ -210,15 +281,11 @@ def generate_client_side_adapter_js() -> str:
               gc_percent: null
             }}
           }};
-          return new Response(JSON.stringify(res), {{
-            status: 200, headers: {{ 'Content-Type': 'application/json' }}
-          }});
+          return createJsonResponse(res);
         }}
 
         // 9. Default fallback
-        return new Response(JSON.stringify({{ status: "online", source: "client_embedded_engine" }}), {{
-          status: 200, headers: {{ 'Content-Type': 'application/json' }}
-        }});
+        return createJsonResponse({{ status: "online", source: "client_embedded_engine" }});
       }}
 
       // Monkey-patch window.fetch
