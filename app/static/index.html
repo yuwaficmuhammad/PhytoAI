@@ -1954,12 +1954,14 @@
                     <option value="S167A">S167A (Abolisi Fosforilasi Regulasi Negatif Karst)</option>
                   </select>
                 </div>
-                <button class="btn btn-primary" onclick="runBaseEditingDesign()" style="padding: 10px 18px;">
-                  ⚡ Desain sgRNA Base Editor dari CDS NCBI
-                </button>
-                <button type="button" class="btn btn-secondary" onclick="open3DSimulation()" style="padding: 10px 18px; margin-left: 8px;">
-                  🎬 Simulasi 3D Rekayasa Genetik &rarr;
-                </button>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
+                  <button type="button" class="btn btn-primary" onclick="runBaseEditingDesign()" style="width: 100%; padding: 11px 14px; text-align: center; justify-content: center; font-size: 12.5px; font-weight: 700;">
+                    ⚡ Desain sgRNA Base Editor dari CDS NCBI
+                  </button>
+                  <button type="button" class="btn btn-secondary" onclick="open3DSimulation()" style="width: 100%; padding: 11px 14px; text-align: center; justify-content: center; font-size: 12.5px; font-weight: 700;">
+                    🎬 Simulasi 3D Rekayasa Genetik &rarr;
+                  </button>
+                </div>
               </div>
               <div>
                 <div id="be-results-card" style="background: var(--surface-subtle); border: 1px solid var(--border); border-radius: 12px; padding: 18px; display:none; box-shadow: var(--shadow-sm);">

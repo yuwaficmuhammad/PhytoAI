@@ -383,6 +383,59 @@ else:
     with tab_crispr:
         st.markdown("### ✂️ CRISPR Base Editing Studio (CBE & ABE)")
         st.info("💡 **Simulasi Molekuler 3D Tersedia!** Buka tab **🎬 Animasi 3D CRISPR** di atas untuk melihat proses pengikatan Cas9, pembentukan R-loop, dan deaminasi kimiawi basa DNA secara interaktif 360°.")
+
+        st.markdown("#### ⚡ Desain Base Editor dari CDS NCBI & Simulasi 3D:")
+        c_be_sel = st.selectbox(
+            "Pilih Target Mutasi Toleransi Kekeringan:",
+            [
+                "P168L (DREB2A-CA: Stabilisasi Degron NRD - Cytosine Base Editor)",
+                "V79I (Peningkatan Afinitas Ikatan DNA AP2 - Adenine Base Editor)",
+                "S167A (Abolisi Fosforilasi Regulasi Negatif Karst - CBE)",
+            ],
+            key="st_crispr_tab_mut",
+        )
+        selected_crispr_mut = c_be_sel.split()[0]
+
+        # Dua tombol dengan lebar sama persis (use_container_width=True)
+        col_btn_be1, col_btn_be2 = st.columns(2)
+        with col_btn_be1:
+            btn_run_be = st.button("⚡ Desain sgRNA Base Editor dari CDS NCBI", use_container_width=True, key="btn_run_be")
+        with col_btn_be2:
+            btn_to_3d = st.button("🎬 Simulasi 3D Rekayasa Genetik →", use_container_width=True, key="btn_to_3d")
+
+        if btn_to_3d:
+            st.success(f"✅ Buka tab **🎬 Animasi 3D CRISPR** di atas untuk melihat simulasi 3D molekuler mutasi **{selected_crispr_mut}** secara dinamis!")
+
+        if btn_run_be:
+            from app.routers.phytoai import OSDREB2A_CDS_NCBI
+            cds = OSDREB2A_CDS_NCBI
+            mut_obj = analyze_dreb2a_mutation(selected_crispr_mut)
+            pos = mut_obj.position
+            c_start = (pos - 1) * 3
+            c_end = pos * 3
+            wt_cod = cds[c_start:c_end]
+            w_start = max(0, c_start - 30)
+            w_end = min(len(cds), c_end + 30)
+            w_seq = cds[w_start:w_end]
+            crispr_res = analyze_crispr_targets(w_seq, pam_type="SpCas9")
+
+            st.markdown(f"**Target Mutasi:** `{selected_crispr_mut}` | **Kodon Asal NCBI:** `posisi {pos} ({wt_cod})`")
+            st.info(f"**Rekomendasi Editor:** {mut_obj.crispr_base_editing_candidate or 'Base Editor'}")
+            be_sg_rows = []
+            for s in crispr_res.sites[:5]:
+                be_sg_rows.append(
+                    {
+                        "Protospacer (20-nt)": s.protospacer_sequence,
+                        "PAM": s.pam,
+                        "GC (%)": f"{s.gc_content:.1f}%",
+                        "Pol III Signal": "⚠️ TTTT" if s.has_poly_t_termination else "✅ Bersih",
+                        "Kualitas": s.quality_assessment,
+                    }
+                )
+            render_table(be_sg_rows)
+
+        st.markdown("---")
+        st.markdown("#### 🧪 Pemindaian Sekuens Bebas:")
         dna_seq = st.text_area(
             "Sekuens DNA Sasaran (5' -> 3'):",
             value="ATGGACGAGCCGCCGTCGCCGTCGGGGACGCAGTCGGCGTCGGTGGTGTCGCCGGCGAGGGAGGAGGCGAAGAAGCAGCGGCGGGTGGGCCTGCGGTACAGGGGGGTGAGGCAGCGGCCGTGGGGGAAGTGGGCGGCGGAGATCCGGGACCCGAACAAGGCCGCCCGGGTGTGGCTCGGCACGTTCGACACCGCGGAGGAGGCGGCGCTGGCCTACGACAAGGCGGCGAGGCTGCTGCGGGGCCGCAACGCGCTGCTCAACTTCCCGCTGCGGCTCGGCGAGCGG",
