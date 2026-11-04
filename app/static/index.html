@@ -1585,7 +1585,7 @@
               </p>
             </div>
             <div style="display:flex; gap:8px; flex-wrap:wrap;">
-              <a href="/Panduan_Alur_Penelitian_Step_by_Step_A4.pdf" target="_blank" class="btn btn-primary" style="font-size:12px; padding:6px 12px; text-decoration:none; display:inline-flex; align-items:center; gap:5px;">
+              <a href="https://raw.githubusercontent.com/yuwaficmuhammad/PhytoAI/main/Panduan_Alur_Penelitian_Step_by_Step_A4.pdf" target="_blank" download="Panduan_Alur_Penelitian_Step_by_Step_A4.pdf" rel="noopener noreferrer" onclick="downloadOfficialPdf('step-by-step', event);" class="btn btn-primary" style="font-size:12px; padding:6px 12px; text-decoration:none; display:inline-flex; align-items:center; gap:5px;">
                 📥 Unduh PDF Alur Riset (A4)
               </a>
               <button class="btn btn-secondary" style="font-size:12px; padding:6px 12px;" onclick="toggleWorkflowDetails()" id="btn-toggle-workflow">
@@ -2240,10 +2240,10 @@
                 </div>
               </div>
               <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-                <a href="/Panduan_Alur_Penelitian_Step_by_Step_A4.pdf" target="_blank" class="btn btn-primary" style="display:inline-flex; align-items:center; gap:6px; text-decoration:none; font-weight:700;">
+                <a href="https://raw.githubusercontent.com/yuwaficmuhammad/PhytoAI/main/Panduan_Alur_Penelitian_Step_by_Step_A4.pdf" target="_blank" download="Panduan_Alur_Penelitian_Step_by_Step_A4.pdf" rel="noopener noreferrer" onclick="downloadOfficialPdf('step-by-step', event);" class="btn btn-primary" style="display:inline-flex; align-items:center; gap:6px; text-decoration:none; font-weight:700;">
                   📥 Unduh Alur Riset Step-by-Step (A4)
                 </a>
-                <a href="/Panduan_Lengkap_PhytoAI_Genetics_A4.pdf" target="_blank" class="btn btn-secondary" style="display:inline-flex; align-items:center; gap:6px; text-decoration:none; font-weight:700;">
+                <a href="https://raw.githubusercontent.com/yuwaficmuhammad/PhytoAI/main/Panduan_Lengkap_PhytoAI_Genetics_A4.pdf" target="_blank" download="Panduan_Lengkap_PhytoAI_Genetics_A4.pdf" rel="noopener noreferrer" onclick="downloadOfficialPdf('full', event);" class="btn btn-secondary" style="display:inline-flex; align-items:center; gap:6px; text-decoration:none; font-weight:700;">
                   📄 Dokumen Teknis Lengkap (A4)
                 </a>
               </div>
@@ -3537,6 +3537,43 @@ server {
         appMain.scrollTo({
           top: mainTargetY,
           behavior: 'smooth'
+        });
+      }
+    }
+
+    function downloadOfficialPdf(pdfType, event) {
+      if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      const isStep = (pdfType === 'step-by-step');
+      const filename = isStep 
+        ? 'Panduan_Alur_Penelitian_Step_by_Step_A4.pdf' 
+        : 'Panduan_Lengkap_PhytoAI_Genetics_A4.pdf';
+      
+      const githubUrl = 'https://raw.githubusercontent.com/yuwaficmuhammad/PhytoAI/main/' + filename;
+      const localUrl = '/' + filename;
+
+      // Cek apakah host saat ini adalah localhost:8000 (FastAPI aktif langsung)
+      const isFastApiDirect = window.location && (window.location.port === '8000' || String(window.location.host).includes(':8000'));
+      const targetUrl = isFastApiDirect ? localUrl : githubUrl;
+
+      const link = document.createElement('a');
+      link.href = targetUrl;
+      link.download = filename;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      document.body.appendChild(link);
+      link.click();
+      setTimeout(() => {
+        try { document.body.removeChild(link); } catch (e) {}
+      }, 300);
+
+      if (window.PhytoToast) {
+        PhytoToast.fire({
+          icon: 'success',
+          title: 'Mengunduh Dokumen PDF Resmi',
+          text: `Memulai unduhan berkas ${filename}...`
         });
       }
     }
