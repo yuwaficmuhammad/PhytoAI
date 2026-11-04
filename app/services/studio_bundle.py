@@ -65,34 +65,54 @@ def generate_client_side_adapter_js() -> str:
 
       function safeParseUrl(urlStr) {{
         try {{
-          if (typeof urlStr === 'string' && (urlStr.startsWith('http://') || urlStr.startsWith('https://'))) {{
-            return new URL(urlStr);
+          const str = String(urlStr || '');
+          const qIdx = str.indexOf('?');
+          const pathname = qIdx >= 0 ? str.slice(0, qIdx) : str;
+          const search = qIdx >= 0 ? str.slice(qIdx + 1) : '';
+          const params = {{}};
+          if (search) {{
+            search.split('&').forEach(function(pair) {{
+              if (!pair) return;
+              const eq = pair.indexOf('=');
+              const k = eq >= 0 ? decodeURIComponent(pair.slice(0, eq)) : decodeURIComponent(pair);
+              const v = eq >= 0 ? decodeURIComponent(pair.slice(eq + 1)) : '';
+              params[k] = v;
+            }});
           }}
-          return new URL(urlStr, 'https://phytoai.local');
-        }} catch (e) {{
-          const parts = String(urlStr).split('?');
           return {{
-            pathname: parts[0] || '',
-            searchParams: new URLSearchParams(parts[1] || '')
+            pathname: pathname,
+            searchParams: {{
+              get: function(key) {{ return params[key] !== undefined ? params[key] : null; }},
+              has: function(key) {{ return params[key] !== undefined; }}
+            }}
+          }};
+        }} catch (e) {{
+          return {{
+            pathname: String(urlStr || '').split('?')[0],
+            searchParams: {{ get: function() {{ return null; }}, has: function() {{ return false; }} }}
           }};
         }}
       }}
 
       function createJsonResponse(data) {{
+        const jsonStr = JSON.stringify(data);
         if (typeof Response !== 'undefined') {{
           try {{
-            return new Response(JSON.stringify(data), {{
+            const resp = new Response(jsonStr, {{
               status: 200,
               headers: {{ 'Content-Type': 'application/json' }}
             }});
+            resp.json = async () => (typeof data === 'object' && data !== null) ? JSON.parse(jsonStr) : data;
+            resp.text = async () => jsonStr;
+            return resp;
           }} catch (e) {{}}
         }}
         return {{
           ok: true,
           status: 200,
           headers: {{ get: () => 'application/json' }},
-          json: async () => data,
-          text: async () => JSON.stringify(data)
+          json: async () => JSON.parse(jsonStr),
+          text: async () => jsonStr
         }};
       }}
 
@@ -304,17 +324,24 @@ def generate_client_side_adapter_js() -> str:
         window.open('?view=native', '_blank');
       }};
 
-      // Monkey-patch window.fetch
+      // Monkey-patch window.fetch untuk mode offline / Streamlit Cloud
       const nativeFetch = window.fetch;
       window.fetch = async function(resource, init) {{
         const url = typeof resource === 'string' ? resource : (resource.url || '');
-        if (url.includes('/api/v1/')) {{
+        if (typeof url === 'string' && url.includes('/api/v1/')) {{
+          // Hanya jika origin port adalah 8000 (FastAPI aktif langsung di localhost)
           try {{
-            const liveResp = await nativeFetch(resource, init);
-            if (liveResp.ok) return liveResp;
+            if (window.location && (window.location.port === '8000' || String(window.location.host).includes(':8000'))) {{
+              const liveResp = await nativeFetch(resource, init);
+              const ctype = liveResp.headers ? (liveResp.headers.get('content-type') || '') : '';
+              if (liveResp.ok && ctype.includes('application/json')) {{
+                return liveResp;
+              }}
+            }}
           }} catch (netErr) {{
-            // Server offline / CORS / port 8000 unreachable
+            // Port 8000 offline / unreachable
           }}
+          // Di Streamlit (Cloud share.streamlit.io atau :8501), selalu gunakan local embedded engine
           return handleLocalApi(url, init);
         }}
         return nativeFetch(resource, init);
