@@ -134,6 +134,21 @@ async def download_tutorial_pdf():
     return HTMLResponse("Berkas PDF belum ditemukan.", status_code=404)
 
 
+@app.get("/download-step-by-step-pdf", include_in_schema=False)
+@app.get("/Panduan_Alur_Penelitian_Step_by_Step_A4.pdf", include_in_schema=False)
+async def download_step_by_step_pdf():
+    """Mengunduh berkas PDF alur proses penelitian step-by-step bahasa mudah dipahami (ukuran A4)."""
+    root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    pdf_path = os.path.join(root_dir, "Panduan_Alur_Penelitian_Step_by_Step_A4.pdf")
+    if os.path.exists(pdf_path):
+        return FileResponse(
+            pdf_path,
+            media_type="application/pdf",
+            headers={"Content-Disposition": "attachment; filename=Panduan_Alur_Penelitian_Step_by_Step_A4.pdf"}
+        )
+    return HTMLResponse("Berkas PDF belum ditemukan.", status_code=404)
+
+
 @app.get("/health", tags=["Sistem"])
 async def health_check():
     """Pemeriksaan status operasional API."""

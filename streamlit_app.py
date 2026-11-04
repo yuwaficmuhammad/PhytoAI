@@ -62,6 +62,7 @@ st.set_page_config(
 
 FASTAPI_URL = "http://localhost:8000"
 PDF_PATH = os.path.join(ROOT_DIR, "Panduan_Lengkap_PhytoAI_Genetics_A4.pdf")
+STEP_PDF_PATH = os.path.join(ROOT_DIR, "Panduan_Alur_Penelitian_Step_by_Step_A4.pdf")
 IMG_DIR = os.path.join(ROOT_DIR, "app", "static", "images")
 
 
@@ -225,11 +226,22 @@ else:
         except Exception as e:
             st.warning(f"Database lokal: {e}")
 
+        if os.path.exists(STEP_PDF_PATH):
+            with open(STEP_PDF_PATH, "rb") as f:
+                pdf_step_bytes = f.read()
+            st.download_button(
+                label="📥 Unduh Alur Riset Step-by-Step (PDF)",
+                data=pdf_step_bytes,
+                file_name="Panduan_Alur_Penelitian_Step_by_Step_A4.pdf",
+                mime="application/pdf",
+                use_container_width=True,
+            )
+
         if os.path.exists(PDF_PATH):
             with open(PDF_PATH, "rb") as f:
                 pdf_bytes = f.read()
             st.download_button(
-                label="📥 Unduh Panduan Riset A4 (PDF)",
+                label="📄 Unduh Panduan Riset Teknis (PDF)",
                 data=pdf_bytes,
                 file_name="Panduan_Lengkap_PhytoAI_Genetics_A4.pdf",
                 mime="application/pdf",
@@ -851,16 +863,29 @@ else:
             """
             )
 
-        if os.path.exists(PDF_PATH):
-            with open(PDF_PATH, "rb") as f:
-                pdf_bytes_doc = f.read()
-            st.download_button(
-                label="📥 Unduh Panduan Riset Resmi PDF A4 Lengkap (11 Halaman)",
-                data=pdf_bytes_doc,
-                file_name="Panduan_Lengkap_PhytoAI_Genetics_A4.pdf",
-                mime="application/pdf",
-                use_container_width=True,
-            )
+        col_d1, col_d2 = st.columns(2)
+        with col_d1:
+            if os.path.exists(STEP_PDF_PATH):
+                with open(STEP_PDF_PATH, "rb") as f:
+                    pdf_step_doc = f.read()
+                st.download_button(
+                    label="📥 Unduh Alur Riset Step-by-Step (PDF 6 Halaman)",
+                    data=pdf_step_doc,
+                    file_name="Panduan_Alur_Penelitian_Step_by_Step_A4.pdf",
+                    mime="application/pdf",
+                    use_container_width=True,
+                )
+        with col_d2:
+            if os.path.exists(PDF_PATH):
+                with open(PDF_PATH, "rb") as f:
+                    pdf_bytes_doc = f.read()
+                st.download_button(
+                    label="📄 Unduh Dokumen Teknis Lengkap A4 (PDF 11 Halaman)",
+                    data=pdf_bytes_doc,
+                    file_name="Panduan_Lengkap_PhytoAI_Genetics_A4.pdf",
+                    mime="application/pdf",
+                    use_container_width=True,
+                )
 
     # 11. TAB PENGUJIAN PYTEST
     with tab_tests:
