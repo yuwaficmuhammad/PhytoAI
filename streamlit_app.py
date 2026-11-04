@@ -50,7 +50,7 @@ st.set_page_config(
     page_title="PhytoAI-Genetics | Transformer Modeling & Rice Drought Tolerance",
     page_icon="🌾",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="collapsed",
 )
 
 FASTAPI_URL = "http://localhost:8000"
@@ -127,6 +127,11 @@ def get_inarisk_leaflet_html(center_lat=-2.5, center_lon=118.0, zoom=5):
     """
 
 
+# Cek parameter query URL (mis. http://localhost:8501/?view=native untuk melihat dashboard native)
+url_params = getattr(st, "query_params", {})
+view_param = str(url_params.get("view", "")).lower()
+default_idx = 1 if "native" in view_param else 0
+
 # ==================== SIDEBAR PILIHAN TAMPILAN ====================
 with st.sidebar:
     st.markdown("### 🌾 PhytoAI-Genetics")
@@ -139,7 +144,7 @@ with st.sidebar:
             "🖥️ Tampilan Sama Persis (FastAPI Web Studio)",
             "📊 Mode Dashboard Streamlit (Native Cloud)",
         ],
-        index=0,
+        index=default_idx,
         help="Default: Tampilan web studio responsif 100% sama persis dengan FastAPI (:8000). Pilih 'Mode Dashboard Streamlit (Native Cloud)' untuk widget native Python atau saat deploy ke share.streamlit.io.",
     )
 
@@ -195,24 +200,32 @@ with st.sidebar:
 
 # ==================== 1. MODE TAMPILAN SAMA PERSIS DENGAN FASTAPI ====================
 if view_mode == "🖥️ Tampilan Sama Persis (FastAPI Web Studio)":
-    # Custom CSS untuk menyelaraskan container Streamlit menjadi full-width tanpa margin
+    # Custom CSS untuk menyembunyikan sidebar Streamlit sepenuhnya dan menyelaraskan iframe full-screen
     st.markdown(
         """
     <style>
         #MainMenu {visibility: hidden;}
         footer {visibility: hidden;}
-        header[data-testid="stHeader"] {display: none;}
+        header[data-testid="stHeader"] {display: none !important;}
+        [data-testid="stSidebar"] {display: none !important;}
+        section[data-testid="stSidebar"] {display: none !important;}
+        [data-testid="collapsedControl"] {display: none !important;}
+        div[data-testid="stSidebarCollapseButton"] {display: none !important;}
+        button[kind="header"] {display: none !important;}
         .block-container {
             padding-top: 0rem !important;
             padding-bottom: 0rem !important;
             padding-left: 0rem !important;
             padding-right: 0rem !important;
+            margin: 0rem !important;
             max-width: 100% !important;
         }
         iframe {
             border: none !important;
-            width: 100% !important;
+            width: 100vw !important;
+            height: 100vh !important;
             min-height: 100vh !important;
+            display: block;
         }
     </style>
     """,
