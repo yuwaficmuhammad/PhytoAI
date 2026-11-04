@@ -44,6 +44,13 @@ from app.services.db_service import (
     get_all_db_dms,
     get_db_crispr_guides
 )
+from app.services.studio_bundle import build_standalone_studio_html
+
+
+@st.cache_data
+def get_cached_studio_html() -> str:
+    """Mengambil dokumen HTML Web Studio yang terkompilasi mandiri (di-cache in-memory)."""
+    return build_standalone_studio_html()
 
 # ==================== KONFIGURASI HALAMAN ====================
 st.set_page_config(
@@ -127,25 +134,12 @@ def get_inarisk_leaflet_html(center_lat=-2.5, center_lon=118.0, zoom=5):
     """
 
 
-# Deteksi apakah aplikasi berjalan di Streamlit Community Cloud
-is_streamlit_cloud = (
-    os.environ.get("STREAMLIT_SHARING_HOST") is not None
-    or os.environ.get("USER") == "appuser"
-    or os.path.exists("/mount/src")
-)
-
-# Cek parameter query URL (mis. http://localhost:8501/?view=native atau ?view=fastapi)
+# Cek parameter query URL (mis. ?view=native untuk melihat dashboard widget native)
 url_params = getattr(st, "query_params", {})
 view_param = str(url_params.get("view", "")).lower()
 
-if "native" in view_param:
-    default_idx = 1
-elif "fastapi" in view_param:
-    default_idx = 0
-elif is_streamlit_cloud:
-    default_idx = 1  # Di cloud, gunakan mode native mandiri
-else:
-    default_idx = 0  # Di komputer lokal, langsung tampilkan web studio FastAPI
+# Selalu jadikan Tampilan Web Studio FastAPI sebagai default utama (baik di komputer lokal maupun di cloud)
+default_idx = 1 if "native" in view_param else 0
 
 # ==================== SIDEBAR PILIHAN TAMPILAN ====================
 with st.sidebar:
@@ -247,11 +241,10 @@ if view_mode == "🖥️ Tampilan Sama Persis (FastAPI Web Studio)":
         unsafe_allow_html=True,
     )
 
-    # Embed aplikasi web studio FastAPI secara utuh (100% sama persis)
-    if hasattr(st, "iframe"):
-        st.iframe(f"{FASTAPI_URL}", height=1200)
-    else:
-        components.iframe(f"{FASTAPI_URL}", height=1200, scrolling=True)
+    # Embed aplikasi web studio FastAPI secara utuh, mandiri, dan responsif
+    # Menggunakan components.html() agar berjalan 100% sempurna di localhost maupun cloud share.streamlit.io
+    studio_html = get_cached_studio_html()
+    components.html(studio_html, height=1350, scrolling=True)
 
 
 # ==================== 2. MODE DASHBOARD STREAMLIT NATIVE ====================
