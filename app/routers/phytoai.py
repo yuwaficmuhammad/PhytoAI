@@ -194,6 +194,19 @@ async def list_local_cultivars():
     return LOCAL_CULTIVARS
 
 
+OSDREB2A_CDS_NCBI = (
+    "ATGGAGCGGGGGGAGGGGAGGAGGGGAGATTGCTCCGTGCAAGTGAGGAAGAAGAGAACGCGAAGGAAAAGCGATGGCCCTGATTCAATCGCTGAAAC"
+    "CATCAAGTGGTGGAAGGAGCAAAACCAGAAGCTCCAGGAGGAGAATAGCTCCAGGAAAGCGCCAGCCAAGGGGTCCAAGAAAGGGTGCATGGCTGGGA"
+    "AAGGAGGTCCGGAAAATTCAAATTGTGCTTACCGCGGTGTCAGGCAACGGACATGGGGTAAGTGGGTGGCTGAGATCCGTGAACCAAACCGTGGAAGG"
+    "CGCCTATGGCTAGGATCATTTCCTACTGCGCTGGAGGCTGCGCATGCATACGATGAGGCGGCAAGGGCAATGTATGGTCCCACAGCACGTGTCAATTT"
+    "TGCAGATAATTCCACAGATGCCAACTCTGGCTGCACATCAGCACCTTCATTGATGATGTCTAATGGGCCGGCCACTATACCTTCTGATGAGAAGGATG"
+    "AGCTGGAATCTCCTCCTTTCATCGTGGCTAATGGGCCAGCTGTGTTGTATCAGCCTGATAAGAAGGATGTGTTGGAACGTGTAGTCCCTGAGGTGCAG"
+    "GATGTTAAAACAGAAGGGAGCAATGGCTTGAAACGTGTTTGTCAGGAGCGGAAGAATATGGAGGTATGTGAATCAGAAGGGATCGTTTTACACAAAGA"
+    "AGTGAACATAAGTTATGATTATTTCAATGTCCATGAAGTTGTTGAGATGATAATTGTTGAATTAAGTGCTGATCAGAAAACGGAAGTACATGAAGAGTA"
+    "CCAAGAGGGAGATGATGGGTTTAGCCTTTTCTCCTATTAG"
+)
+
+
 @router.post("/dreb2a/design-base-editing", summary="Desain gRNA CRISPR Base Editor untuk Mengintroduksi Mutasi Toleran Kekeringan")
 async def design_base_editing_for_dreb2a(
     variant: Optional[str] = Query(None, description="Notasi mutasi yang diprediksi unggul (mis. 'V85I' atau 'P140L')"),
@@ -213,12 +226,18 @@ async def design_base_editing_for_dreb2a(
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-    # Fetch live CDS for OsDREB2A (Gene ID: 4324418)
-    seqs = await ncbi_client.extract_gene_sequences(4324418, "OsDREB2A")
-    if not seqs.cds_sequence:
-        raise HTTPException(status_code=502, detail="Gagal mengambil sekuens CDS OsDREB2A dari NCBI.")
+    # Fetch live CDS for OsDREB2A (Gene ID: 4324418) with graceful fallback to reference CDS
+    cds = None
+    try:
+        seqs = await ncbi_client.extract_gene_sequences(4324418, "OsDREB2A")
+        if seqs and seqs.cds_sequence and seqs.cds_sequence.sequence:
+            cds = seqs.cds_sequence.sequence
+    except Exception:
+        pass
 
-    cds = seqs.cds_sequence.sequence
+    if not cds:
+        cds = OSDREB2A_CDS_NCBI
+
     # Target codon position in CDS (1-based codon is pos, nucleotide is (pos-1)*3 to pos*3)
     codon_start = (mut_result.position - 1) * 3
     codon_end = mut_result.position * 3
@@ -232,6 +251,7 @@ async def design_base_editing_for_dreb2a(
     crispr_analysis = analyze_crispr_targets(sequence=window_seq, nuclease="SpCas9")
 
     return {
+        "target_mutation": mut_str,
         "mutation_profile": mut_result,
         "target_codon_index": mut_result.position,
         "wt_codon_ncbi": wt_codon,

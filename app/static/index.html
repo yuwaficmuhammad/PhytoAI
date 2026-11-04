@@ -3949,6 +3949,10 @@ server {
         const res = await fetch(`/api/v1/phytoai/dreb2a/design-base-editing?variant=${encodeURIComponent(mut)}&target_mutation=${encodeURIComponent(mut)}`, { method: 'POST' });
         const data = await res.json();
 
+        if (!res.ok || !data.candidate_sgRNAs || !Array.isArray(data.candidate_sgRNAs)) {
+          throw new Error(data.detail || 'Respon desain base editing tidak valid atau gagal diproses.');
+        }
+
         let sgHtml = '';
         data.candidate_sgRNAs.slice(0, 3).forEach((sg, idx) => {
           sgHtml += `
@@ -3959,8 +3963,9 @@ server {
           `;
         });
 
+        const targetMutName = data.target_mutation || mut;
         card.innerHTML = `
-          <div style="font-weight:800; color:var(--accent-dark); font-size:14.5px; margin-bottom:8px;">Target Mutasi: ${data.target_mutation}</div>
+          <div style="font-weight:800; color:var(--accent-dark); font-size:14.5px; margin-bottom:8px;">Target Mutasi: ${targetMutName}</div>
           <div style="font-size:12.5px; margin-bottom:6px;"><strong>Rekomendasi Editor:</strong> ${data.base_editor_recommendation}</div>
           <div style="font-size:12px; margin-bottom:14px; color:var(--text-muted);"><strong>Kodon Asal NCBI:</strong> <code>${data.wt_codon_ncbi}</code> pada residu ke-${data.target_codon_index}</div>
           <div style="font-size:12px; font-weight:800; color:var(--text-main); margin-bottom:8px;">Kandidat sgRNA Siap Sintesis Oligo:</div>
@@ -3972,7 +3977,7 @@ server {
 
         PhytoToast.fire({
           icon: 'success',
-          title: `Desain Base Editor ${data.target_mutation} Siap!`,
+          title: `Desain Base Editor ${targetMutName} Siap!`,
           text: `${data.candidate_sgRNAs.length} protospacer teridentifikasi.`
         });
       } catch (e) {
