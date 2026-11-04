@@ -262,13 +262,53 @@ else:
             col_img2.image(f2, caption="Gambar 2: Rekahan lempung vertisol Pantura Jawa.", use_container_width=True)
 
     with tab_3d:
-        st.markdown("### 🎬 Simulasi 3D Real-Time: Rekayasa Genetik OsDREB2A")
-        st.caption("Visualisasi molekuler 3D interaktif 360° (Three.js/WebGL): Pengenalan PAM 5'-NGG-3', pembentukan R-Loop, deaminasi basa C→T (P168L), dan pengikatan regulon.")
+        st.markdown("### 🎬 Simulasi 3D Dinamis: Rekayasa Genetik OsDREB2A")
+        st.caption(
+            "Visualisasi molekuler 3D interaktif berbasis WebGL/Three.js. Simulasi ini berjalan dinamis sesuai "
+            "dengan mutasi target yang dipilih (menyesuaikan tipe enzim base editor, basa sasaran, dan domain fungsional)."
+        )
+
+        col_m1, col_m2 = st.columns([2, 1])
+        with col_m1:
+            mut_choice = st.selectbox(
+                "Pilih Target Rekayasa Genetik untuk Disimulasikan:",
+                [
+                    "P168L (Cytosine Base Editor CBE: C→T / Degron NRD Stabil)",
+                    "V79I (Adenine Base Editor ABE: A→G / Peningkatan Afinitas AP2)",
+                    "S167A (Cytosine Base Editor CBE: C→T / Abolisi Fosforilasi)",
+                ],
+                index=0,
+                key="st_3d_mut_choice"
+            )
+            selected_mut_key = mut_choice.split()[0]
+        with col_m2:
+            st.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True)
+            st.caption("💡 *Simulasi dapat diputar 360° & di-zoom langsung di viewport 3D di bawah.*")
+
+        # Kartu indikator dinamis
+        mc1, mc2, mc3 = st.columns(3)
+        if selected_mut_key == "P168L":
+            mc1.metric("Editor Enzim", "CBE (evoAPOBEC1)", delta="Deaminasi Sitidin")
+            mc2.metric("Perubahan Basa", "CCT → CTT (C → T)", delta="Pro168Leu")
+            mc3.metric("Efek Fenotipe", "DREB2A-CA", delta="Resisten Ubiquitin")
+        elif selected_mut_key == "V79I":
+            mc1.metric("Editor Enzim", "ABE (TadA-8e)", delta="Deaminasi Adenin")
+            mc2.metric("Perubahan Basa", "GTT → ATT (A → G)", delta="Val79Ile")
+            mc3.metric("Efek Fenotipe", "Afinitas DNA +140%", delta="Ikatan DRE/CRT Kuat")
+        else:
+            mc1.metric("Editor Enzim", "CBE (evoCDA1)", delta="Deaminasi Sitidin")
+            mc2.metric("Perubahan Basa", "TCC → GCC (C → T)", delta="Ser167Ala")
+            mc3.metric("Efek Fenotipe", "Abolisi Fosforilasi", delta="Mencegah Degradasi")
+
         anim_path = os.path.join(ROOT_DIR, "app", "static", "crispr_3d.html")
         if os.path.exists(anim_path):
             with open(anim_path, "r", encoding="utf-8") as f:
                 html_code = f.read()
-            components.html(html_code, height=690, scrolling=False)
+            html_code = html_code.replace(
+                "let activeMutationKey = urlParams.get('mut') || 'P168L';",
+                f"let activeMutationKey = '{selected_mut_key}';"
+            )
+            components.html(html_code, height=720, scrolling=False)
         else:
             st.warning("File aset simulasi 3D (`crispr_3d.html`) sedang disiapkan.")
 
@@ -342,6 +382,7 @@ else:
 
     with tab_crispr:
         st.markdown("### ✂️ CRISPR Base Editing Studio (CBE & ABE)")
+        st.info("💡 **Simulasi Molekuler 3D Tersedia!** Buka tab **🎬 Animasi 3D CRISPR** di atas untuk melihat proses pengikatan Cas9, pembentukan R-loop, dan deaminasi kimiawi basa DNA secara interaktif 360°.")
         dna_seq = st.text_area(
             "Sekuens DNA Sasaran (5' -> 3'):",
             value="ATGGACGAGCCGCCGTCGCCGTCGGGGACGCAGTCGGCGTCGGTGGTGTCGCCGGCGAGGGAGGAGGCGAAGAAGCAGCGGCGGGTGGGCCTGCGGTACAGGGGGGTGAGGCAGCGGCCGTGGGGGAAGTGGGCGGCGGAGATCCGGGACCCGAACAAGGCCGCCCGGGTGTGGCTCGGCACGTTCGACACCGCGGAGGAGGCGGCGCTGGCCTACGACAAGGCGGCGAGGCTGCTGCGGGGCCGCAACGCGCTGCTCAACTTCCCGCTGCGGCTCGGCGAGCGG",

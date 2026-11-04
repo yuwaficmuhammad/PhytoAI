@@ -1957,7 +1957,7 @@
                 <button class="btn btn-primary" onclick="runBaseEditingDesign()" style="padding: 10px 18px;">
                   ⚡ Desain sgRNA Base Editor dari CDS NCBI
                 </button>
-                <button class="btn btn-secondary" onclick="switchTab('3d-anim')" style="padding: 10px 18px; margin-left: 8px;">
+                <button type="button" class="btn btn-secondary" onclick="open3DSimulation()" style="padding: 10px 18px; margin-left: 8px;">
                   🎬 Simulasi 3D Rekayasa Genetik &rarr;
                 </button>
               </div>
@@ -1989,7 +1989,7 @@
                 </a>
               </div>
             </div>
-            <iframe src="/static/crispr_3d.html" style="width: 100%; height: 680px; border: none; display: block;" allow="fullscreen"></iframe>
+            <iframe id="iframe-3d-anim" src="/static/crispr_3d.html" style="width: 100%; height: 680px; border: none; display: block;" allow="fullscreen"></iframe>
           </div>
         </div>
 
@@ -3311,12 +3311,25 @@ server {
       const titleEl = document.getElementById('topbar-page-title');
       if (titleEl && tabTitles[tabId]) titleEl.textContent = tabTitles[tabId];
 
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      const mainEl = document.querySelector('.main-content') || document.querySelector('.content-area') || document.querySelector('.app-main');
+      if (mainEl) mainEl.scrollTo({ top: 0, behavior: 'smooth' });
+
       if (tabId === 'map') {
         setTimeout(() => {
           initInaRiskMap();
           if (leafletMap) leafletMap.invalidateSize();
         }, 150);
       }
+    }
+
+    function open3DSimulation(mutVariant) {
+      const mut = mutVariant || document.getElementById('be-mutation-select')?.value || 'P168L';
+      const iframe = document.getElementById('iframe-3d-anim');
+      if (iframe) {
+        iframe.src = `/static/crispr_3d.html?mut=${encodeURIComponent(mut)}`;
+      }
+      switchTab('3d-anim');
     }
 
     // --- LEAFLET INARISK MAP SETUP (LIGHT PRESENTATION MODE) ---
