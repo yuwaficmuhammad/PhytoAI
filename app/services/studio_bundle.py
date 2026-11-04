@@ -288,6 +288,22 @@ def generate_client_side_adapter_js() -> str:
         return createJsonResponse({{ status: "online", source: "client_embedded_engine" }});
       }}
 
+      // Handler navigasi beralih ke Mode Native Streamlit secara aman (tahan sandbox iframe)
+      window.openNativeDashboard = function(event) {{
+        if (event) {{
+          try {{ event.preventDefault(); event.stopPropagation(); }} catch (e) {{}}
+        }}
+        try {{
+          if (window.top && window.top !== window) {{
+            window.top.location.href = window.location.origin + window.location.pathname + '?view=native';
+            return;
+          }}
+        }} catch (e) {{
+          // Iframe sandbox memblokir top navigation di cloud Streamlit
+        }}
+        window.open('?view=native', '_blank');
+      }};
+
       // Monkey-patch window.fetch
       const nativeFetch = window.fetch;
       window.fetch = async function(resource, init) {{
@@ -314,15 +330,30 @@ def build_standalone_studio_html() -> str:
     with open(index_file, "r", encoding="utf-8") as f:
         html = f.read()
 
-    # 1. Base64 encode gambar
+    # 1. Base64 encode gambar (dikompresi cerdas via PIL agar payload WebSocket Streamlit ringan & kilat)
     if os.path.exists(IMG_DIR):
         for img_name in os.listdir(IMG_DIR):
             if img_name.endswith((".png", ".jpg", ".jpeg")):
                 img_path = os.path.join(IMG_DIR, img_name)
                 try:
-                    with open(img_path, "rb") as imf:
-                        b64_str = base64.b64encode(imf.read()).decode("utf-8")
-                    mime = "image/png" if img_name.endswith(".png") else "image/jpeg"
+                    try:
+                        from PIL import Image
+                        import io
+                        im = Image.open(img_path).convert("RGB")
+                        if im.width > 960:
+                            ratio = 960.0 / float(im.width)
+                            new_h = int(float(im.height) * ratio)
+                            im = im.resize((960, new_h), Image.Resampling.LANCZOS)
+                        buf = io.BytesIO()
+                        im.save(buf, format="JPEG", quality=80, optimize=True)
+                        raw_bytes = buf.getvalue()
+                        mime = "image/jpeg"
+                    except Exception:
+                        with open(img_path, "rb") as imf:
+                            raw_bytes = imf.read()
+                        mime = "image/png" if img_name.endswith(".png") else "image/jpeg"
+
+                    b64_str = base64.b64encode(raw_bytes).decode("utf-8")
                     data_uri = f"data:{mime};base64,{b64_str}"
                     html = html.replace(f"/static/images/{img_name}", data_uri)
                 except Exception:
@@ -348,10 +379,10 @@ def build_standalone_studio_html() -> str:
     else:
         html = adapter_script + html
 
-    # 4. Tambahkan opsi switch ke Mode Native di sidebar Web Studio (target="_top")
+    # 4. Tambahkan opsi switch ke Mode Native di sidebar Web Studio secara aman
     native_nav_link = """
         <div class="sidebar-section-title">Mode Alternatif</div>
-        <a class="sidebar-link" href="?view=native" target="_top" style="color: #0284c7; font-weight: 600;">
+        <a class="sidebar-link" href="javascript:void(0)" onclick="openNativeDashboard(event)" style="color: #0284c7; font-weight: 600;">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 3v18h18"/><path d="M18 9l-5 5-4-4-3 3"/></svg>
           Dashboard Native Python
         </a>

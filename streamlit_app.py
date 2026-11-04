@@ -158,6 +158,13 @@ if not is_native_mode:
         div[data-testid="stToolbar"] {display: none !important;}
         div[data-testid="stDecoration"] {display: none !important;}
         div[data-testid="stStatusWidget"] {display: none !important;}
+        html, body, [data-testid="stAppViewContainer"], .main {
+            overflow: hidden !important;
+            height: 100vh !important;
+            max-height: 100vh !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
         .block-container {
             padding-top: 0rem !important;
             padding-bottom: 0rem !important;
@@ -166,15 +173,25 @@ if not is_native_mode:
             margin: 0rem !important;
             max-width: 100% !important;
             width: 100% !important;
+            height: 100vh !important;
         }
+        [data-testid="stCustomComponentV1"],
+        [data-testid="stCustomComponentV1"] > iframe,
         iframe {
             border: none !important;
             width: 100vw !important;
             height: 100vh !important;
             min-height: 100vh !important;
+            max-height: 100vh !important;
             display: block;
         }
     </style>
+    <div style="position:fixed; top:10px; right:16px; z-index:9999999; pointer-events:auto;">
+        <a href="?view=native" target="_self" style="background:#0284c7; color:#ffffff; font-size:11.5px; font-weight:700; padding:6px 14px; border-radius:999px; text-decoration:none; box-shadow:0 2px 8px rgba(0,0,0,0.18); display:inline-flex; align-items:center; gap:6px; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; border:1px solid rgba(255,255,255,0.4); backdrop-filter:blur(4px);">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 3v18h18"/><path d="M18 9l-5 5-4-4-3 3"/></svg>
+            Buka Dashboard Native Python
+        </a>
+    </div>
     """,
         unsafe_allow_html=True,
     )
@@ -182,11 +199,21 @@ if not is_native_mode:
     # Embed aplikasi web studio FastAPI secara utuh, mandiri, dan responsif
     # Menggunakan components.html() agar berjalan 100% sempurna di localhost maupun cloud share.streamlit.io
     studio_html = get_cached_studio_html()
-    components.html(studio_html, height=1350, scrolling=True)
+    components.html(studio_html, height=1200, scrolling=True)
 
 
 # ==================== 2. MODE DASHBOARD STREAMLIT NATIVE (?view=native) ====================
 else:
+    st.markdown(
+        """
+    <div style="position:fixed; top:10px; right:16px; z-index:9999999; pointer-events:auto;">
+        <a href="?" target="_self" style="background:#059669; color:#ffffff; font-size:11.5px; font-weight:700; padding:6px 14px; border-radius:999px; text-decoration:none; box-shadow:0 2px 8px rgba(0,0,0,0.18); display:inline-flex; align-items:center; gap:6px; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; border:1px solid rgba(255,255,255,0.4); backdrop-filter:blur(4px);">
+            🖥️ Kembali ke Tampilan Web Studio
+        </a>
+    </div>
+    """,
+        unsafe_allow_html=True,
+    )
     with st.sidebar:
         st.markdown("### 🌾 PhytoAI-Genetics")
         st.caption("Mode Dashboard Native Python (Widgets & Pytest Live Runner)")
