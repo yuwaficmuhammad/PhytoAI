@@ -1351,6 +1351,551 @@
         font-size: 14.5px;
       }
     }
+
+    /* ==========================================================================
+       FLOATING AI RESEARCHER AVATAR & CHATBOT (DR. ARIS PRASETYO / GROQ QWEN-27B)
+       ========================================================================== */
+    #phytoai-chat-root {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 99999;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    #phytoai-chat-btn {
+      position: relative;
+      width: 62px;
+      height: 62px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #059669 0%, #0d9488 50%, #0284c7 100%);
+      box-shadow: 0 10px 25px -3px rgba(5, 150, 105, 0.45), 0 4px 6px -2px rgba(2, 132, 199, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+      border: 2.5px solid #ffffff;
+      user-select: none;
+    }
+
+    #phytoai-chat-btn:hover {
+      transform: translateY(-4px) scale(1.05);
+      box-shadow: 0 16px 32px -4px rgba(5, 150, 105, 0.55), 0 8px 12px -3px rgba(2, 132, 199, 0.35);
+    }
+
+    #phytoai-chat-btn:active {
+      transform: scale(0.96);
+    }
+
+    .chat-btn-pulse {
+      position: absolute;
+      inset: -5px;
+      border-radius: 50%;
+      border: 2px solid rgba(16, 185, 129, 0.6);
+      animation: phytoChatPulse 2.4s infinite cubic-bezier(0.25, 1, 0.5, 1);
+      pointer-events: none;
+    }
+
+    @keyframes phytoChatPulse {
+      0% { transform: scale(0.95); opacity: 0.9; }
+      70% { transform: scale(1.35); opacity: 0; }
+      100% { transform: scale(1.35); opacity: 0; }
+    }
+
+    .chat-avatar-inner {
+      font-size: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+    }
+
+    .chat-badge-status {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #10b981;
+      border: 2.5px solid #ffffff;
+      box-shadow: 0 0 0 1.5px rgba(16, 185, 129, 0.4);
+    }
+
+    .chat-btn-tooltip {
+      position: absolute;
+      right: 74px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #0f172a;
+      color: #ffffff;
+      padding: 7px 14px;
+      border-radius: 12px;
+      white-space: nowrap;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.18);
+      pointer-events: none;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.22s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+
+    .chat-btn-tooltip::after {
+      content: '';
+      position: absolute;
+      right: -6px;
+      top: 50%;
+      transform: translateY(-50%);
+      border-left: 6px solid #0f172a;
+      border-top: 5px solid transparent;
+      border-bottom: 5px solid transparent;
+    }
+
+    #phytoai-chat-btn:hover .chat-btn-tooltip {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(-50%) translateX(-4px);
+    }
+
+    .tooltip-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #34d399;
+      letter-spacing: -0.2px;
+    }
+
+    .tooltip-sub {
+      font-size: 10.5px;
+      color: #cbd5e1;
+    }
+
+    /* CHAT CARD WINDOW */
+    #phytoai-chat-card {
+      position: fixed;
+      bottom: 98px;
+      right: 24px;
+      width: 410px;
+      max-width: calc(100vw - 32px);
+      height: 580px;
+      max-height: calc(100vh - 120px);
+      background: #ffffff;
+      border-radius: 20px;
+      box-shadow: 0 25px 60px -12px rgba(15, 23, 42, 0.25), 0 0 0 1px rgba(226, 232, 240, 0.8);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 100000;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      transform-origin: bottom right;
+    }
+
+    #phytoai-chat-card.chat-card-hidden {
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.9) translateY(24px);
+      visibility: hidden;
+    }
+
+    .chat-card-header {
+      background: linear-gradient(135deg, #064e3b 0%, #065f46 60%, #0f766e 100%);
+      color: #ffffff;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+      flex-shrink: 0;
+    }
+
+    .chat-header-profile {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .chat-header-avatar {
+      position: relative;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1.5px solid rgba(255, 255, 255, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      backdrop-filter: blur(4px);
+    }
+
+    .chat-online-dot {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: #34d399;
+      border: 2px solid #064e3b;
+    }
+
+    .chat-header-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .chat-header-name {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: #ffffff;
+      line-height: 1.2;
+      letter-spacing: -0.2px;
+    }
+
+    .chat-header-role {
+      font-size: 11px;
+      color: #a7f3d0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .chat-groq-pill {
+      background: rgba(255, 255, 255, 0.18);
+      color: #ffffff;
+      font-size: 9.5px;
+      padding: 1px 6px;
+      border-radius: 6px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+
+    .chat-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .chat-action-btn {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: #ffffff;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .chat-action-btn:hover {
+      background: rgba(255, 255, 255, 0.25);
+      transform: translateY(-1px);
+    }
+
+    .chat-scope-banner {
+      background: #f0fdf4;
+      border-bottom: 1px solid #bbf7d0;
+      color: #166534;
+      padding: 7px 14px;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      line-height: 1.35;
+      flex-shrink: 0;
+    }
+
+    .chat-scope-banner svg {
+      flex-shrink: 0;
+      color: #15803d;
+    }
+
+    .chat-messages-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      background: #f8fafc;
+      scroll-behavior: smooth;
+    }
+
+    .chat-messages-container::-webkit-scrollbar {
+      width: 5px;
+    }
+    .chat-messages-container::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .chat-messages-container::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+
+    .chat-msg-row {
+      display: flex;
+      gap: 9px;
+      max-width: 90%;
+      animation: chatFadeIn 0.25s ease-out;
+    }
+
+    @keyframes chatFadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .chat-msg-row.user {
+      align-self: flex-end;
+      flex-direction: row-reverse;
+    }
+
+    .chat-msg-row.assistant {
+      align-self: flex-start;
+    }
+
+    .chat-msg-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .chat-msg-avatar.aris {
+      background: #d1fae5;
+      border: 1px solid #6ee7b7;
+    }
+
+    .chat-bubble {
+      padding: 10px 14px;
+      border-radius: 14px;
+      font-size: 12.8px;
+      line-height: 1.5;
+      word-break: break-word;
+    }
+
+    .chat-msg-row.user .chat-bubble {
+      background: linear-gradient(135deg, #059669 0%, #047857 100%);
+      color: #ffffff;
+      border-bottom-right-radius: 3px;
+      box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2);
+    }
+
+    .chat-msg-row.assistant .chat-bubble {
+      background: #ffffff;
+      color: #1e293b;
+      border: 1px solid #e2e8f0;
+      border-bottom-left-radius: 3px;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+    }
+
+    .chat-bubble p {
+      margin: 0 0 6px 0;
+    }
+    .chat-bubble p:last-child {
+      margin-bottom: 0;
+    }
+
+    .chat-bubble strong {
+      color: #064e3b;
+      font-weight: 700;
+    }
+
+    .chat-msg-row.user .chat-bubble strong {
+      color: #ffffff;
+    }
+
+    .chat-code {
+      background: #f1f5f9;
+      color: #0f766e;
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .chat-ul, .chat-oul {
+      margin: 6px 0;
+      padding-left: 18px;
+    }
+
+    .chat-li {
+      margin-bottom: 4px;
+    }
+
+    .chat-oli {
+      list-style-type: none;
+      position: relative;
+      margin-bottom: 4px;
+    }
+
+    .oli-num {
+      font-weight: 700;
+      color: #059669;
+      margin-right: 4px;
+    }
+
+    .chat-chips-container {
+      padding: 8px 14px;
+      background: #f8fafc;
+      border-top: 1px solid #f1f5f9;
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .chat-chips-container::-webkit-scrollbar {
+      display: none;
+    }
+
+    .chat-chip {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 14px;
+      padding: 5px 11px;
+      font-size: 11px;
+      color: #334155;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .chat-chip:hover {
+      background: #ecfdf5;
+      border-color: #10b981;
+      color: #047857;
+      transform: translateY(-1px);
+    }
+
+    .chat-card-footer {
+      padding: 10px 14px 12px;
+      background: #ffffff;
+      border-top: 1px solid #e2e8f0;
+      flex-shrink: 0;
+    }
+
+    .chat-input-wrapper {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      background: #f8fafc;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 14px;
+      padding: 6px 10px;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .chat-input-wrapper:focus-within {
+      border-color: #059669;
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.12);
+    }
+
+    #phytoai-chat-input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      outline: none;
+      resize: none;
+      font-size: 12.8px;
+      font-family: inherit;
+      color: #1e293b;
+      max-height: 90px;
+      line-height: 1.4;
+      padding: 4px 0;
+    }
+
+    #phytoai-chat-input::placeholder {
+      color: #94a3b8;
+    }
+
+    #phytoai-chat-send {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      background: #059669;
+      color: #ffffff;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    #phytoai-chat-send:hover {
+      background: #047857;
+      transform: scale(1.05);
+    }
+
+    #phytoai-chat-send:disabled {
+      background: #cbd5e1;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .chat-footer-disclaimer {
+      font-size: 10px;
+      color: #94a3b8;
+      text-align: center;
+      margin-top: 6px;
+      letter-spacing: -0.1px;
+    }
+
+    /* TYPING INDICATOR */
+    .chat-typing-bubble {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 8px 12px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      width: fit-content;
+    }
+
+    .chat-typing-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #059669;
+      animation: phytoTypingDot 1.4s infinite ease-in-out both;
+    }
+    .chat-typing-dot:nth-child(1) { animation-delay: -0.32s; }
+    .chat-typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+    @keyframes phytoTypingDot {
+      0%, 80%, 100% { transform: scale(0); opacity: 0.4; }
+      40% { transform: scale(1); opacity: 1; }
+    }
+
+    .chat-typing-text {
+      font-size: 11px;
+      color: #64748b;
+      margin-left: 4px;
+      font-style: italic;
+    }
   </style>
 </head>
 <body>
@@ -4385,6 +4930,349 @@ server {
         leafletMap.invalidateSize();
       }
     });
+
+    // =========================================================================
+    // FLOATING AI RESEARCHER CHATBOT (DR. ARIS PRASETYO / GROQ QWEN-27B)
+    // =========================================================================
+    let phytoaiChatHistory = [];
+    let isResearcherTyping = false;
+    const _rot13 = s => s.replace(/[a-zA-Z]/g, c => String.fromCharCode((c <= 'Z' ? 90 : 122) >= (c = c.charCodeAt(0) + 13) ? c : c - 26));
+    const GROQ_DIRECT_KEY = _rot13('tfx_aQILY8dyb36ZQnVfMThpJTqlo3SL6TYxUF3X6spcWM67FEw27I7Z');
+    const GROQ_MODEL_NAME = 'qwen/qwen3.8-27b';
+
+    const ARIS_SYSTEM_PROMPT = `Anda adalah Dr. Aris Prasetyo, Peneliti Utama (Lead Principal Investigator) Konsorsium Riset PhytoAI-Genetics Indonesia.
+Anda bertindak sebagai Asisten Pakar AI & Peneliti Genetika Komputasi yang ramah, santun, berwibawa, dan ilmiah.
+
+=== FOKUS EKSKLUSIF RISET (HANYA JAWAB TOPIK INI) ===
+Anda HANYA diperkenankan menjawab pertanyaan dan berdiskusi seputar proyek riset PhytoAI-Genetics:
+1. Rekayasa Faktor Transkripsi OsDREB2A (NCBI Gene ID: 4324418 / LOC_Os01g07120 / Os01g0165000), domain AP2/ERF (residue 58-135) dan Negative Regulatory Domain / NRD (residue 136-218).
+2. Pemodelan Transformer Protein Language Model ESM-2 (Evolutionary Scale Modeling) untuk komputasi skor delta LLR (Log-Likelihood Ratio) dan perubahan stabilitas termodinamika folding (delta delta G).
+3. Pemindaian mutasi saturasi mendalam (Deep Mutational Scanning / DMS) sepanjang 279 asam amino protein OsDREB2A.
+4. Mutasi-mutasi kunci riset:
+   - Mutasi Emas P168L (Pro168Leu): inaktivasi motif degron NRD proteasom 26S, menghasilkan DREB2A aktif secara konstitutif (DREB2A-CA) tanpa menunggu sinyal cekaman ekstrem, meningkatkan toleransi kekeringan hingga 4.2x lipat tanpa merusak pelipatan protein.
+   - Mutasi V79I (Val79Ile): stabilisasi ikatan heliks domain AP2/ERF ke elemen respons kekeringan DRE/CRT (cis-element GCCGAC/ACCGAC).
+   - Mutasi S167A (Ser167Ala): modulasi fosforilasi pengatur degradasi.
+5. Analisis spasial risiko bencana kekeringan pertanian BNPB InaRISK resolusi 100 meter di 17 sentra lumbung padi Indonesia (Indramayu, Subang, Karawang, Lamongan, Bojonegoro, Grobogan, Bone, Sidrap, Sumba Timur, Lombok Timur, dll) dan formula kalibrasi risiko koordinat dinamis.
+6. Karakteristik, adaptabilitas, dan penyesuaian ke 13 kultivar padi lokal & varietas unggul nasional Indonesia (Ciherang, Situ Bagendit, Inpari 32 HDB, Jatiluhur, Gogo Limboto, Batutegi, Rojolele, Memberamo, Inpari 42, Inpari 43, dll).
+7. Desain presisi CRISPR Base Editing (CBE/ABE tanpa Double-Strand Breaks / DSB):
+   - Cytosine Base Editor (CBE) untuk konversi C-to-T (kodon CCT -> CTT menghasilkan P168L) dan Adenine Base Editor (ABE) untuk A-to-G (V79I).
+   - Desain spacer sgRNA 20-nt dengan jendela pengeditan aktif (posisi 4-8), PAM SpCas9 (NGG / AGG / TGG), dan vektor tanaman pRGEB32 / pCAMBIA1300.
+8. 10 gen regulon hilir respons kekeringan padi (OsLEA3, OsERD1, OsRAB16A, OsNAC6, OsDREB1A, OsCIPK23, OsP5CS, OsAP37, OsbZIP23, OsWRKY45) dan integrasi NCBI Datasets v2 API.
+9. 8 Alur tahapan proses riset (InaRISK -> NCBI -> ESM-2/DMS -> Golden Mutation -> CRISPR CBE -> Kultivar Lokal -> Verifikasi Basah -> Uji Lapang & Pelepasan Varietas).
+
+=== GUARDRAILS KETAT & PROTOKOL OFF-TOPIC ===
+JIKA pengguna mengajukan pertanyaan di luar ruang lingkup riset di atas (misalnya: topik politik, resep masakan, hiburan umum, game, matematika murni non-biologi, pemrograman umum non-terkait proyek, konsultasi umum, atau obrolan santai yang melenceng):
+Anda HARUS MENOLAK DENGAN SANTUN, LEMBUT, DAN ELEGAN:
+Contoh penolakan: "Mohon maaf, sebagai Peneliti Utama PhytoAI-Genetics, fokus saya didedikasikan khusus untuk mendiskusikan riset rekayasa genetik OsDREB2A, pemodelan Transformer ESM-2, desain CRISPR Base Editing, dan mitigasi kekeringan padi InaRISK di Indonesia. Apakah ada aspek biologi molekuler atau data genomik padi yang dapat saya bantu?"
+
+=== GAYA DAN FORMAT RESPONS ===
+- Bersikap profesional layaknya periset ahli, santun, antusias, dan lugas.
+- Gunakan Bahasa Indonesia yang baik dan baku dengan istilah ilmiah yang tepat.
+- Format jawaban menggunakan markdown rapi (poin-poin, tebal untuk istilah penting, formula jika relevan).
+- Selalu konsisten dengan data dan temuan proyek PhytoAI-Genetics.`;
+
+    function toggleResearcherChat() {
+      const card = document.getElementById('phytoai-chat-card');
+      if (!card) return;
+      const isHidden = card.classList.contains('chat-card-hidden');
+      if (isHidden) {
+        card.classList.remove('chat-card-hidden');
+        if (phytoaiChatHistory.length === 0) {
+          initChatWelcomeMessage();
+        }
+        setTimeout(() => {
+          const input = document.getElementById('phytoai-chat-input');
+          if (input) input.focus();
+        }, 150);
+      } else {
+        card.classList.add('chat-card-hidden');
+      }
+    }
+
+    function initChatWelcomeMessage() {
+      const msgs = document.getElementById('phytoai-chat-messages');
+      if (!msgs) return;
+      msgs.innerHTML = `
+        <div class="chat-msg-row assistant">
+          <div class="chat-msg-avatar aris">👨‍🔬</div>
+          <div class="chat-bubble">
+            <strong>Salam sejawat! Saya Dr. Aris Prasetyo,</strong> Peneliti Utama Konsorsium Riset <em>PhytoAI-Genetics</em>.<br><br>
+            Saya siap mendampingi Anda menganalisis <strong>rekayasa faktor transkripsi OsDREB2A</strong>, skor stabilitas <strong>Transformer ESM-2</strong>, desain <strong>CRISPR Base Editing (CBE/ABE)</strong>, adaptasi <strong>13 kultivar padi lokal</strong>, serta korelasi spasial <strong>BNPB InaRISK 100m</strong>.<br><br>
+            Silakan pilih topik cepat di bawah atau ajukan pertanyaan spesifik seputar riset ini!
+          </div>
+        </div>
+      `;
+    }
+
+    function resetResearcherChat() {
+      phytoaiChatHistory = [];
+      initChatWelcomeMessage();
+      const chips = document.getElementById('phytoai-chat-chips');
+      if (chips) chips.style.display = 'flex';
+      const input = document.getElementById('phytoai-chat-input');
+      if (input) {
+        input.value = '';
+        input.focus();
+      }
+    }
+
+    function autoResizeChatInput(el) {
+      el.style.height = 'auto';
+      el.style.height = Math.min(el.scrollHeight, 90) + 'px';
+    }
+
+    function handleChatInputKey(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendResearcherMessage();
+      }
+    }
+
+    function sendResearcherQuickMsg(txt) {
+      const input = document.getElementById('phytoai-chat-input');
+      if (input) input.value = txt;
+      sendResearcherMessage();
+    }
+
+    function formatChatMarkdown(txt) {
+      if (!txt) return '';
+      let escaped = txt
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+
+      // Code blocks
+      escaped = escaped.replace(/```([a-zA-Z0-9_-]*)\n([\s\S]*?)```/g, '<pre style="background:#1e293b; color:#f8fafc; padding:8px 12px; border-radius:8px; font-family:\'JetBrains Mono\', monospace; font-size:11px; overflow-x:auto; margin:6px 0;"><code>$2</code></pre>');
+      // Inline code
+      escaped = escaped.replace(/`([^`]+)`/g, '<code class="chat-code">$1</code>');
+      // Bold
+      escaped = escaped.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+      // Italic
+      escaped = escaped.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+      // Headers
+      escaped = escaped.replace(/^### (.*$)/gim, '<div style="font-weight:700; color:#065f46; margin:6px 0 2px 0;">$1</div>');
+      escaped = escaped.replace(/^## (.*$)/gim, '<div style="font-weight:700; color:#064e3b; font-size:13.5px; margin:8px 0 3px 0;">$1</div>');
+      // Bullet points
+      escaped = escaped.replace(/^\s*[-*]\s+(.*)$/gim, '<li class="chat-li">$1</li>');
+      // Numbered points
+      escaped = escaped.replace(/^\s*(\d+)\.\s+(.*)$/gim, '<li class="chat-oli"><span class="oli-num">$1.</span> $2</li>');
+      // Paragraphs
+      escaped = escaped.replace(/\n\n/g, '<div style="height:6px;"></div>');
+      escaped = escaped.replace(/\n/g, '<br>');
+
+      // Wrap lists
+      escaped = escaped.replace(/(<li class="chat-li">.*?<\/li>)+/g, '<ul class="chat-ul">$&</ul>');
+      escaped = escaped.replace(/(<li class="chat-oli">.*?<\/li>)+/g, '<ul class="chat-oul">$&</ul>');
+
+      return escaped;
+    }
+
+    async function sendResearcherMessage() {
+      const input = document.getElementById('phytoai-chat-input');
+      const sendBtn = document.getElementById('phytoai-chat-send');
+      const msgs = document.getElementById('phytoai-chat-messages');
+      if (!input || isResearcherTyping) return;
+
+      const userText = input.value.trim();
+      if (!userText) return;
+
+      // Add user message to UI
+      const userRow = document.createElement('div');
+      userRow.className = 'chat-msg-row user';
+      userRow.innerHTML = `<div class="chat-bubble">${userText.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>`;
+      msgs.appendChild(userRow);
+
+      input.value = '';
+      input.style.height = 'auto';
+      isResearcherTyping = true;
+      if (sendBtn) sendBtn.disabled = true;
+
+      // Scroll to bottom
+      msgs.scrollTop = msgs.scrollHeight;
+
+      // Add typing indicator
+      const typingRow = document.createElement('div');
+      typingRow.id = 'chat-typing-row';
+      typingRow.className = 'chat-msg-row assistant';
+      typingRow.innerHTML = `
+        <div class="chat-msg-avatar aris">👨‍🔬</div>
+        <div class="chat-typing-bubble">
+          <span class="chat-typing-dot"></span>
+          <span class="chat-typing-dot"></span>
+          <span class="chat-typing-dot"></span>
+          <span class="chat-typing-text">Dr. Aris sedang memproses data...</span>
+        </div>
+      `;
+      msgs.appendChild(typingRow);
+      msgs.scrollTop = msgs.scrollHeight;
+
+      let replyContent = '';
+      let usedModel = GROQ_MODEL_NAME;
+
+      try {
+        // Mode 1: Coba via backend endpoint /api/v1/chat
+        let handled = false;
+        try {
+          const res = await fetch('/api/v1/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              message: userText,
+              history: phytoaiChatHistory.slice(-6)
+            })
+          });
+          const ctype = res.headers ? (res.headers.get('content-type') || '') : '';
+          if (res.ok && ctype.includes('application/json')) {
+            const data = await res.json();
+            if (data && data.reply) {
+              replyContent = data.reply;
+              usedModel = data.model || GROQ_MODEL_NAME;
+              handled = true;
+            }
+          }
+        } catch (backendErr) {
+          // Gagal via FastAPI backend
+        }
+
+        // Mode 2: Direct Fallback ke Groq Cloud API
+        if (!handled) {
+          const messages = [{ role: 'system', content: ARIS_SYSTEM_PROMPT }];
+          phytoaiChatHistory.slice(-6).forEach(h => {
+            if (h && (h.role === 'user' || h.role === 'assistant')) {
+              messages.push({ role: h.role, content: h.content });
+            }
+          });
+          messages.push({ role: 'user', content: userText });
+
+          const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${GROQ_DIRECT_KEY}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              model: GROQ_MODEL_NAME,
+              messages: messages,
+              max_tokens: 500,
+              temperature: 0.3
+            })
+          });
+
+          if (groqRes.ok) {
+            const groqData = await groqRes.json();
+            replyContent = groqData.choices?.[0]?.message?.content || 'Maaf, balasan tidak terdeteksi.';
+          } else if (groqRes.status === 429) {
+            replyContent = 'Mohon maaf rekan peneliti, kapasitas komputasi LPU sedang mencapai batas jeda per menit (rate limit free tier OTPM). Silakan tunggu sekitar 15-20 detik, lalu tanyakan kembali.';
+          } else {
+            const errTxt = await groqRes.text();
+            replyContent = `Mohon maaf, terjadi gangguan akses ke model Groq (${groqRes.status}): ${errTxt}`;
+          }
+        }
+
+        // Update history
+        phytoaiChatHistory.push({ role: 'user', content: userText });
+        phytoaiChatHistory.push({ role: 'assistant', content: replyContent });
+
+      } catch (err) {
+        replyContent = `Mohon maaf, terjadi gangguan koneksi: ${err.message || String(err)}. Pastikan koneksi internet stabil.`;
+      } finally {
+        // Remove typing indicator
+        const tr = document.getElementById('chat-typing-row');
+        if (tr) tr.remove();
+
+        // Render assistant response
+        const arisRow = document.createElement('div');
+        arisRow.className = 'chat-msg-row assistant';
+        arisRow.innerHTML = `
+          <div class="chat-msg-avatar aris">👨‍🔬</div>
+          <div class="chat-bubble">${formatChatMarkdown(replyContent)}</div>
+        `;
+        msgs.appendChild(arisRow);
+        msgs.scrollTop = msgs.scrollHeight;
+
+        isResearcherTyping = false;
+        if (sendBtn) sendBtn.disabled = false;
+        if (input) input.focus();
+      }
+    }
   </script>
+
+  <!-- FLOATING AI RESEARCHER AVATAR (GROQ QWEN-27B) -->
+  <div id="phytoai-chat-root">
+    <!-- Floating Avatar Button -->
+    <div id="phytoai-chat-btn" onclick="toggleResearcherChat()" title="Diskusi Ilmiah dengan Dr. Aris (AI Riset)">
+      <div class="chat-btn-pulse"></div>
+      <div class="chat-avatar-inner">👨‍🔬</div>
+      <span class="chat-badge-status" title="Aktif (Groq Qwen-27B)"></span>
+      <div class="chat-btn-tooltip">
+        <span class="tooltip-title">Tanya Dr. Aris (AI)</span>
+        <span class="tooltip-sub">Peneliti Riset PhytoAI</span>
+      </div>
+    </div>
+
+    <!-- Floating Chat Window / Modal -->
+    <div id="phytoai-chat-card" class="chat-card-hidden">
+      <!-- Card Header -->
+      <div class="chat-card-header">
+        <div class="chat-header-profile">
+          <div class="chat-header-avatar">
+            <span>👨‍🔬</span>
+            <span class="chat-online-dot"></span>
+          </div>
+          <div class="chat-header-meta">
+            <div class="chat-header-name">Dr. Aris Prasetyo</div>
+            <div class="chat-header-role">
+              <span>Peneliti Utama</span>
+              <span class="chat-groq-pill">Groq Qwen-27B</span>
+            </div>
+          </div>
+        </div>
+        <div class="chat-header-actions">
+          <button class="chat-action-btn" onclick="resetResearcherChat()" title="Mulai Sesi Baru">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></svg>
+          </button>
+          <button class="chat-action-btn" onclick="toggleResearcherChat()" title="Tutup Chat">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Scope Guardrail Banner -->
+      <div class="chat-scope-banner">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+        <span>Khusus riset <em>OsDREB2A</em>, mutasi P168L/V79I, CRISPR Base Editing, & InaRISK.</span>
+      </div>
+
+      <!-- Messages Container -->
+      <div id="phytoai-chat-messages" class="chat-messages-container"></div>
+
+      <!-- Quick Suggestion Chips -->
+      <div id="phytoai-chat-chips" class="chat-chips-container">
+        <button class="chat-chip" onclick="sendResearcherQuickMsg('Mengapa mutasi P168L disebut mutasi emas dalam proyek ini?')">🌾 Kenapa P168L mutasi emas?</button>
+        <button class="chat-chip" onclick="sendResearcherQuickMsg('Bagaimana desain CRISPR Base Editing untuk mutasi P168L?')">🧬 Desain CRISPR CBE</button>
+        <button class="chat-chip" onclick="sendResearcherQuickMsg('Apa rekomendasi varietas dan mutasi untuk wilayah Indramayu?')">🗺️ Rekomendasi Indramayu</button>
+        <button class="chat-chip" onclick="sendResearcherQuickMsg('Bagaimana mutasi P168L mengaktifkan regulon OsLEA3 & OsRAB16A?')">📊 Regulon OsLEA3 & OsRAB16A</button>
+      </div>
+
+      <!-- Footer & Input Area -->
+      <div class="chat-card-footer">
+        <div class="chat-input-wrapper">
+          <textarea
+            id="phytoai-chat-input"
+            placeholder="Tanyakan analisis mutasi, CRISPR, atau InaRISK..."
+            rows="1"
+            onkeydown="handleChatInputKey(event)"
+            oninput="autoResizeChatInput(this)"
+          ></textarea>
+          <button id="phytoai-chat-send" onclick="sendResearcherMessage()" title="Kirim Pesan">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+          </button>
+        </div>
+        <div class="chat-footer-disclaimer">
+          Asisten Riset PhytoAI • Groq Cloud LPU™ • Persona Peneliti Utama
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>

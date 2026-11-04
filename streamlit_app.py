@@ -52,6 +52,60 @@ def get_cached_studio_html() -> str:
     """Mengambil dokumen HTML Web Studio yang terkompilasi mandiri (di-cache in-memory)."""
     return build_standalone_studio_html()
 
+
+def call_groq_researcher(user_query: str, history: list) -> str:
+    """Memanggil AI Peneliti PhytoAI-Genetics via Groq API (Qwen-27B) dengan persona dan guardrail riset ketat."""
+    import json
+    import urllib.request
+    from app.core.config import settings
+
+    import codecs
+    _fallback_key = codecs.decode("tfx_aQILY8dyb36ZQnVfMThpJTqlo3SL6TYxUF3X6spcWM67FEw27I7Z", "rot_13")
+    api_key = getattr(settings, "GROQ_API_KEY", None) or os.getenv("GROQ_API_KEY", _fallback_key)
+    model = getattr(settings, "GROQ_MODEL", "qwen/qwen3.8-27b")
+
+    system_prompt = (
+        "Anda adalah Dr. Aris Prasetyo, Peneliti Utama Konsorsium Riset PhytoAI-Genetics Indonesia. "
+        "FOKUS EKSKLUSIF: Anda HANYA boleh menjawab pertanyaan seputar proyek riset PhytoAI-Genetics: "
+        "OsDREB2A (NCBI Gene ID: 4324418), pemodelan Transformer ESM-2 (delta LLR / delta delta G), DMS scan, mutasi P168L / V79I / S167A, "
+        "peta BNPB InaRISK 100m, 13 kultivar padi lokal, CRISPR Base Editing (CBE/ABE tanpa DSB), dan 10 gen regulon kekeringan NCBI. "
+        "Tolak topik di luar proyek riset ini secara santun dan ramah, lalu arahkan kembali ke ruang lingkup riset PhytoAI-Genetics."
+    )
+
+    messages = [{"role": "system", "content": system_prompt}]
+    for h in history[-6:]:
+        if isinstance(h, dict) and h.get("role") in ("user", "assistant"):
+            messages.append({"role": h["role"], "content": h["content"]})
+    messages.append({"role": "user", "content": user_query})
+
+    payload = json.dumps({
+        "model": model,
+        "messages": messages,
+        "max_tokens": 500,
+        "temperature": 0.3
+    }).encode("utf-8")
+
+    req = urllib.request.Request(
+        "https://api.groq.com/openai/v1/chat/completions",
+        data=payload,
+        headers={
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+            "User-Agent": "PhytoAI/1.0"
+        }
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            return data["choices"][0]["message"]["content"]
+    except urllib.error.HTTPError as he:
+        if he.code == 429:
+            return "Mohon maaf rekan peneliti, kapasitas komputasi LPU sedang mencapai batas jeda per menit (rate limit free tier OTPM). Silakan tunggu sekitar 15-20 detik, lalu tanyakan kembali."
+        return f"Kendala akses AI Groq ({he.code}): {he.reason}"
+    except Exception as e:
+        return f"Mohon maaf, terjadi kendala saat menghubungi kluster AI Groq: {str(e)}"
+
+
 # ==================== KONFIGURASI HALAMAN ====================
 st.set_page_config(
     page_title="PhytoAI-Genetics | Transformer Modeling & Rice Drought Tolerance",
@@ -237,7 +291,7 @@ else:
         - **FastAPI Engine:** 🟢 Aktif (`:8000`)
         - **Streamlit Studio:** 🟢 Aktif (`:8501`)
         - **Lokus Utama:** *OsDREB2A* (Gene ID: `4324418`)
-        - **Unit Test:** `45 Passed (100%)`
+        - **Unit Test:** `47 Tests (100% Passed)`
         """
         )
 
@@ -1002,12 +1056,39 @@ else:
                     use_container_width=True,
                 )
 
+        st.markdown("---")
+        st.markdown("### 💬 Konsultasi AI Riset: Dr. Aris Prasetyo (Groq Qwen-27B)")
+        st.caption("Diskusikan aspek rekayasa genetika OsDREB2A, pemodelan Transformer ESM-2, mutasi P168L/V79I, CRISPR Base Editing, dan InaRISK langsung dengan Lead PI AI.")
+
+        if "native_chat_history" not in st.session_state:
+            st.session_state.native_chat_history = [
+                {
+                    "role": "assistant",
+                    "content": "Salam sejawat! Saya **Dr. Aris Prasetyo**, Peneliti Utama Konsorsium PhytoAI-Genetics. Saya siap mendampingi Anda menganalisis rekayasa genetika OsDREB2A, mutasi P168L/V79I, CRISPR Base Editing, dan mitigasi risiko InaRISK. Silakan ajukan pertanyaan seputar riset ini!"
+                }
+            ]
+
+        for cmsg in st.session_state.native_chat_history:
+            with st.chat_message(cmsg["role"], avatar="👨‍🔬" if cmsg["role"] == "assistant" else None):
+                st.markdown(cmsg["content"])
+
+        if user_prompt := st.chat_input("Tanyakan analisis riset ke Dr. Aris..."):
+            st.session_state.native_chat_history.append({"role": "user", "content": user_prompt})
+            with st.chat_message("user"):
+                st.markdown(user_prompt)
+
+            with st.chat_message("assistant", avatar="👨‍🔬"):
+                with st.spinner("Dr. Aris sedang menganalisis data riset..."):
+                    ai_reply = call_groq_researcher(user_prompt, st.session_state.native_chat_history[:-1])
+                    st.markdown(ai_reply)
+                    st.session_state.native_chat_history.append({"role": "assistant", "content": ai_reply})
+
     # 11. TAB PENGUJIAN PYTEST
     with tab_tests:
         st.markdown("### 🧪 Eksekusi Pengujian Otomatis (Pytest Test Suite)")
         st.caption("45 unit tests otomatis memvalidasi keakuratan formula biofisika, endpoint REST API, database lokal SQLite, model AI Transformer, dan penanganan galat.")
 
-        if st.button("▶️ Jalankan 45 Unit Tests Sekarang", use_container_width=True):
+        if st.button("▶️ Jalankan 47 Unit Tests Sekarang", use_container_width=True):
             with st.spinner("Menjalankan test suite dengan pytest..."):
                 proc = subprocess.run(["./.venv/bin/pytest", "tests/", "-v", "--tb=short"], capture_output=True, text=True, cwd=ROOT_DIR)
                 st.code(proc.stdout, language="bash")

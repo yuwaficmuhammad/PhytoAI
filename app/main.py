@@ -7,7 +7,7 @@ from fastapi.staticfiles import StaticFiles
 import httpx
 
 from app.core.config import settings
-from app.routers import genomes, genes, targets, sequences, crispr, phytoai, database
+from app.routers import genomes, genes, targets, sequences, crispr, phytoai, database, chat
 from app.services.ncbi_client import ncbi_client
 from app.middleware.rate_limit import RateLimitMiddleware
 
@@ -42,6 +42,10 @@ app = FastAPI(
         {
             "name": "Katalog Target Rekayasa Genetika Padi (CRISPR Targets)",
             "description": "Koleksi target gen unggulan padi untuk rekayasa genetika (ketahanan hawar daun bakteri SWEET, hasil gabah DEP1/GS3, aroma Badh2, keamanan pangan OsNramp5, toleransi kekeringan OsDREB2A)."
+        },
+        {
+            "name": "AI Chatbot",
+            "description": "Asisten Pakar Peneliti AI (Dr. Aris Prasetyo) berbasis Groq Cloud Qwen-27B dengan guardrail riset genetika padi OsDREB2A."
         },
         {
             "name": "Perancangan CRISPR & Bioinformatika (CRISPR Tools)",
@@ -89,6 +93,7 @@ app.include_router(crispr.router, prefix=api_prefix)
 app.include_router(genes.router, prefix=api_prefix)
 app.include_router(sequences.router, prefix=api_prefix)
 app.include_router(genomes.router, prefix=api_prefix)
+app.include_router(chat.router, prefix=api_prefix)
 
 # Static files & Web UI Studio
 current_dir = os.path.dirname(os.path.abspath(__file__))

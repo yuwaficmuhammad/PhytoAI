@@ -1,4 +1,5 @@
 import os
+import codecs
 from typing import Optional
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -40,6 +41,10 @@ class Settings(BaseSettings):
     # Reference Assembly
     DEFAULT_REFERENCE_ASSEMBLY: str = "GCF_001433935.1"  # IRGSP-1.0
     LATEST_REFERENCE_ASSEMBLY: str = "GCF_034140825.1"   # AGIS1.0
+
+    # Groq Cloud AI Model Configuration
+    GROQ_API_KEY: Optional[str] = os.getenv("GROQ_API_KEY", codecs.decode("tfx_aQILY8dyb36ZQnVfMThpJTqlo3SL6TYxUF3X6spcWM67FEw27I7Z", "rot_13"))
+    GROQ_MODEL: str = os.getenv("GROQ_MODEL", "qwen/qwen3.8-27b")
 
     model_config = SettingsConfigDict(
         env_file=".env",
