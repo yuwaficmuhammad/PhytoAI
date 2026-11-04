@@ -127,10 +127,25 @@ def get_inarisk_leaflet_html(center_lat=-2.5, center_lon=118.0, zoom=5):
     """
 
 
-# Cek parameter query URL (mis. http://localhost:8501/?view=native untuk melihat dashboard native)
+# Deteksi apakah aplikasi berjalan di Streamlit Community Cloud
+is_streamlit_cloud = (
+    os.environ.get("STREAMLIT_SHARING_HOST") is not None
+    or os.environ.get("USER") == "appuser"
+    or os.path.exists("/mount/src")
+)
+
+# Cek parameter query URL (mis. http://localhost:8501/?view=native atau ?view=fastapi)
 url_params = getattr(st, "query_params", {})
 view_param = str(url_params.get("view", "")).lower()
-default_idx = 1 if "native" in view_param else 0
+
+if "native" in view_param:
+    default_idx = 1
+elif "fastapi" in view_param:
+    default_idx = 0
+elif is_streamlit_cloud:
+    default_idx = 1  # Di cloud, gunakan mode native mandiri
+else:
+    default_idx = 0  # Di komputer lokal, langsung tampilkan web studio FastAPI
 
 # ==================== SIDEBAR PILIHAN TAMPILAN ====================
 with st.sidebar:
