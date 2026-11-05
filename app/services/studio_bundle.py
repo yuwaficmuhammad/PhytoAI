@@ -24,6 +24,8 @@ from app.services.db_service import get_all_db_genes
 from app.services.variety_designer_service import (
     PLANT_GENOMICS_CATALOG,
     NUCLEOTIDE_BLUEPRINT_REGISTRY,
+    RESEARCH_VARIETIES_CATALOG,
+    GRAPHICAL_ANALYSIS_DATA,
     get_nucleotide_edit_blueprint,
     synthesize_new_variety
 )
@@ -63,6 +65,8 @@ def generate_client_side_adapter_js() -> str:
       const EMBEDDED_DMS_POSITIONS = {json.dumps(dms_all)};
       const EMBEDDED_PLANT_CATALOG = {json.dumps(PLANT_GENOMICS_CATALOG)};
       const EMBEDDED_BLUEPRINTS = {json.dumps(NUCLEOTIDE_BLUEPRINT_REGISTRY)};
+      const EMBEDDED_RESEARCH_VARIETIES = {json.dumps(RESEARCH_VARIETIES_CATALOG)};
+      const EMBEDDED_GRAPHICAL_ANALYSIS = {json.dumps(GRAPHICAL_ANALYSIS_DATA)};
       const OSDREB2A_CDS = "{OSDREB2A_CDS_NCBI}";
 
       function haversineDist(lat1, lon1, lat2, lon2) {{
@@ -389,6 +393,14 @@ def generate_client_side_adapter_js() -> str:
             scientific_summary: `Varietas baru '${{customName}}' dirancang berbasis genom induk '${{parent}}' dengan menggabungkan ${{traits.length}} sifat unggul secara presisi pada tingkat nukleotida (DSB-Free Base Editing) untuk adaptasi optimal di ${{env}}.`
           }};
           return createJsonResponse(varRes);
+        }}
+
+        if (path === '/api/v1/phytoai/variety-designer/research-varieties') {{
+          return createJsonResponse(EMBEDDED_RESEARCH_VARIETIES);
+        }}
+
+        if (path === '/api/v1/phytoai/variety-designer/graphical-analysis') {{
+          return createJsonResponse(EMBEDDED_GRAPHICAL_ANALYSIS);
         }}
 
         // 8. Gene sequences

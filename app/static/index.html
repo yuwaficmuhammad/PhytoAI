@@ -101,6 +101,7 @@
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 
   <!-- Leaflet GIS Engine -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -2967,6 +2968,98 @@
               </div>
             </div>
 
+            <!-- SECTION GALERI 4 VARIETAS UNGGUL HASIL RISET & DATA ANALISIS GRAFIK -->
+            <div style="margin-top: 28px; border-top: 1px solid var(--border); padding-top: 24px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 16px; gap: 10px;">
+                <div>
+                  <div style="display:flex; align-items:center; gap:8px;">
+                    <span style="font-size: 22px;">📊</span>
+                    <h3 style="font-weight: 800; font-size: 18px; color: var(--text-main); margin: 0;">Data Analisis Grafik & Galeri 4 Varietas Unggul Hasil Penelitian</h3>
+                  </div>
+                  <div style="font-size: 13px; color: var(--text-muted); margin-top: 3px;">
+                    Inovasi Orisinal Periset MA Salafiyah Kajen Pati • Visualisasi Komparatif Produktivitas Gabah, Kinetika Retensi Air Daun (RWC %), dan Profil Radar Sifat Agronomi
+                  </div>
+                </div>
+                <span class="badge" style="background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; font-weight: 700; font-size: 11.5px; padding: 5px 12px;">
+                  🏛️ Riset Unggulan MA Salafiyah Kajen Pati
+                </span>
+              </div>
+
+              <!-- 4 STAT METRIC PILLS -->
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 22px;">
+                <div style="background: #ffffff; border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; box-shadow: var(--shadow-sm);">
+                  <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Varietas Baru Dihasilkan</div>
+                  <div style="font-size: 22px; font-weight: 800; color: #059669; margin: 2px 0;">4 Galur Unggul</div>
+                  <div style="font-size: 11px; color: #047857;">Periset MA Salafiyah Kajen Pati</div>
+                </div>
+                <div style="background: #ffffff; border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; box-shadow: var(--shadow-sm);">
+                  <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Kenaikan Hasil di Lahan Kering</div>
+                  <div style="font-size: 22px; font-weight: 800; color: #0284c7; margin: 2px 0;">+129.4%</div>
+                  <div style="font-size: 11px; color: #0369a1;">vs Situ Bagendit WT (3.4 t/ha)</div>
+                </div>
+                <div style="background: #ffffff; border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; box-shadow: var(--shadow-sm);">
+                  <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Retensi Air Daun (Hari 25)</div>
+                  <div style="font-size: 22px; font-weight: 800; color: #d97706; margin: 2px 0;">81.2% RWC</div>
+                  <div style="font-size: 11px; color: #b45309;">Ambang Layu Kritis: 50%</div>
+                </div>
+                <div style="background: #ffffff; border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; box-shadow: var(--shadow-sm);">
+                  <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Stabilitas Lipatan Protein</div>
+                  <div style="font-size: 22px; font-weight: 800; color: #7c3aed; margin: 2px 0;">&Delta;&Delta;G -1.42</div>
+                  <div style="font-size: 11px; color: #6d28d9;">&Delta;LLR +1.85 (Mutasi P168L)</div>
+                </div>
+              </div>
+
+              <!-- 4 RESEARCH VARIETIES CARDS -->
+              <div style="font-weight: 800; font-size: 15px; color: var(--text-main); margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+                <span>🌾</span> Katalog 4 Varietas Unggul Baru Dihasilkan dari Riset Ini:
+              </div>
+              <div id="research-varieties-container" class="responsive-grid-2" style="gap: 16px; margin-bottom: 28px;">
+                <!-- Cards will be rendered here dynamically and statically fallback -->
+              </div>
+
+              <!-- 4 INTERACTIVE CHARTS -->
+              <div style="font-weight: 800; font-size: 15px; color: var(--text-main); margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+                <span>📈</span> Visualisasi Data Analisis Grafik Komparatif:
+              </div>
+              <div class="responsive-grid-2" style="gap: 18px; margin-bottom: 24px;">
+                <!-- Chart 1: Bar Chart Produktivitas Normal vs Cekaman -->
+                <div class="card" style="margin-bottom: 0; background: #ffffff; border: 1px solid var(--border); border-radius: 12px; padding: 16px;">
+                  <div style="font-weight: 700; font-size: 14px; color: var(--text-main); margin-bottom: 2px;">🌾 1. Produktivitas Gabah (Ton/Ha): Normal vs Cekaman</div>
+                  <div style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 10px;">Membandingkan 4 varietas hasil riset Salafiyah vs tetua lokal dan kontrol peka IR64.</div>
+                  <div style="position: relative; height: 260px; width: 100%;">
+                    <canvas id="chart-yield-comparison"></canvas>
+                  </div>
+                </div>
+
+                <!-- Chart 2: Line Chart Kinetika RWC % Daun -->
+                <div class="card" style="margin-bottom: 0; background: #ffffff; border: 1px solid var(--border); border-radius: 12px; padding: 16px;">
+                  <div style="font-weight: 700; font-size: 14px; color: var(--text-main); margin-bottom: 2px;">💧 2. Kinetika Kandungan Air Daun (RWC % 25 Hari)</div>
+                  <div style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 10px;">Retensi kadar air sel daun di bawah hari tanpa air berturut-turut (Ambang kritis 50%).</div>
+                  <div style="position: relative; height: 260px; width: 100%;">
+                    <canvas id="chart-rwc-kinetics"></canvas>
+                  </div>
+                </div>
+
+                <!-- Chart 3: Radar Chart 6-Dimensi Sifat Agronomi -->
+                <div class="card" style="margin-bottom: 0; background: #ffffff; border: 1px solid var(--border); border-radius: 12px; padding: 16px;">
+                  <div style="font-weight: 700; font-size: 14px; color: var(--text-main); margin-bottom: 2px;">🎯 3. Profil Multidimensi Sifat Unggul (Radar Chart)</div>
+                  <div style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 10px;">Pemetaan keunggulan multi-sifat (Kering, Akar, Rendaman, HDB, Blas, Potensi Hasil).</div>
+                  <div style="position: relative; height: 260px; width: 100%;">
+                    <canvas id="chart-traits-radar"></canvas>
+                  </div>
+                </div>
+
+                <!-- Chart 4: Bar Chart Biofisika Transformer ΔLLR & ΔΔG -->
+                <div class="card" style="margin-bottom: 0; background: #ffffff; border: 1px solid var(--border); border-radius: 12px; padding: 16px;">
+                  <div style="font-weight: 700; font-size: 14px; color: var(--text-main); margin-bottom: 2px;">🔬 4. Stabilitas Biofisika Transformer pLM (ΔLLR & ΔΔG)</div>
+                  <div style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 10px;">Skor evolusi ESM-2 & perubahan energi bebas termodinamika pelipatan protein.</div>
+                  <div style="position: relative; height: 260px; width: 100%;">
+                    <canvas id="chart-thermo-stability"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <!-- SECTION SINTESIS VARIETAS UNGGUL BARU & MULTI-TRAIT PYRAMIDING -->
             <div style="margin-top: 28px; border-top: 1px solid var(--border); padding-top: 24px;">
               <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 12px; gap: 8px;">
@@ -4503,6 +4596,11 @@ server {
           initInaRiskMap();
           if (leafletMap) leafletMap.invalidateSize();
         }, 150);
+      } else if (cleanId === 'base-editing') {
+        setTimeout(() => {
+          loadResearchVarietiesGallery();
+          initResearchCharts();
+        }, 120);
       }
     }
 
@@ -5418,6 +5516,280 @@ server {
       }
     }
 
+    // =========================================================================
+    // KATALOG 4 VARIETAS UNGGUL HASIL RISET & INISIALISASI CHART.JS
+    // =========================================================================
+    let chartInstances = {};
+
+    async function loadResearchVarietiesGallery() {
+      const container = document.getElementById('research-varieties-container');
+      if (!container) return;
+
+      try {
+        const res = await fetch('/api/v1/phytoai/variety-designer/research-varieties');
+        const list = await res.json();
+        if (!Array.isArray(list) || list.length === 0) return;
+
+        let html = '';
+        list.forEach(v => {
+          let genesHtml = '';
+          (v.stacked_genes || []).forEach(g => {
+            genesHtml += `<div style="font-size:11.5px; margin-bottom:4px;">• <strong>${g.gene}</strong> (<code>${g.mutation}</code>): <span style="color:var(--text-muted);">${g.role}</span></div>`;
+          });
+
+          let traitsBadge = '';
+          (v.key_traits || []).forEach(tr => {
+            traitsBadge += `<span class="badge" style="background:#f1f5f9; color:#334155; font-size:10px; padding:3px 7px; border:1px solid #cbd5e1;">${tr}</span>`;
+          });
+
+          html += `
+            <div class="card" style="margin-bottom:0; background:#ffffff; border:1px solid var(--border); border-radius:14px; padding:18px; display:flex; flex-direction:column; justify-content:space-between; box-shadow:var(--shadow-sm); transition:transform 0.15s ease, box-shadow 0.15s ease;">
+              <div>
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px; gap:8px;">
+                  <span class="badge" style="background:#ecfdf5; color:#065f46; border:1px solid #a7f3d0; font-size:10.5px; font-weight:700;">${v.institution}</span>
+                  <span style="font-family:'JetBrains Mono'; font-size:11px; color:var(--text-muted); font-weight:700;">${v.lineage}</span>
+                </div>
+                <h4 style="font-size:16.5px; font-weight:800; color:var(--text-main); margin:4px 0 2px 0;">🌾 ${v.name}</h4>
+                <div style="font-size:12px; font-weight:700; color:#0284c7; margin-bottom:10px;">${v.flagship_role}</div>
+                
+                <div style="background:var(--surface-subtle); border:1px solid var(--border); border-radius:10px; padding:10px 12px; margin-bottom:12px; display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                  <div>
+                    <div style="font-size:10px; color:var(--text-muted); font-weight:700;">HASIL LAHAN CEKAMAN</div>
+                    <div style="font-size:19px; font-weight:800; color:#059669;">${v.yield_stress} Ton/Ha</div>
+                    <div style="font-size:11px; color:#047857; font-weight:700;">${v.yield_gain_percent}</div>
+                  </div>
+                  <div>
+                    <div style="font-size:10px; color:var(--text-muted); font-weight:700;">RETENSI AIR DAUN (HARI 25)</div>
+                    <div style="font-size:19px; font-weight:800; color:#0284c7;">${v.rwc_day_25}% RWC</div>
+                    <div style="font-size:10.5px; color:#0369a1;">${v.survival_rate.slice(0, 24)}...</div>
+                  </div>
+                </div>
+
+                <div style="font-size:12.5px; color:var(--text-body); line-height:1.55; margin-bottom:10px;">
+                  ${v.description}
+                </div>
+
+                <div style="font-size:12px; margin-bottom:8px;">
+                  <strong>🌱 Induk:</strong> ${v.parent_cultivar}<br>
+                  <strong>📍 Wilayah Target:</strong> ${v.target_regions} (${v.target_soil})
+                </div>
+
+                <div style="border-top:1px dashed var(--border); padding-top:8px; margin-top:8px;">
+                  <div style="font-size:11.5px; font-weight:700; color:var(--text-main); margin-bottom:4px;">🧬 Rekayasa Genetik Presisi Basa DNA:</div>
+                  ${genesHtml}
+                </div>
+              </div>
+
+              <div style="margin-top:14px; padding-top:12px; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+                <div style="display:flex; gap:4px; flex-wrap:wrap;">
+                  ${traitsBadge}
+                </div>
+                <button type="button" class="btn btn-secondary" style="font-size:11.5px; padding:6px 12px;" onclick="prefillVarietyDesigner('${v.parent_cultivar}', '${v.name}')">
+                  Pilih Varietas &rarr;
+                </button>
+              </div>
+            </div>
+          `;
+        });
+        container.innerHTML = html;
+      } catch (err) {
+        console.warn('Gagal memuat galeri varietas riset:', err);
+      }
+    }
+
+    async function initResearchCharts() {
+      if (typeof Chart === 'undefined') {
+        console.warn('Chart.js belum dimuat.');
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/v1/phytoai/variety-designer/graphical-analysis');
+        const data = await res.json();
+        if (!data || !data.yield_comparison) return;
+
+        // 1. Chart Yield Comparison
+        const ctxYield = document.getElementById('chart-yield-comparison');
+        if (ctxYield && !chartInstances['yield']) {
+          chartInstances['yield'] = new Chart(ctxYield, {
+            type: 'bar',
+            data: {
+              labels: data.yield_comparison.categories.map(c => c.replace('Salafiyah ', 'Salafiyah ')),
+              datasets: [
+                {
+                  label: 'Kondisi Normal (t/ha)',
+                  data: data.yield_comparison.yield_normal,
+                  backgroundColor: 'rgba(2, 132, 199, 0.75)',
+                  borderColor: '#0284c7',
+                  borderWidth: 1.5,
+                  borderRadius: 4
+                },
+                {
+                  label: 'Cekaman Ekstrem (t/ha)',
+                  data: data.yield_comparison.yield_stress,
+                  backgroundColor: 'rgba(5, 150, 105, 0.85)',
+                  borderColor: '#059669',
+                  borderWidth: 1.5,
+                  borderRadius: 4
+                }
+              ]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: { position: 'top', labels: { boxWidth: 12, font: { size: 11 } } },
+                tooltip: {
+                  callbacks: {
+                    afterBody: function(ctx) {
+                      const idx = ctx[0].dataIndex;
+                      const ret = data.yield_comparison.yield_retention_percent[idx];
+                      return `Retensi Hasil: ${ret}%`;
+                    }
+                  }
+                }
+              },
+              scales: {
+                x: { ticks: { font: { size: 10 } } },
+                y: { beginAtZero: true, title: { display: true, text: 'Ton / Hektar' } }
+              }
+            }
+          });
+        }
+
+        // 2. Chart RWC Kinetics
+        const ctxRwc = document.getElementById('chart-rwc-kinetics');
+        if (ctxRwc && !chartInstances['rwc']) {
+          const colors = ['#059669', '#0284c7', '#d97706', '#94a3b8', '#64748b', '#ef4444'];
+          const seriesKeys = Object.keys(data.rwc_kinetics.series);
+          const datasets = seriesKeys.map((k, i) => ({
+            label: k,
+            data: data.rwc_kinetics.series[k],
+            borderColor: colors[i % colors.length],
+            backgroundColor: colors[i % colors.length] + '22',
+            borderWidth: i < 3 ? 2.5 : 1.5,
+            borderDash: i >= 3 ? [4, 4] : [],
+            tension: 0.25,
+            fill: false,
+            pointRadius: 3
+          }));
+
+          chartInstances['rwc'] = new Chart(ctxRwc, {
+            type: 'line',
+            data: {
+              labels: data.rwc_kinetics.days,
+              datasets: datasets
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: { position: 'top', labels: { boxWidth: 10, font: { size: 9.5 } } }
+              },
+              scales: {
+                y: { min: 20, max: 100, title: { display: true, text: 'Kandungan Air Daun (%)' } }
+              }
+            }
+          });
+        }
+
+        // 3. Chart Traits Radar
+        const ctxRadar = document.getElementById('chart-traits-radar');
+        if (ctxRadar && !chartInstances['radar']) {
+          const rVarKeys = Object.keys(data.radar_traits.varieties);
+          const rColors = ['rgba(5, 150, 105, 0.7)', 'rgba(2, 132, 199, 0.7)', 'rgba(217, 119, 6, 0.7)', 'rgba(124, 58, 237, 0.7)', 'rgba(148, 163, 184, 0.5)'];
+          const rDatasets = rVarKeys.map((k, i) => ({
+            label: k,
+            data: data.radar_traits.varieties[k],
+            borderColor: rColors[i].replace('0.7', '1').replace('0.5', '1'),
+            backgroundColor: rColors[i].replace('0.7', '0.15').replace('0.5', '0.1'),
+            borderWidth: i === 0 ? 2.5 : 1.5,
+            pointRadius: 2.5
+          }));
+
+          chartInstances['radar'] = new Chart(ctxRadar, {
+            type: 'radar',
+            data: {
+              labels: data.radar_traits.axes,
+              datasets: rDatasets
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: { position: 'top', labels: { boxWidth: 10, font: { size: 9.5 } } }
+              },
+              scales: {
+                r: { min: 30, max: 100, ticks: { stepSize: 20, font: { size: 9 } } }
+              }
+            }
+          });
+        }
+
+        // 4. Chart Thermo Stability
+        const ctxThermo = document.getElementById('chart-thermo-stability');
+        if (ctxThermo && !chartInstances['thermo']) {
+          chartInstances['thermo'] = new Chart(ctxThermo, {
+            type: 'bar',
+            data: {
+              labels: data.thermodynamic_stability.mutations,
+              datasets: [
+                {
+                  label: 'Skor Evolusi ESM-2 (ΔLLR)',
+                  data: data.thermodynamic_stability.delta_llr,
+                  backgroundColor: data.thermodynamic_stability.delta_llr.map(v => v > 0 ? 'rgba(5, 150, 105, 0.8)' : 'rgba(220, 38, 38, 0.8)'),
+                  borderRadius: 4
+                },
+                {
+                  label: 'Energi Bebas ΔΔG (kcal/mol)',
+                  data: data.thermodynamic_stability.delta_delta_g,
+                  backgroundColor: data.thermodynamic_stability.delta_delta_g.map(v => v < 0 ? 'rgba(2, 132, 199, 0.75)' : 'rgba(234, 88, 12, 0.75)'),
+                  borderRadius: 4
+                }
+              ]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: { position: 'top', labels: { boxWidth: 12, font: { size: 10.5 } } }
+              },
+              scales: {
+                y: { title: { display: true, text: 'Nilai Biofisika' } }
+              }
+            }
+          });
+        }
+      } catch (err) {
+        console.warn('Gagal menginisialisasi grafik riset:', err);
+      }
+    }
+
+    function prefillVarietyDesigner(parentName, varName) {
+      const pSelect = document.getElementById('var-parent-select');
+      if (pSelect) {
+        for (let i = 0; i < pSelect.options.length; i++) {
+          if (pSelect.options[i].value.includes(parentName) || parentName.includes(pSelect.options[i].value)) {
+            pSelect.selectedIndex = i;
+            break;
+          }
+        }
+      }
+      const cInput = document.getElementById('var-custom-name');
+      if (cInput) {
+        cInput.value = varName;
+      }
+      const anchor = document.getElementById('var-parent-select');
+      if (anchor) {
+        anchor.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      PhytoToast.fire({
+        icon: 'info',
+        title: 'Profil Varietas Dipilih',
+        text: `Memilih induk ${parentName} untuk perancangan varietas.`
+      });
+    }
+
     // --- DROUGHT REGULON TARGETS LOADER ---
     async function loadTargets() {
       try {
@@ -5534,7 +5906,9 @@ server {
       loadAllDroughtRegions();
       loadAllLocalCultivars();
       loadTargets();
+      loadResearchVarietiesGallery();
       setTimeout(() => initInaRiskMap(), 200);
+      setTimeout(() => initResearchCharts(), 400);
     };
 
     window.addEventListener('resize', () => {

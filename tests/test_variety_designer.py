@@ -4,7 +4,9 @@ from app.main import app
 from app.services.variety_designer_service import (
     get_nucleotide_edit_blueprint,
     synthesize_new_variety,
-    PLANT_GENOMICS_CATALOG
+    PLANT_GENOMICS_CATALOG,
+    get_research_varieties,
+    get_graphical_analysis_data
 )
 
 client = TestClient(app)
@@ -74,4 +76,39 @@ def test_api_variety_designer_synthesize():
     assert data["variety_name"] == "Salafiyah BioPadi-Amfibi"
     assert len(data["molecular_blueprints"]) == 2
     assert "Induk" in data["scientific_summary"] or "Situ Bagendit" in data["scientific_summary"]
+
+
+def test_research_varieties_catalog():
+    varieties = get_research_varieties()
+    assert len(varieties) == 4
+    v_names = [v["name"] for v in varieties]
+    assert any("Agritama-1" in name for name in v_names)
+    assert any("Amfibi-2" in name for name in v_names)
+    assert any("Salina-3" in name for name in v_names)
+    assert any("Savana-4" in name for name in v_names)
+
+
+def test_graphical_analysis_dataset():
+    data = get_graphical_analysis_data()
+    assert "yield_comparison" in data
+    assert "rwc_kinetics" in data
+    assert "thermodynamic_stability" in data
+    assert "radar_traits" in data
+    assert len(data["yield_comparison"]["categories"]) >= 7
+
+
+def test_api_research_varieties_endpoint():
+    resp = client.get("/api/v1/phytoai/variety-designer/research-varieties")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert len(data) == 4
+    assert data[0]["institution"] == "Periset MA Salafiyah Kajen Pati"
+
+
+def test_api_graphical_analysis_endpoint():
+    resp = client.get("/api/v1/phytoai/variety-designer/graphical-analysis")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert "yield_normal" in data["yield_comparison"]
+    assert "Hari 25" in data["rwc_kinetics"]["days"]
 

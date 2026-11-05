@@ -310,7 +310,9 @@ from app.services.variety_designer_service import (
     SynthesizedVarietyProfile,
     PLANT_GENOMICS_CATALOG,
     get_nucleotide_edit_blueprint,
-    synthesize_new_variety
+    synthesize_new_variety,
+    get_research_varieties,
+    get_graphical_analysis_data
 )
 from pydantic import BaseModel, Field
 
@@ -358,4 +360,22 @@ async def api_synthesize_new_variety(payload: SynthesizeVarietyRequest):
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Gagal merancang varietas baru: {str(e)}")
+
+
+@router.get("/variety-designer/research-varieties", summary="Katalog 4 Varietas Unggul Baru Hasil Penelitian MA Salafiyah Kajen Pati")
+async def api_get_research_varieties():
+    """
+    Menyajikan daftar resmi 4 varietas unggul baru hasil penelitian PhytoAI-Genetics karya Periset MA Salafiyah Kajen Pati:
+    Salafiyah Agritama-1 (DREB Super), Salafiyah Amfibi-2 (SubDREB), Salafiyah Salina-3 (Coastal), dan Salafiyah Savana-4 (Arid Gora).
+    """
+    return get_research_varieties()
+
+
+@router.get("/variety-designer/graphical-analysis", summary="Data Analisis Grafik Komparatif Fenotipe, Produktivitas & Biofisika")
+async def api_get_graphical_analysis():
+    """
+    Menyajikan dataset lengkap untuk visualisasi grafik komparatif: perbandingan hasil panen normal vs cekaman,
+    kinetika Relative Water Content (RWC %) daun selama 25 hari tanpa air, skor stabilitas delta LLR ESM-2, dan radar multi-sifat.
+    """
+    return get_graphical_analysis_data()
 
