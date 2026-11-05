@@ -1179,8 +1179,11 @@ else:
                 }
             ]
 
+        avatar_3d_file = os.path.join(ROOT_DIR, "app", "static", "images", "phytoai_avatar_3d.png")
+        phyto_avatar = avatar_3d_file if os.path.exists(avatar_3d_file) else "🤖"
+
         for cmsg in st.session_state.native_chat_history:
-            with st.chat_message(cmsg["role"], avatar="👨‍🔬" if cmsg["role"] == "assistant" else None):
+            with st.chat_message(cmsg["role"], avatar=phyto_avatar if cmsg["role"] == "assistant" else None):
                 st.markdown(cmsg["content"])
 
         if user_prompt := st.chat_input("Tanyakan analisis riset ke PhytoAI..."):
@@ -1188,7 +1191,7 @@ else:
             with st.chat_message("user"):
                 st.markdown(user_prompt)
 
-            with st.chat_message("assistant", avatar="👨‍🔬"):
+            with st.chat_message("assistant", avatar=phyto_avatar):
                 with st.spinner("PhytoAI sedang menganalisis data riset..."):
                     ai_reply = call_groq_researcher(user_prompt, st.session_state.native_chat_history[:-1])
                     st.markdown(ai_reply)
