@@ -65,9 +65,12 @@ def render_iframe(html_content: str, height: int = 600, scrolling: bool = True):
     """Merender konten HTML/iframe secara kompatibel di Streamlit versi baru (st.iframe) maupun lama (st.components.v1.html)."""
     if hasattr(st, "iframe"):
         try:
-            return st.iframe(html_content, height=height)
+            return st.iframe(html_content, width="stretch", height="content")
         except Exception:
-            pass
+            try:
+                return st.iframe(html_content, height=height)
+            except Exception:
+                pass
     return components.html(html_content, height=height, scrolling=scrolling)
 
 
@@ -388,6 +391,9 @@ if not is_native_mode:
         }
         [data-testid="stCustomComponentV1"],
         [data-testid="stCustomComponentV1"] > iframe,
+        [data-testid="stIFrame"],
+        [data-testid="stIFrame"] > iframe,
+        .element-container:has(iframe),
         iframe {
             border: none !important;
             width: 100vw !important;

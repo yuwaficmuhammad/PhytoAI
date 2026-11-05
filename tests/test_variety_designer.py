@@ -74,3 +74,4 @@ def test_api_variety_designer_synthesize():
     assert data["variety_name"] == "Salafiyah BioPadi-Amfibi"
     assert len(data["molecular_blueprints"]) == 2
     assert "Induk" in data["scientific_summary"] or "Situ Bagendit" in data["scientific_summary"]
+

@@ -533,3 +533,4 @@ def synthesize_new_variety(
         breeding_protocol_steps=protocol_steps,
         scientific_summary=summary
     )
+
