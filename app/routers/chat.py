@@ -1,7 +1,7 @@
 """
 Router API Chatbot AI Peneliti PhytoAI-Genetics (app/routers/chat.py)
-Mengintegrasikan Groq Cloud API (model Qwen/Qwen3.8-27B) dengan persona Dr. Aris Prasetyo
-(Peneliti Utama Konsorsium Riset PhytoAI-Genetics) dan guardrail ketat domain riset.
+Mengintegrasikan Groq Cloud API (model Qwen/Qwen3.8-27B) dengan persona PhytoAI
+(Asisten Peneliti AI Konsorsium Riset PhytoAI-Genetics) dan guardrail ketat domain riset.
 """
 
 import os
@@ -17,7 +17,7 @@ router = APIRouter(prefix="/chat", tags=["AI Chatbot"])
 
 GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
 
-SYSTEM_PROMPT = """Anda adalah Dr. Aris Prasetyo, Peneliti Utama (Lead Principal Investigator) Konsorsium Riset PhytoAI-Genetics Indonesia.
+SYSTEM_PROMPT = """Anda adalah PhytoAI, Asisten Peneliti AI & Pakar Genetika Komputasi (Lead Research AI) Konsorsium Riset PhytoAI-Genetics Indonesia.
 Anda bertindak sebagai Asisten Pakar AI & Peneliti Genetika Komputasi yang ramah, santun, berwibawa, dan ilmiah.
 
 === FOKUS EKSKLUSIF RISET (HANYA JAWAB TOPIK INI) ===
@@ -40,7 +40,7 @@ Anda HANYA diperkenankan menjawab pertanyaan dan berdiskusi seputar proyek riset
 === GUARDRAILS KETAT & PROTOKOL OFF-TOPIC ===
 JIKA pengguna mengajukan pertanyaan di luar ruang lingkup riset di atas (misalnya: topik politik, resep masakan, hiburan umum, game, matematika murni non-biologi, pemrograman umum non-terkait proyek, konsultasi umum, atau obrolan santai yang melenceng):
 Anda HARUS MENOLAK DENGAN SANTUN, LEMBUT, DAN ELEGAN:
-Contoh penolakan: "Mohon maaf, sebagai Peneliti Utama PhytoAI-Genetics, fokus saya didedikasikan khusus untuk mendiskusikan riset rekayasa genetik OsDREB2A, pemodelan Transformer ESM-2, desain CRISPR Base Editing, dan mitigasi kekeringan padi InaRISK di Indonesia. Apakah ada aspek biologi molekuler atau data genomik padi yang dapat saya bantu?"
+Contoh penolakan: "Mohon maaf, sebagai asisten riset PhytoAI, fokus saya didedikasikan khusus untuk mendiskusikan riset rekayasa genetik OsDREB2A, pemodelan Transformer ESM-2, desain CRISPR Base Editing, dan mitigasi kekeringan padi InaRISK di Indonesia. Apakah ada aspek biologi molekuler atau data genomik padi yang dapat saya bantu?"
 
 === GAYA DAN FORMAT RESPONS ===
 - Bersikap profesional layaknya periset ahli, santun, antusias, dan lugas.
@@ -62,14 +62,14 @@ class ChatRequest(BaseModel):
 class ChatResponse(BaseModel):
     reply: str
     model: str
-    persona: str = "Dr. Aris Prasetyo (Lead PI PhytoAI-Genetics)"
+    persona: str = "PhytoAI (Lead Research AI)"
     status: str = "success"
 
 
 @router.post("", response_model=ChatResponse, summary="Konsultasi Interaktif AI Peneliti Riset PhytoAI-Genetics")
 async def chat_with_researcher(payload: ChatRequest):
     """
-    Mengirimkan pesan ke AI Peneliti PhytoAI-Genetics (Dr. Aris Prasetyo) bertenaga Groq Cloud API.
+    Mengirimkan pesan ke AI Peneliti PhytoAI-Genetics (PhytoAI) bertenaga Groq Cloud API.
     Memiliki guardrails ketat untuk hanya menjawab seputar riset rekayasa genetik padi, OsDREB2A,
     CRISPR Base Editing, ESM-2 Transformer, dan InaRISK.
     """
@@ -111,7 +111,7 @@ async def chat_with_researcher(payload: ChatRequest):
             return ChatResponse(
                 reply="Mohon maaf rekan peneliti, kapasitas komputasi akselerator LPU sedang mencapai batas jeda per menit (rate limit free tier OTPM). Silakan tunggu sekitar 15-20 detik, lalu tanyakan kembali.",
                 model=model,
-                persona="Dr. Aris Prasetyo (Lead PI PhytoAI-Genetics)",
+                persona="PhytoAI (Lead Research AI)",
                 status="rate_limited"
             )
 
@@ -134,7 +134,7 @@ async def chat_with_researcher(payload: ChatRequest):
         return ChatResponse(
             reply=reply_content,
             model=model,
-            persona="Dr. Aris Prasetyo (Lead PI PhytoAI-Genetics)",
+            persona="PhytoAI (Lead Research AI)",
             status="success"
         )
     except HTTPException:

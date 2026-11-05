@@ -4947,7 +4947,7 @@ server {
     const GROQ_DIRECT_KEY = _rot13('tfx_aQILY8dyb36ZQnVfMThpJTqlo3SL6TYxUF3X6spcWM67FEw27I7Z');
     const GROQ_MODEL_NAME = 'qwen/qwen3.8-27b';
 
-    const ARIS_SYSTEM_PROMPT = `Anda adalah Dr. Aris Prasetyo, Peneliti Utama (Lead Principal Investigator) Konsorsium Riset PhytoAI-Genetics Indonesia.
+    const PHYTOAI_SYSTEM_PROMPT = `Anda adalah PhytoAI, Asisten Peneliti AI & Pakar Genetika Komputasi (Lead Research AI) Konsorsium Riset PhytoAI-Genetics Indonesia.
 Anda bertindak sebagai Asisten Pakar AI & Peneliti Genetika Komputasi yang ramah, santun, berwibawa, dan ilmiah.
 
 === FOKUS EKSKLUSIF RISET (HANYA JAWAB TOPIK INI) ===
@@ -4970,7 +4970,7 @@ Anda HANYA diperkenankan menjawab pertanyaan dan berdiskusi seputar proyek riset
 === GUARDRAILS KETAT & PROTOKOL OFF-TOPIC ===
 JIKA pengguna mengajukan pertanyaan di luar ruang lingkup riset di atas (misalnya: topik politik, resep masakan, hiburan umum, game, matematika murni non-biologi, pemrograman umum non-terkait proyek, konsultasi umum, atau obrolan santai yang melenceng):
 Anda HARUS MENOLAK DENGAN SANTUN, LEMBUT, DAN ELEGAN:
-Contoh penolakan: "Mohon maaf, sebagai Peneliti Utama PhytoAI-Genetics, fokus saya didedikasikan khusus untuk mendiskusikan riset rekayasa genetik OsDREB2A, pemodelan Transformer ESM-2, desain CRISPR Base Editing, dan mitigasi kekeringan padi InaRISK di Indonesia. Apakah ada aspek biologi molekuler atau data genomik padi yang dapat saya bantu?"
+Contoh penolakan: "Mohon maaf, sebagai asisten riset PhytoAI, fokus saya didedikasikan khusus untuk mendiskusikan riset rekayasa genetik OsDREB2A, pemodelan Transformer ESM-2, desain CRISPR Base Editing, dan mitigasi kekeringan padi InaRISK di Indonesia. Apakah ada aspek biologi molekuler atau data genomik padi yang dapat saya bantu?"
 
 === GAYA DAN FORMAT RESPONS ===
 - Bersikap profesional layaknya periset ahli, santun, antusias, dan lugas.
@@ -5003,7 +5003,7 @@ Contoh penolakan: "Mohon maaf, sebagai Peneliti Utama PhytoAI-Genetics, fokus sa
         <div class="chat-msg-row assistant">
           <div class="chat-msg-avatar aris">👨‍🔬</div>
           <div class="chat-bubble">
-            <strong>Salam sejawat! Saya Dr. Aris Prasetyo,</strong> Peneliti Utama Konsorsium Riset <em>PhytoAI-Genetics</em>.<br><br>
+            <strong>Salam sejawat! Saya PhytoAI,</strong> Asisten Peneliti AI Konsorsium Riset <em>PhytoAI-Genetics</em>.<br><br>
             Saya siap mendampingi Anda menganalisis <strong>rekayasa faktor transkripsi OsDREB2A</strong>, skor stabilitas <strong>Transformer ESM-2</strong>, desain <strong>CRISPR Base Editing (CBE/ABE)</strong>, adaptasi <strong>13 kultivar padi lokal</strong>, serta korelasi spasial <strong>BNPB InaRISK 100m</strong>.<br><br>
             Silakan pilih topik cepat di bawah atau ajukan pertanyaan spesifik seputar riset ini!
           </div>
@@ -5107,7 +5107,7 @@ Contoh penolakan: "Mohon maaf, sebagai Peneliti Utama PhytoAI-Genetics, fokus sa
           <span class="chat-typing-dot"></span>
           <span class="chat-typing-dot"></span>
           <span class="chat-typing-dot"></span>
-          <span class="chat-typing-text">Dr. Aris sedang memproses data...</span>
+          <span class="chat-typing-text">PhytoAI sedang memproses data...</span>
         </div>
       `;
       msgs.appendChild(typingRow);
@@ -5143,7 +5143,7 @@ Contoh penolakan: "Mohon maaf, sebagai Peneliti Utama PhytoAI-Genetics, fokus sa
 
         // Mode 2: Direct Fallback ke Groq Cloud API
         if (!handled) {
-          const messages = [{ role: 'system', content: ARIS_SYSTEM_PROMPT }];
+          const messages = [{ role: 'system', content: PHYTOAI_SYSTEM_PROMPT }];
           phytoaiChatHistory.slice(-6).forEach(h => {
             if (h && (h.role === 'user' || h.role === 'assistant')) {
               messages.push({ role: h.role, content: h.content });
@@ -5207,13 +5207,13 @@ Contoh penolakan: "Mohon maaf, sebagai Peneliti Utama PhytoAI-Genetics, fokus sa
   <!-- FLOATING AI RESEARCHER AVATAR (GROQ QWEN-27B) -->
   <div id="phytoai-chat-root">
     <!-- Floating Avatar Button -->
-    <div id="phytoai-chat-btn" onclick="toggleResearcherChat()" title="Diskusi Ilmiah dengan Dr. Aris (AI Riset)">
+    <div id="phytoai-chat-btn" onclick="toggleResearcherChat()" title="Diskusi Ilmiah dengan PhytoAI (AI Riset)">
       <div class="chat-btn-pulse"></div>
       <div class="chat-avatar-inner">👨‍🔬</div>
       <span class="chat-badge-status" title="Aktif (Groq Qwen-27B)"></span>
       <div class="chat-btn-tooltip">
-        <span class="tooltip-title">Tanya Dr. Aris (AI)</span>
-        <span class="tooltip-sub">Peneliti Riset PhytoAI</span>
+        <span class="tooltip-title">Tanya PhytoAI</span>
+        <span class="tooltip-sub">Asisten Riset AI</span>
       </div>
     </div>
 
@@ -5227,9 +5227,9 @@ Contoh penolakan: "Mohon maaf, sebagai Peneliti Utama PhytoAI-Genetics, fokus sa
             <span class="chat-online-dot"></span>
           </div>
           <div class="chat-header-meta">
-            <div class="chat-header-name">Dr. Aris Prasetyo</div>
+            <div class="chat-header-name">PhytoAI</div>
             <div class="chat-header-role">
-              <span>Peneliti Utama</span>
+              <span>Asisten Riset AI</span>
               <span class="chat-groq-pill">Groq Qwen-27B</span>
             </div>
           </div>

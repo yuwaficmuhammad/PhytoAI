@@ -125,7 +125,7 @@ def call_groq_researcher(user_query: str, history: list) -> str:
     model = getattr(settings, "GROQ_MODEL", "qwen/qwen3.8-27b")
 
     system_prompt = (
-        "Anda adalah Dr. Aris Prasetyo, Peneliti Utama Konsorsium Riset PhytoAI-Genetics Indonesia. "
+        "Anda adalah PhytoAI, Asisten Peneliti AI Konsorsium Riset PhytoAI-Genetics Indonesia. "
         "FOKUS EKSKLUSIF: Anda HANYA boleh menjawab pertanyaan seputar proyek riset PhytoAI-Genetics: "
         "OsDREB2A (NCBI Gene ID: 4324418), pemodelan Transformer ESM-2 (delta LLR / delta delta G), DMS scan, mutasi P168L / V79I / S167A, "
         "peta BNPB InaRISK 100m, 13 kultivar padi lokal, CRISPR Base Editing (CBE/ABE tanpa DSB), dan 10 gen regulon kekeringan NCBI. "
@@ -1146,14 +1146,14 @@ else:
                 )
 
         st.markdown("---")
-        st.markdown("### 💬 Konsultasi AI Riset: Dr. Aris Prasetyo (Groq Qwen-27B)")
-        st.caption("Diskusikan aspek rekayasa genetika OsDREB2A, pemodelan Transformer ESM-2, mutasi P168L/V79I, CRISPR Base Editing, dan InaRISK langsung dengan Lead PI AI.")
+        st.markdown("### 💬 Konsultasi AI Riset: PhytoAI (Groq Qwen-27B)")
+        st.caption("Diskusikan aspek rekayasa genetika OsDREB2A, pemodelan Transformer ESM-2, mutasi P168L/V79I, CRISPR Base Editing, dan InaRISK langsung dengan Asisten AI Riset.")
 
         if "native_chat_history" not in st.session_state:
             st.session_state.native_chat_history = [
                 {
                     "role": "assistant",
-                    "content": "Salam sejawat! Saya **Dr. Aris Prasetyo**, Peneliti Utama Konsorsium PhytoAI-Genetics. Saya siap mendampingi Anda menganalisis rekayasa genetika OsDREB2A, mutasi P168L/V79I, CRISPR Base Editing, dan mitigasi risiko InaRISK. Silakan ajukan pertanyaan seputar riset ini!"
+                    "content": "Salam sejawat! Saya **PhytoAI**, Asisten Peneliti AI Konsorsium PhytoAI-Genetics. Saya siap mendampingi Anda menganalisis rekayasa genetika OsDREB2A, mutasi P168L/V79I, CRISPR Base Editing, dan mitigasi risiko InaRISK. Silakan ajukan pertanyaan seputar riset ini!"
                 }
             ]
 
@@ -1161,13 +1161,13 @@ else:
             with st.chat_message(cmsg["role"], avatar="👨‍🔬" if cmsg["role"] == "assistant" else None):
                 st.markdown(cmsg["content"])
 
-        if user_prompt := st.chat_input("Tanyakan analisis riset ke Dr. Aris..."):
+        if user_prompt := st.chat_input("Tanyakan analisis riset ke PhytoAI..."):
             st.session_state.native_chat_history.append({"role": "user", "content": user_prompt})
             with st.chat_message("user"):
                 st.markdown(user_prompt)
 
             with st.chat_message("assistant", avatar="👨‍🔬"):
-                with st.spinner("Dr. Aris sedang menganalisis data riset..."):
+                with st.spinner("PhytoAI sedang menganalisis data riset..."):
                     ai_reply = call_groq_researcher(user_prompt, st.session_state.native_chat_history[:-1])
                     st.markdown(ai_reply)
                     st.session_state.native_chat_history.append({"role": "assistant", "content": ai_reply})

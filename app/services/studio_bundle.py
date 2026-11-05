@@ -315,7 +315,7 @@ def generate_client_side_adapter_js() -> str:
             const messages = [
               {{
                 role: 'system',
-                content: `Anda adalah Dr. Aris Prasetyo, Peneliti Utama Konsorsium Riset PhytoAI-Genetics Indonesia.
+                content: `Anda adalah PhytoAI, Asisten Peneliti AI Konsorsium Riset PhytoAI-Genetics Indonesia.
 HANYA jawab topik seputar riset rekayasa genetik OsDREB2A, pemodelan Transformer ESM-2 (delta LLR/delta delta G), DMS scan, mutasi P168L/V79I/S167A, peta BNPB InaRISK 100m, 13 kultivar lokal, CRISPR Base Editing (CBE/ABE), dan regulon gen NCBI. Tolak topik di luar riset ini secara santun dan ilmiah.`
               }}
             ];
@@ -350,7 +350,7 @@ HANYA jawab topik seputar riset rekayasa genetik OsDREB2A, pemodelan Transformer
               return createJsonResponse({{
                 reply: reply,
                 model: 'qwen/qwen3.8-27b',
-                persona: 'Dr. Aris Prasetyo (Lead PI PhytoAI-Genetics)',
+                persona: 'PhytoAI (Lead Research AI)',
                 status: 'success'
               }});
             }} else if (groqRes.status === 429) {{

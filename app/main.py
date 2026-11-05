@@ -45,7 +45,7 @@ app = FastAPI(
         },
         {
             "name": "AI Chatbot",
-            "description": "Asisten Pakar Peneliti AI (Dr. Aris Prasetyo) berbasis Groq Cloud Qwen-27B dengan guardrail riset genetika padi OsDREB2A."
+            "description": "Asisten Pakar Peneliti AI (PhytoAI) berbasis Groq Cloud Qwen-27B dengan guardrail riset genetika padi OsDREB2A."
         },
         {
             "name": "Perancangan CRISPR & Bioinformatika (CRISPR Tools)",
