@@ -1357,7 +1357,7 @@
        ========================================================================== */
     #phytoai-chat-root {
       position: fixed;
-      bottom: 24px;
+      bottom: 88px;
       right: 24px;
       z-index: 99999;
       font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -1475,12 +1475,12 @@
     /* CHAT CARD WINDOW */
     #phytoai-chat-card {
       position: fixed;
-      bottom: 98px;
+      bottom: 162px;
       right: 24px;
       width: 410px;
       max-width: calc(100vw - 32px);
-      height: 580px;
-      max-height: calc(100vh - 120px);
+      height: 560px;
+      max-height: calc(100vh - 180px);
       background: #ffffff;
       border-radius: 20px;
       box-shadow: 0 25px 60px -12px rgba(15, 23, 42, 0.25), 0 0 0 1px rgba(226, 232, 240, 0.8);
@@ -1895,6 +1895,21 @@
       color: #64748b;
       margin-left: 4px;
       font-style: italic;
+    }
+
+    @media (max-width: 640px) {
+      #phytoai-chat-root {
+        bottom: 76px;
+        right: 16px;
+      }
+      #phytoai-chat-card {
+        bottom: 148px;
+        right: 12px;
+        left: 12px;
+        width: auto;
+        max-width: none;
+        max-height: calc(100vh - 165px);
+      }
     }
   </style>
 </head>

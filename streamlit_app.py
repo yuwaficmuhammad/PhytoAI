@@ -311,6 +311,10 @@ if not is_native_mode:
         div[data-testid="stToolbar"] {display: none !important;}
         div[data-testid="stDecoration"] {display: none !important;}
         div[data-testid="stStatusWidget"] {display: none !important;}
+        div[data-testid="manage-app-button"] {display: none !important;}
+        div[class*="viewerBadge"] {display: none !important;}
+        div[class*="manageApp"] {display: none !important;}
+        .viewerBadge_container__1QSob {display: none !important;}
         html, body, [data-testid="stAppViewContainer"], .main {
             overflow: hidden !important;
             height: 100vh !important;
