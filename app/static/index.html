@@ -5043,12 +5043,31 @@ server {
 
         data.positions.forEach(p => {
           let matrixHtml = '';
-          Object.keys(p.scores).slice(0, 10).forEach(aa => {
-            const sc = p.scores[aa];
-            const col = sc > 1.0 ? '#10b981' : sc < -1.0 ? '#ef4444' : '#cbd5e1';
-            const txtCol = sc < -1.0 || sc > 1.0 ? '#ffffff' : '#0f172a';
-            matrixHtml += `<span class="heatmap-cell" style="background:${col}; color:${txtCol};" title="${aa}: ${sc}">${aa}</span>`;
-          });
+          const scores = p.scores || {};
+          const aaKeys = Object.keys(scores);
+
+          if (aaKeys.length > 0) {
+            aaKeys.slice(0, 10).forEach(aa => {
+              const sc = scores[aa];
+              const col = sc > 1.0 ? '#10b981' : sc < -1.0 ? '#ef4444' : '#cbd5e1';
+              const txtCol = sc < -1.0 || sc > 1.0 ? '#ffffff' : '#0f172a';
+              matrixHtml += `<span class="heatmap-cell" style="background:${col}; color:${txtCol};" title="${aa}: ${sc > 0 ? '+' : ''}${sc}">${aa}</span>`;
+            });
+          } else if (Array.isArray(p.mutations) && p.mutations.length > 0) {
+            p.mutations.slice(0, 10).forEach(m => {
+              const sc = m.delta_llr ?? m.score ?? 0;
+              const aa = m.mutant_aa || 'M';
+              const col = sc > 1.0 ? '#10b981' : sc < -1.0 ? '#ef4444' : '#cbd5e1';
+              const txtCol = sc < -1.0 || sc > 1.0 ? '#ffffff' : '#0f172a';
+              matrixHtml += `<span class="heatmap-cell" style="background:${col}; color:${txtCol};" title="${aa}: ${sc > 0 ? '+' : ''}${sc}">${aa}</span>`;
+            });
+          } else {
+            matrixHtml = '<span style="color:var(--text-subtle); font-size:11px;">Matriks tidak tersedia</span>';
+          }
+
+          const scoreVal = typeof p.best_score === 'number' ? p.best_score : parseFloat(p.best_score || 0);
+          const scoreDisplay = scoreVal > 0 ? `+${scoreVal.toFixed(2)}` : scoreVal.toFixed(2);
+          const scoreColor = scoreVal > 1.0 ? '#16a34a' : scoreVal < -1.0 ? '#dc2626' : '#475569';
 
           html += `
             <tr>
@@ -5056,7 +5075,7 @@ server {
               <td style="font-weight:700; font-family:'JetBrains Mono';">${p.wildtype_aa}</td>
               <td style="font-size:11.5px;">${p.domain}</td>
               <td style="font-weight:700; color:var(--primary-dark); font-family:'JetBrains Mono';">${p.best_mutation}</td>
-              <td style="font-weight:800; color:#16a34a;">+${p.best_score}</td>
+              <td style="font-weight:800; color:${scoreColor};">${scoreDisplay}</td>
               <td>${matrixHtml}</td>
             </tr>
           `;

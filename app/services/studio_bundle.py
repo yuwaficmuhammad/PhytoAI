@@ -43,6 +43,9 @@ def generate_client_side_adapter_js() -> str:
         except Exception:
             pass
 
+    # Pre-computasi posisi DMS lengkap OsDREB2A (279 residu x 20 asam amino)
+    dms_all = [p.model_dump() for p in generate_dms_scan(1, 279).positions]
+
     return f"""
     <script id="phytoai-cloud-adapter">
     (function() {{
@@ -51,6 +54,7 @@ def generate_client_side_adapter_js() -> str:
       const EMBEDDED_TARGETS = {json.dumps(targets_data)};
       const EMBEDDED_GENES = {json.dumps(genes_data)};
       const MUTATIONS_CACHE = {json.dumps(mutations_cache)};
+      const EMBEDDED_DMS_POSITIONS = {json.dumps(dms_all)};
       const OSDREB2A_CDS = "{OSDREB2A_CDS_NCBI}";
 
       function haversineDist(lat1, lon1, lat2, lon2) {{
@@ -216,20 +220,17 @@ def generate_client_side_adapter_js() -> str:
 
         // 6. Deep mutational scan
         if (path === '/api/v1/phytoai/dreb2a/deep-mutational-scan') {{
-          const start = parseInt(url.searchParams.get('start_pos') || '136');
-          const end = parseInt(url.searchParams.get('end_pos') || '151');
-          const positions = [];
-          for (let p = start; p <= end; p++) {{
-            positions.push({{
-              position: p,
-              wildtype_aa: "P",
-              domain: (p >= 136 && p <= 192) ? "NRD (Degron PEST)" : "AP2/ERF",
-              best_mutation: "P" + p + "L",
-              best_score: 1.84,
-              mutations: [{{ mutant_aa: "L", delta_llr: 1.84, tolerance_index: 0.94 }}]
-            }});
-          }}
-          return createJsonResponse({{ region_scanned: `Posisi ${{start}}-${{end}}`, positions: positions }});
+          const start = parseInt(url.searchParams.get('start_pos') || '70');
+          const end = parseInt(url.searchParams.get('end_pos') || '90');
+          const filtered = EMBEDDED_DMS_POSITIONS.filter(p => p.position >= start && p.position <= end);
+          return createJsonResponse({{
+            gene_symbol: "OsDREB2A",
+            ncbi_gene_id: 4324418,
+            region_scanned: `Residu ${{start}} - ${{end}}`,
+            start_pos: start,
+            end_pos: end,
+            positions: filtered
+          }});
         }}
 
         // 7. Base editing design
