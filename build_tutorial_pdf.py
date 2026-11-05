@@ -577,7 +577,7 @@ def build_pdf(output_path: str):
         ],
         [
             P("<b>6. Gen Regulon Kekeringan</b>", table_cell),
-            P("Katalog terkurasi 10 gen target rekayasa padi (OsDREB2A, SWEET14, DEP1, Badh2, dst).", table_cell),
+            P("Katalog terkurasi 10 gen target rekayasa padi (OsDREB2A, OsDREB1A, OsLEA3, OsAREB1, dst).", table_cell),
             P("Lokus kromosom, nomor Gene ID resmi, strategi perakitan ganda (<i>multiplexing</i>).", table_cell)
         ],
         [
@@ -792,7 +792,7 @@ def build_pdf(output_path: str):
     ))
 
     story.append(P(
-        "Peneliti dapat menggabungkan rekayasa genetik multipel (<i>multiplex genome editing</i>), misalnya mengombinasikan mutasi aktivasi <b>OsDREB2A</b> (toleransi kekeringan) dengan inaktivasi promotor <b>OsSWEET14</b> (tahan hawar daun bakteri) dan penonaktifan transporter <b>OsNramp5</b> (mencegah penyerapan racun kadmium ke beras) dalam satu kali transformasi tanaman via <i>Agrobacterium tumefaciens</i>.",
+        "Peneliti dapat menggabungkan rekayasa genetik presisi multipel (<i>multiplex genome editing</i>), misalnya mengombinasikan mutasi aktivasi konstitutif <b>OsDREB2A</b> (P168L/V79I) dengan modulasi faktor transkripsi stomata <b>SNAC1/OsDST</b> dan efektor hilir <b>OsLEA3-1</b> untuk ketahanan komprehensif terhadap cekaman El Niño dalam satu kali transformasi tanaman via <i>Agrobacterium tumefaciens</i>.",
         body_justify
     ))
 

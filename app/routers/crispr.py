@@ -18,9 +18,9 @@ async def find_crispr_targets(
         ...,
         openapi_examples={
             "default": {
-                "summary": "Sekuens Ekson OsSWEET14 Padi",
+                "summary": "Sekuens Ekson NRD OsDREB2A Padi (Target Golden Mutation P168L)",
                 "value": {
-                    "sequence": "ATGGCTGGCATGTCTCTTCAGCATCCCTGGGCCTTCGCCTTTGGTCTCCTAGGCAACATCATCTCCTTCATGACCTACCTGGCCCCACTGCCGACGTTCTACAGGATCTACAAGAGCAAGTCGACGCAG",
+                    "sequence": "CATCGTGGCTAATGGGCCAGCTGTGTTGTATCAGCCTGATAAGAAGGATGTGTTGGAACGTGTAGTCCCTGAGGTGCAGGATGTTAAAACAGAAGGGAGCAATGGCTTGAAACGTGTTTGTCAGGAGCGGAAG",
                     "nuclease": "SpCas9",
                     "min_gc": 35.0,
                     "max_gc": 70.0
@@ -51,7 +51,7 @@ async def find_crispr_targets(
 
 @router.post("/design-for-gene/{gene_id}", response_model=CRISPRAnalysisResponse, summary="Otomasi Desain gRNA CRISPR Langsung dari NCBI Gene ID")
 async def design_crispr_for_gene(
-    gene_id: int = Path(..., description="NCBI Gene ID padi (mis. 4350572 untuk OsSWEET14, 4347178 untuk DEP1, 4345606 untuk Badh2)"),
+    gene_id: int = Path(..., description="NCBI Gene ID padi (mis. 4324418 untuk OsDREB2A, 4337666 untuk OsLEA3-1, 4341490 untuk OsDREB1A)"),
     nuclease: str = Query("SpCas9", description="Pilihan sistem enzim: 'SpCas9' atau 'Cas12a'"),
     target_region: str = Query("cds", description="Daerah target: 'cds' (ekson pengkode protein) atau 'genomic' (promotor/intron)")
 ):

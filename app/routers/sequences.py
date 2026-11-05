@@ -13,7 +13,7 @@ router = APIRouter(prefix="/sequences", tags=["Ekstraksi Sekuens DNA/Protein (Se
 
 @router.get("/gene/{gene_id}", response_model=GeneSequencesResponse, summary="Ekstrak Sekuens Genomik, CDS, dan Protein Padi")
 async def get_gene_sequences(
-    gene_id: int = Path(..., description="NCBI Gene ID (mis. 4350572 untuk OsSWEET14, 4347178 untuk DEP1, 4324418 untuk OsDREB2A)")
+    gene_id: int = Path(..., description="NCBI Gene ID (mis. 4324418 untuk OsDREB2A, 4337666 untuk OsLEA3-1, 4341490 untuk OsDREB1A)")
 ):
     """
     Mengunduh dan mengekstrak sekuens DNA Genomik (fna), Coding Sequence (CDS),
@@ -56,7 +56,7 @@ async def get_gene_sequences(
 
 @router.get("/gene/{gene_id}/cds", response_model=SequenceData, summary="Ambil Sekuens Pengkode (CDS) Saja")
 async def get_gene_cds(
-    gene_id: int = Path(..., description="NCBI Gene ID (mis. 4350572 untuk OsSWEET14, 4324418 untuk OsDREB2A)")
+    gene_id: int = Path(..., description="NCBI Gene ID (mis. 4324418 untuk OsDREB2A, 4337666 untuk OsLEA3-1)")
 ):
     """
     Mengambil bagian Coding DNA Sequence (CDS) spesifik dari gen padi.

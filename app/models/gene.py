@@ -19,8 +19,8 @@ class GeneAnnotation(BaseModel):
 
 class RiceGeneSummary(BaseModel):
     gene_id: int = Field(..., description="NCBI Gene ID numerik")
-    symbol: str = Field(..., description="Simbol gen (mis. LOC4350572, DEP1)")
-    common_symbol: Optional[str] = Field(None, description="Simbol gen populer dalam literatur (mis. OsSWEET14)")
+    symbol: str = Field(..., description="Simbol gen (mis. LOC4324418, OsDREB2A)")
+    common_symbol: Optional[str] = Field(None, description="Simbol gen populer dalam literatur (mis. OsDREB2A)")
     description: Optional[str] = Field(None, description="Nama lengkap dan deskripsi fungsi gen")
     tax_id: int = Field(..., description="NCBI Taxon ID")
     taxname: Optional[str] = Field(None, description="Nama takson (mis. Oryza sativa Japonica Group)")

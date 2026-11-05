@@ -3,13 +3,13 @@ from pydantic import BaseModel, Field
 
 
 class GeneticEngineeringTarget(BaseModel):
-    id: str = Field(..., description="ID unik target (mis. os-sweet14)")
-    gene_symbol: str = Field(..., description="Simbol gen di literatur (mis. OsSWEET14)")
+    id: str = Field(..., description="ID unik target (mis. os-dreb2a)")
+    gene_symbol: str = Field(..., description="Simbol gen di literatur (mis. OsDREB2A)")
     ncbi_gene_id: int = Field(..., description="NCBI Gene ID untuk Oryza sativa Japonica")
-    ncbi_locus_tag: Optional[str] = Field(None, description="Locus tag RAP-DB atau MSU (mis. Os11g0508600)")
+    ncbi_locus_tag: Optional[str] = Field(None, description="Locus tag RAP-DB atau MSU (mis. LOC4324418)")
     category: str = Field(
         ...,
-        description="Kategori agronomi (Disease Resistance, Grain Yield, Abiotic Stress, Aroma/Quality, Heavy Metal, Genome Editing Control)"
+        description="Kategori agronomi ketahanan abiotik kekeringan (Toleransi Kekeringan, Proteksi Osmotik, Regulasi Stomata, Arsitektur Perakaran)"
     )
     trait_description: str = Field(..., description="Deskripsi fenotip dan manfaat rekayasa genetika")
     target_strategy: str = Field(..., description="Strategi (mis. CRISPR Promoter KO, Base Editing, Gene Knockout)")

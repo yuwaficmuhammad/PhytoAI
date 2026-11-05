@@ -54,7 +54,7 @@ def format_gene_report(raw_report: dict) -> RiceGeneSummary:
 
 @router.get("/search", response_model=GeneSearchResponse, summary="Cari Gen Padi berdasarkan Simbol atau Kata Kunci")
 async def search_rice_genes(
-    query: str = Query(..., description="Simbol gen (mis. SWEET14, DEP1, GS3, Badh2, OsPDS) atau kata kunci"),
+    query: str = Query(..., description="Simbol gen regulon kekeringan (mis. OsDREB2A, OsLEA3, OsERD1, OsRAB16A, OsNAC6) atau kata kunci"),
     taxon: Optional[str] = Query(
         None,
         description="NCBI Taxon ID. Kosongkan untuk pencarian otomatis (Japonica 39947 / Oryza sativa 4530 / Indica 39946)."
@@ -63,16 +63,16 @@ async def search_rice_genes(
     """
     Mencari gen padi di NCBI Datasets v2.
     Otomatis memeriksa takson Japonica (Nipponbare) dan fallback ke taxa terkait lainnya
-    sehingga simbol umum penelitian (seperti SWEET14 atau DEP1) langsung ditemukan.
+    sehingga simbol gen regulon kekeringan (seperti OsDREB2A atau OsLEA3) langsung ditemukan.
     """
     raw_reports = await ncbi_client.get_genes_by_symbol(symbol=query, taxon=taxon)
     results = [format_gene_report(r) for r in raw_reports if "gene" in r]
     return GeneSearchResponse(total_found=len(results), genes=results)
 
 
-@router.get("/symbol/{symbol}", response_model=GeneDetailResponse, summary="Detail Gen berdasarkan Simbol (mis. DEP1, SWEET14)")
+@router.get("/symbol/{symbol}", response_model=GeneDetailResponse, summary="Detail Gen berdasarkan Simbol (mis. OsDREB2A, OsLEA3)")
 async def get_gene_by_symbol(
-    symbol: str = Path(..., description="Simbol gen (mis. DEP1, SWEET14, GS3, BADH2, PDS)"),
+    symbol: str = Path(..., description="Simbol gen (mis. OsDREB2A, OsLEA3, OsERD1, OsRAB16A, OsNAC6)"),
     taxon: Optional[str] = Query(None, description="Takson spesifik (opsional)")
 ):
     """
@@ -93,7 +93,7 @@ async def get_gene_by_symbol(
 
 @router.get("/id/{gene_id}", response_model=GeneDetailResponse, summary="Detail Gen Lengkap berdasarkan NCBI Gene ID")
 async def get_gene_by_id(
-    gene_id: int = Path(..., description="ID Gen numerik NCBI (mis. 4350572 untuk OsSWEET14, 4347178 untuk DEP1)")
+    gene_id: int = Path(..., description="ID Gen numerik NCBI (mis. 4324418 untuk OsDREB2A, 4337666 untuk OsLEA3-1)")
 ):
     """
     Mengambil laporan komprehensif gen padi dari NCBI Datasets v2 berdasarkan NCBI Gene ID,

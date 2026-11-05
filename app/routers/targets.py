@@ -11,7 +11,7 @@ router = APIRouter(prefix="/targets", tags=["Katalog Target Rekayasa Genetika Pa
 async def list_targets(
     category: Optional[str] = Query(
         None,
-        description="Filter berdasarkan kategori agronomi (mis. 'Penyakit (Bacterial Blight)', 'Produktivitas & Hasil Gabah (Yield)', 'Aroma & Kualitas Beras')"
+        description="Filter berdasarkan kategori agronomi (mis. 'Toleransi Kekeringan', 'Proteksi Membran', 'Regulasi Stomata')"
     )
 ):
     """
@@ -41,7 +41,7 @@ async def list_categories():
 
 @router.get("/{identifier}", summary="Detail Target Rekayasa Genetika + Integrasi Anotasi Live NCBI")
 async def get_target_detail(
-    identifier: str = Path(..., description="ID target (mis. os-sweet14, os-dep1, os-badh2) atau simbol (OsSWEET14, DEP1) atau Gene ID")
+    identifier: str = Path(..., description="ID target (mis. os-dreb2a, os-lea3-1, snac1) atau simbol (OsDREB2A, OsLEA3-1) atau Gene ID (4324418)")
 ):
     """
     Mengambil informasi target rekayasa genetika dan secara langsung menghubungkannya

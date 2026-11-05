@@ -41,7 +41,7 @@ app = FastAPI(
         },
         {
             "name": "Katalog Target Rekayasa Genetika Padi (CRISPR Targets)",
-            "description": "Koleksi target gen unggulan padi untuk rekayasa genetika (ketahanan hawar daun bakteri SWEET, hasil gabah DEP1/GS3, aroma Badh2, keamanan pangan OsNramp5, toleransi kekeringan OsDREB2A)."
+            "description": "Koleksi 10 gen target regulon respons kekeringan padi (OsDREB2A, OsDREB1A, OsDREB2B, OsLEA3-1, OsAREB1, OsP5CS1, OsSKIPa, SNAC1, OsDST, OsERF71) untuk rekayasa toleransi cekaman iklim El Niño."
         },
         {
             "name": "AI Chatbot",
