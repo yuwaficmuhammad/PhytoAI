@@ -380,22 +380,6 @@ HANYA jawab topik seputar riset rekayasa genetik OsDREB2A, pemodelan Transformer
         return createJsonResponse({{ status: "online", source: "client_embedded_engine" }});
       }}
 
-      // Handler navigasi beralih ke Mode Native Streamlit secara aman (tahan sandbox iframe)
-      window.openNativeDashboard = function(event) {{
-        if (event) {{
-          try {{ event.preventDefault(); event.stopPropagation(); }} catch (e) {{}}
-        }}
-        try {{
-          if (window.top && window.top !== window) {{
-            window.top.location.href = window.location.origin + window.location.pathname + '?view=native';
-            return;
-          }}
-        }} catch (e) {{
-          // Iframe sandbox memblokir top navigation di cloud Streamlit
-        }}
-        window.open('?view=native', '_blank');
-      }};
-
       // Monkey-patch window.fetch untuk mode offline / Streamlit Cloud
       const nativeFetch = window.fetch;
       window.fetch = async function(resource, init) {{
@@ -477,15 +461,5 @@ def build_standalone_studio_html() -> str:
         html = html.replace("</head>", f"{adapter_script}\n</head>")
     else:
         html = adapter_script + html
-
-    # 4. Tambahkan opsi switch ke Mode Native di sidebar Web Studio secara aman
-    native_nav_link = """
-        <div class="sidebar-section-title">Mode Alternatif</div>
-        <a class="sidebar-link" href="javascript:void(0)" onclick="openNativeDashboard(event)" style="color: #0284c7; font-weight: 600;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 3v18h18"/><path d="M18 9l-5 5-4-4-3 3"/></svg>
-          Dashboard Native Python
-        </a>
-      </nav>"""
-    html = html.replace("</nav>", native_nav_link, 1)
 
     return html

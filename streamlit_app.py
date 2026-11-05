@@ -339,15 +339,6 @@ if not is_native_mode:
             display: block;
         }
     </style>
-    <div style="position:fixed; top:10px; right:16px; z-index:9999999; display:flex; gap:8px; align-items:center; pointer-events:auto;">
-        <a href="/app/static/Panduan_Alur_Penelitian_Step_by_Step_A4.pdf" target="_blank" download="Panduan_Alur_Penelitian_Step_by_Step_A4.pdf" style="background:#059669; color:#ffffff; font-size:11.5px; font-weight:700; padding:6px 14px; border-radius:999px; text-decoration:none; box-shadow:0 2px 8px rgba(0,0,0,0.18); display:inline-flex; align-items:center; gap:6px; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; border:1px solid rgba(255,255,255,0.4); backdrop-filter:blur(4px);">
-            📥 Unduh PDF Alur Riset
-        </a>
-        <a href="?view=native" target="_self" style="background:#0284c7; color:#ffffff; font-size:11.5px; font-weight:700; padding:6px 14px; border-radius:999px; text-decoration:none; box-shadow:0 2px 8px rgba(0,0,0,0.18); display:inline-flex; align-items:center; gap:6px; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; border:1px solid rgba(255,255,255,0.4); backdrop-filter:blur(4px);">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 3v18h18"/><path d="M18 9l-5 5-4-4-3 3"/></svg>
-            Buka Dashboard Native Python
-        </a>
-    </div>
     <script>
     (function() {
         try {
@@ -372,19 +363,6 @@ if not is_native_mode:
 
 # ==================== 2. MODE DASHBOARD STREAMLIT NATIVE (?view=native) ====================
 else:
-    st.markdown(
-        """
-    <div style="position:fixed; top:10px; right:16px; z-index:9999999; display:flex; gap:8px; align-items:center; pointer-events:auto;">
-        <a href="/app/static/Panduan_Alur_Penelitian_Step_by_Step_A4.pdf" target="_blank" download="Panduan_Alur_Penelitian_Step_by_Step_A4.pdf" style="background:#059669; color:#ffffff; font-size:11.5px; font-weight:700; padding:6px 14px; border-radius:999px; text-decoration:none; box-shadow:0 2px 8px rgba(0,0,0,0.18); display:inline-flex; align-items:center; gap:6px; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; border:1px solid rgba(255,255,255,0.4); backdrop-filter:blur(4px);">
-            📥 Unduh PDF Alur Riset
-        </a>
-        <a href="?" target="_self" style="background:#0284c7; color:#ffffff; font-size:11.5px; font-weight:700; padding:6px 14px; border-radius:999px; text-decoration:none; box-shadow:0 2px 8px rgba(0,0,0,0.18); display:inline-flex; align-items:center; gap:6px; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; border:1px solid rgba(255,255,255,0.4); backdrop-filter:blur(4px);">
-            🖥️ Kembali ke Tampilan Web Studio
-        </a>
-    </div>
-    """,
-        unsafe_allow_html=True,
-    )
     with st.sidebar:
         st.markdown("### 🌾 PhytoAI-Genetics")
         st.caption("Mode Dashboard Native Python (Widgets & Pytest Live Runner)")
