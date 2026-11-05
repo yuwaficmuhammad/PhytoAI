@@ -124,6 +124,7 @@ async def favicon():
     return HTMLResponse(status_code=404)
 
 
+@app.get("/app/static/Panduan_Lengkap_PhytoAI_Genetics_A4.pdf", include_in_schema=False)
 @app.get("/download-tutorial-pdf", include_in_schema=False)
 @app.get("/Panduan_Lengkap_PhytoAI_Genetics_A4.pdf", include_in_schema=False)
 async def download_tutorial_pdf():
@@ -134,11 +135,12 @@ async def download_tutorial_pdf():
         return FileResponse(
             pdf_path,
             media_type="application/pdf",
-            headers={"Content-Disposition": "attachment; filename=Panduan_Lengkap_PhytoAI_Genetics_A4.pdf"}
+            headers={"Content-Disposition": "inline; filename=Panduan_Lengkap_PhytoAI_Genetics_A4.pdf"}
         )
     return HTMLResponse("Berkas PDF belum ditemukan.", status_code=404)
 
 
+@app.get("/app/static/Panduan_Alur_Penelitian_Step_by_Step_A4.pdf", include_in_schema=False)
 @app.get("/download-step-by-step-pdf", include_in_schema=False)
 @app.get("/Panduan_Alur_Penelitian_Step_by_Step_A4.pdf", include_in_schema=False)
 async def download_step_by_step_pdf():
@@ -149,7 +151,7 @@ async def download_step_by_step_pdf():
         return FileResponse(
             pdf_path,
             media_type="application/pdf",
-            headers={"Content-Disposition": "attachment; filename=Panduan_Alur_Penelitian_Step_by_Step_A4.pdf"}
+            headers={"Content-Disposition": "inline; filename=Panduan_Alur_Penelitian_Step_by_Step_A4.pdf"}
         )
     return HTMLResponse("Berkas PDF belum ditemukan.", status_code=404)
 

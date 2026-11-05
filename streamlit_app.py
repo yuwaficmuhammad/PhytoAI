@@ -47,6 +47,66 @@ from app.services.db_service import (
 from app.services.studio_bundle import build_standalone_studio_html
 
 
+def _register_direct_pdf_handlers():
+    """Mendaftarkan Tornado RequestHandler langsung pada instance web server Streamlit
+    sehingga URL /Panduan_Alur_Penelitian_Step_by_Step_A4.pdf dan /Panduan_Lengkap_PhytoAI_Genetics_A4.pdf
+    langsung mengunduh/menampilkan berkas PDF resmi tanpa terhalang routing SPA."""
+    try:
+        import gc
+        import os
+        import tornado.web
+
+        class DirectPdfRequestHandler(tornado.web.RequestHandler):
+            def initialize(self, default_file=None):
+                self.default_file = default_file
+
+            def set_default_headers(self):
+                self.set_header("Access-Control-Allow-Origin", "*")
+                self.set_header("Access-Control-Allow-Methods", "GET, OPTIONS")
+                self.set_header("Access-Control-Allow-Headers", "*")
+
+            def options(self, *args, **kwargs):
+                self.set_status(204)
+                self.finish()
+
+            def get(self, filename=None):
+                safe_name = os.path.basename(filename or self.default_file or "Panduan_Alur_Penelitian_Step_by_Step_A4.pdf")
+                pdf_file_path = os.path.join(ROOT_DIR, safe_name)
+                if not os.path.exists(pdf_file_path):
+                    alt_path = os.path.join(ROOT_DIR, "static", safe_name)
+                    if os.path.exists(alt_path):
+                        pdf_file_path = alt_path
+
+                if os.path.exists(pdf_file_path) and pdf_file_path.endswith(".pdf"):
+                    self.set_header("Content-Type", "application/pdf")
+                    self.set_header("Content-Disposition", f'inline; filename="{safe_name}"')
+                    self.set_header("Cache-Control", "public, max-age=3600")
+                    with open(pdf_file_path, "rb") as f:
+                        self.write(f.read())
+                else:
+                    self.set_status(404)
+                    self.write("Berkas PDF tidak ditemukan.")
+
+        for obj in gc.get_objects():
+            if isinstance(obj, tornado.web.Application):
+                if not getattr(obj, "_phytoai_pdf_handlers_registered", False):
+                    obj.add_handlers(
+                        r".*",
+                        [
+                            (r"/(Panduan_Alur_Penelitian_Step_by_Step_A4\.pdf)", DirectPdfRequestHandler),
+                            (r"/(Panduan_Lengkap_PhytoAI_Genetics_A4\.pdf)", DirectPdfRequestHandler),
+                            (r"/download-step-by-step-pdf", DirectPdfRequestHandler, {"default_file": "Panduan_Alur_Penelitian_Step_by_Step_A4.pdf"}),
+                            (r"/download-full-pdf", DirectPdfRequestHandler, {"default_file": "Panduan_Lengkap_PhytoAI_Genetics_A4.pdf"}),
+                        ]
+                    )
+                    obj._phytoai_pdf_handlers_registered = True
+    except Exception:
+        pass
+
+
+_register_direct_pdf_handlers()
+
+
 @st.cache_data
 def get_cached_studio_html() -> str:
     """Mengambil dokumen HTML Web Studio yang terkompilasi mandiri (di-cache in-memory)."""
@@ -195,6 +255,45 @@ url_params = getattr(st, "query_params", {})
 view_param = str(url_params.get("view", "")).lower()
 is_native_mode = (view_param == "native")
 
+# Cek apakah pengguna meminta berkas PDF langsung via query parameter
+pdf_req = str(url_params.get("pdf", url_params.get("download", ""))).lower()
+if pdf_req in ("step-by-step", "step", "1", "alur", "full", "panduan", "lengkap"):
+    is_step_target = pdf_req in ("step-by-step", "step", "1", "alur")
+    target_filename = "Panduan_Alur_Penelitian_Step_by_Step_A4.pdf" if is_step_target else "Panduan_Lengkap_PhytoAI_Genetics_A4.pdf"
+    target_path = STEP_PDF_PATH if is_step_target else PDF_PATH
+    target_title = "Panduan Alur Penelitian Step-by-Step A4" if is_step_target else "Dokumentasi Teknis Lengkap PhytoAI-Genetics A4"
+
+    st.markdown(f"## 📄 {target_title}")
+    st.caption("Berkas dokumen resmi panduan riset rekayasa genetik padi OsDREB2A dan mitigasi kekeringan InaRISK.")
+
+    if os.path.exists(target_path):
+        with open(target_path, "rb") as f:
+            pdf_bytes = f.read()
+        c1, c2 = st.columns([1, 1])
+        with c1:
+            st.download_button(
+                label=f"⬇️ Unduh Berkas ({round(len(pdf_bytes)/(1024*1024), 1)} MB)",
+                data=pdf_bytes,
+                file_name=target_filename,
+                mime="application/pdf",
+                use_container_width=True
+            )
+        with c2:
+            if st.button("🖥️ Kembali ke Aplikasi Web Studio", use_container_width=True):
+                if hasattr(st, "query_params"):
+                    st.query_params.clear()
+                st.rerun()
+
+        import base64
+        b64_pdf = base64.b64encode(pdf_bytes).decode("utf-8")
+        st.markdown(
+            f'<iframe src="data:application/pdf;base64,{b64_pdf}" width="100%" height="850" type="application/pdf" style="border-radius:10px; border:1px solid #cbd5e1; margin-top:16px;"></iframe>',
+            unsafe_allow_html=True
+        )
+    else:
+        st.error(f"Berkas {target_filename} belum ditemukan di server.")
+    st.stop()
+
 # ==================== 1. MODE TAMPILAN SAMA PERSIS DENGAN FASTAPI (DEFAULT) ====================
 if not is_native_mode:
     # Custom CSS untuk menyembunyikan header & sidebar Streamlit sepenuhnya (Seamless Fullscreen Studio)
@@ -241,7 +340,7 @@ if not is_native_mode:
         }
     </style>
     <div style="position:fixed; top:10px; right:16px; z-index:9999999; display:flex; gap:8px; align-items:center; pointer-events:auto;">
-        <a href="https://raw.githubusercontent.com/yuwaficmuhammad/PhytoAI/main/Panduan_Alur_Penelitian_Step_by_Step_A4.pdf" target="_blank" download="Panduan_Alur_Penelitian_Step_by_Step_A4.pdf" style="background:#059669; color:#ffffff; font-size:11.5px; font-weight:700; padding:6px 14px; border-radius:999px; text-decoration:none; box-shadow:0 2px 8px rgba(0,0,0,0.18); display:inline-flex; align-items:center; gap:6px; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; border:1px solid rgba(255,255,255,0.4); backdrop-filter:blur(4px);">
+        <a href="/app/static/Panduan_Alur_Penelitian_Step_by_Step_A4.pdf" target="_blank" download="Panduan_Alur_Penelitian_Step_by_Step_A4.pdf" style="background:#059669; color:#ffffff; font-size:11.5px; font-weight:700; padding:6px 14px; border-radius:999px; text-decoration:none; box-shadow:0 2px 8px rgba(0,0,0,0.18); display:inline-flex; align-items:center; gap:6px; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; border:1px solid rgba(255,255,255,0.4); backdrop-filter:blur(4px);">
             📥 Unduh PDF Alur Riset
         </a>
         <a href="?view=native" target="_self" style="background:#0284c7; color:#ffffff; font-size:11.5px; font-weight:700; padding:6px 14px; border-radius:999px; text-decoration:none; box-shadow:0 2px 8px rgba(0,0,0,0.18); display:inline-flex; align-items:center; gap:6px; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; border:1px solid rgba(255,255,255,0.4); backdrop-filter:blur(4px);">
@@ -249,6 +348,18 @@ if not is_native_mode:
             Buka Dashboard Native Python
         </a>
     </div>
+    <script>
+    (function() {
+        try {
+            var currentPath = (window.top || window).location.pathname || '';
+            if (currentPath.indexOf('Panduan_Alur_Penelitian_Step_by_Step_A4.pdf') !== -1) {
+                (window.top || window).location.replace('/app/static/Panduan_Alur_Penelitian_Step_by_Step_A4.pdf');
+            } else if (currentPath.indexOf('Panduan_Lengkap_PhytoAI_Genetics_A4.pdf') !== -1) {
+                (window.top || window).location.replace('/app/static/Panduan_Lengkap_PhytoAI_Genetics_A4.pdf');
+            }
+        } catch(e) {}
+    })();
+    </script>
     """,
         unsafe_allow_html=True,
     )
@@ -264,7 +375,7 @@ else:
     st.markdown(
         """
     <div style="position:fixed; top:10px; right:16px; z-index:9999999; display:flex; gap:8px; align-items:center; pointer-events:auto;">
-        <a href="https://raw.githubusercontent.com/yuwaficmuhammad/PhytoAI/main/Panduan_Alur_Penelitian_Step_by_Step_A4.pdf" target="_blank" download="Panduan_Alur_Penelitian_Step_by_Step_A4.pdf" style="background:#059669; color:#ffffff; font-size:11.5px; font-weight:700; padding:6px 14px; border-radius:999px; text-decoration:none; box-shadow:0 2px 8px rgba(0,0,0,0.18); display:inline-flex; align-items:center; gap:6px; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; border:1px solid rgba(255,255,255,0.4); backdrop-filter:blur(4px);">
+        <a href="/app/static/Panduan_Alur_Penelitian_Step_by_Step_A4.pdf" target="_blank" download="Panduan_Alur_Penelitian_Step_by_Step_A4.pdf" style="background:#059669; color:#ffffff; font-size:11.5px; font-weight:700; padding:6px 14px; border-radius:999px; text-decoration:none; box-shadow:0 2px 8px rgba(0,0,0,0.18); display:inline-flex; align-items:center; gap:6px; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; border:1px solid rgba(255,255,255,0.4); backdrop-filter:blur(4px);">
             📥 Unduh PDF Alur Riset
         </a>
         <a href="?" target="_self" style="background:#0284c7; color:#ffffff; font-size:11.5px; font-weight:700; padding:6px 14px; border-radius:999px; text-decoration:none; box-shadow:0 2px 8px rgba(0,0,0,0.18); display:inline-flex; align-items:center; gap:6px; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; border:1px solid rgba(255,255,255,0.4); backdrop-filter:blur(4px);">

@@ -54,3 +54,4 @@ def test_chat_success_mocked():
         assert "P168L" in data["reply"]
         assert data["model"] == "qwen/qwen3.8-27b"
         assert "Dr. Aris" in data["persona"]
+
