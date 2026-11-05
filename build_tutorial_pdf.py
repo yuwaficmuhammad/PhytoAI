@@ -123,7 +123,7 @@ class NumberedCanvas(canvas.Canvas):
             # Footer
             footer_page = f"Halaman {self._pageNumber} dari {page_count}"
             self.drawRightString(A4[0] - 36, 24, footer_page)
-            self.drawString(36, 24, "Kementerian Pendidikan Tinggi, Sains, dan Teknologi RI  |  Pusat Riset Bioteknologi Pangan")
+            self.drawString(36, 24, "Karya Periset MA Salafiyah Kajen Pati  |  Inovasi Bioteknologi & Genetika Komputasi Padi")
             self.setStrokeColor(HexColor("#cbd5e1"))
             self.setLineWidth(0.5)
             self.line(36, 33, A4[0] - 36, 33)
@@ -486,6 +486,10 @@ def build_pdf(output_path: str):
 
     # Metadata Cover Box
     cover_box = [
+        [
+            P("<b>Pengembang & Periset:</b>", ParagraphStyle('CB1', fontName='SegoeUI-Bold', fontSize=7.4, textColor=TEXT_MAIN)),
+            P("<b>Periset MA Salafiyah Kajen Pati</b> (Madrasah Aliyah Salafiyah Kajen, Margoyoso, Kabupaten Pati, Jawa Tengah).", ParagraphStyle('CB2', fontName='SegoeUI', fontSize=7.4, textColor=TEXT_MAIN))
+        ],
         [
             P("<b>Target Pengguna:</b>", ParagraphStyle('CB1', fontName='SegoeUI-Bold', fontSize=7.4, textColor=TEXT_MAIN)),
             P("Peneliti Bioteknologi Tanaman, Dosen Penguji, Mahasiswa Pascasarjana Pemuliaan Tanaman, Agronom.", ParagraphStyle('CB2', fontName='SegoeUI', fontSize=7.4, textColor=TEXT_MAIN))

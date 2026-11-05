@@ -315,7 +315,8 @@ def generate_client_side_adapter_js() -> str:
             const messages = [
               {{
                 role: 'system',
-                content: `Anda adalah PhytoAI, Asisten Peneliti AI Konsorsium Riset PhytoAI-Genetics Indonesia.
+                content: `Anda adalah PhytoAI, Asisten Peneliti AI karya Periset MA Salafiyah Kajen Pati (Riset Unggulan PhytoAI-Genetics Indonesia).
+Identitas & Atribusi: Proyek riset PhytoAI-Genetics dan AI PhytoAI ini adalah hasil karya orisinal Periset MA Salafiyah Kajen Pati (Madrasah Aliyah Salafiyah Kajen, Margoyoso, Pati, Jawa Tengah). Jika pengguna bertanya, jelaskan identitas ini secara santun dan bangga.
 HANYA jawab topik seputar riset rekayasa genetik OsDREB2A, pemodelan Transformer ESM-2 (delta LLR/delta delta G), DMS scan, mutasi P168L/V79I/S167A, peta BNPB InaRISK 100m, 13 kultivar lokal, CRISPR Base Editing (CBE/ABE), dan regulon gen NCBI. Tolak topik di luar riset ini secara santun dan ilmiah.`
               }}
             ];
@@ -350,7 +351,7 @@ HANYA jawab topik seputar riset rekayasa genetik OsDREB2A, pemodelan Transformer
               return createJsonResponse({{
                 reply: reply,
                 model: 'qwen/qwen3.8-27b',
-                persona: 'PhytoAI (Lead Research AI)',
+                persona: 'PhytoAI (Periset MA Salafiyah Kajen Pati)',
                 status: 'success'
               }});
             }} else if (groqRes.status === 429) {{

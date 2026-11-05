@@ -143,10 +143,11 @@ def call_groq_researcher(user_query: str, history: list) -> str:
     model = getattr(settings, "GROQ_MODEL", "qwen/qwen3.8-27b")
 
     system_prompt = (
-        "Anda adalah PhytoAI, Asisten Peneliti AI Konsorsium Riset PhytoAI-Genetics Indonesia. "
-        "FOKUS EKSKLUSIF: Anda HANYA boleh menjawab pertanyaan seputar proyek riset PhytoAI-Genetics: "
+        "Anda adalah PhytoAI, Asisten Peneliti AI & Pakar Genetika Komputasi karya Periset MA Salafiyah Kajen Pati (Riset Unggulan PhytoAI-Genetics Indonesia). "
+        "FOKUS EKSKLUSIF: Anda HANYA boleh menjawab pertanyaan seputar proyek riset inovasi PhytoAI-Genetics karya Periset MA Salafiyah Kajen Pati: "
         "OsDREB2A (NCBI Gene ID: 4324418), pemodelan Transformer ESM-2 (delta LLR / delta delta G), DMS scan, mutasi P168L / V79I / S167A, "
         "peta BNPB InaRISK 100m, 13 kultivar padi lokal, CRISPR Base Editing (CBE/ABE tanpa DSB), dan 10 gen regulon kekeringan NCBI. "
+        "Jika ditanya mengenai pengembang atau periset di balik proyek ini, tegaskan dengan santun dan bangga bahwa proyek riset dan AI ini adalah hasil karya orisinal Periset MA Salafiyah Kajen Pati (Madrasah Aliyah Salafiyah Kajen, Margoyoso, Pati, Jawa Tengah). "
         "Tolak topik di luar proyek riset ini secara santun dan ramah, lalu arahkan kembali ke ruang lingkup riset PhytoAI-Genetics."
     )
 
@@ -387,6 +388,13 @@ if not is_native_mode:
 else:
     with st.sidebar:
         st.markdown("### 🌾 PhytoAI-Genetics")
+        st.markdown(
+            """<div style="background: rgba(5,150,105,0.08); border: 1px solid rgba(5,150,105,0.25); border-radius: 8px; padding: 6px 10px; margin-bottom: 8px; font-size: 11px; font-weight: 700; color: #065f46; display: flex; align-items: center; gap: 6px;">
+            <span>🏛️</span>
+            <span>Karya Periset MA Salafiyah Kajen Pati</span>
+            </div>""",
+            unsafe_allow_html=True,
+        )
         st.caption("Mode Dashboard Native Python (Widgets & Pytest Live Runner)")
         st.markdown("---")
 
@@ -446,7 +454,7 @@ else:
                 use_container_width=True,
             )
 
-        st.caption("Kementerian Pendidikan Tinggi, Sains, dan Teknologi RI\nPusat Riset Bioteknologi Pangan")
+        st.caption("Karya Periset MA Salafiyah Kajen Pati (Pati, Jawa Tengah)\nInovasi Bioteknologi & Genetika Komputasi Padi Indonesia")
 
     # Custom CSS bertema alam ilmiah (#059669)
     st.markdown(
@@ -509,6 +517,12 @@ else:
     # 1. TAB BERANDA
     with tab_overview:
         st.markdown("<div class='main-title'>🌾 PhytoAI-Genetics Studio</div>", unsafe_allow_html=True)
+        st.markdown(
+            """<div style="background: linear-gradient(90deg, #ecfdf5 0%, #f0fdf4 100%); border-left: 4px solid #059669; border-radius: 6px; padding: 10px 14px; margin-bottom: 12px; color: #065f46; font-size: 13px;">
+            <strong>🏛️ Inovasi Riset Unggulan:</strong> Proyek riset dan platform PhytoAI-Genetics ini adalah hasil karya orisinal <strong>Periset MA Salafiyah Kajen Pati</strong> (Madrasah Aliyah Salafiyah Kajen, Margoyoso, Pati, Jawa Tengah).
+            </div>""",
+            unsafe_allow_html=True,
+        )
         st.markdown(
             "<div class='sub-title'>Platform bioinformatika kecerdasan buatan terintegrasi untuk akselerasi perakitan padi tahan kekeringan El Nino berbasis Transformer pLM, CRISPR Base Editing, dan Data Geospasial InaRISK BNPB.</div>",
             unsafe_allow_html=True,
@@ -1169,13 +1183,13 @@ else:
 
         st.markdown("---")
         st.markdown("### 💬 Konsultasi AI Riset: PhytoAI (Groq Qwen-27B)")
-        st.caption("Diskusikan aspek rekayasa genetika OsDREB2A, pemodelan Transformer ESM-2, mutasi P168L/V79I, CRISPR Base Editing, dan InaRISK langsung dengan Asisten AI Riset.")
+        st.caption("Karya Periset MA Salafiyah Kajen Pati • Diskusikan aspek rekayasa genetika OsDREB2A, pemodelan Transformer ESM-2, mutasi P168L/V79I, CRISPR Base Editing, dan InaRISK langsung dengan Asisten AI Riset.")
 
         if "native_chat_history" not in st.session_state:
             st.session_state.native_chat_history = [
                 {
                     "role": "assistant",
-                    "content": "Salam sejawat! Saya **PhytoAI**, Asisten Peneliti AI Konsorsium PhytoAI-Genetics. Saya siap mendampingi Anda menganalisis rekayasa genetika OsDREB2A, mutasi P168L/V79I, CRISPR Base Editing, dan mitigasi risiko InaRISK. Silakan ajukan pertanyaan seputar riset ini!"
+                    "content": "Salam sejawat! Saya **PhytoAI**, Asisten Peneliti AI karya **Periset MA Salafiyah Kajen Pati** (PhytoAI-Genetics). Saya siap mendampingi Anda menganalisis rekayasa genetika OsDREB2A, mutasi P168L/V79I, CRISPR Base Editing, dan mitigasi risiko InaRISK. Silakan ajukan pertanyaan seputar riset ini!"
                 }
             ]
 

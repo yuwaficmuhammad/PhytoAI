@@ -1,6 +1,8 @@
 # 🌾 PhytoAI-Genetics: Transformer Modeling of DREB2A Mutations and Drought Tolerance in Local Rice (Oryza sativa)
 ### *Bioinformatics & Machine Learning Platform for DREB2A Mutation Modeling, CRISPR Base Editing, and Spatial InaRISK BNPB Integration across Indonesian Rice Agroecosystems consuming NCBI Datasets v2 REST API*
 
+> 🏛️ **Atribusi Riset**: Proyek penelitian, platform pemodelan genomik, dan AI PhytoAI ini adalah hasil karya orisinal **Periset MA Salafiyah Kajen Pati** (Madrasah Aliyah Salafiyah Kajen, Margoyoso, Kabupaten Pati, Jawa Tengah).
+
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.128+-009688.svg?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![NCBI Datasets](https://img.shields.io/badge/NCBI%20Datasets-v2%20API-0071bc.svg)](https://www.ncbi.nlm.nih.gov/datasets/docs/v2/api/)
 [![Python](https://img.shields.io/badge/Python-3.9%2B-blue.svg?logo=python&logoColor=white)](https://python.org)
@@ -131,6 +133,7 @@ pytest tests/test_live_integration.py -v
 
 ## 📜 Lisensi & Atribusi
 
-- Data genomika bersumber langsung dari **National Center for Biotechnology Information (NCBI) Datasets v2 REST API**.
-- Data spasial risiko kekeringan bersumber dari **BNPB InaRISK Indonesia** (`gis.bnpb.go.id`).
-- Dibuat untuk mendukung riset bioteknologi dan pemuliaan tanaman padi modern berketahanan iklim.
+- **Karya Orisinal**: Periset **MA Salafiyah Kajen Pati** (Pati, Jawa Tengah).
+- **Data Genomika**: Bersumber langsung dari **National Center for Biotechnology Information (NCBI) Datasets v2 REST API**.
+- **Data Spasial Kekeringan**: Bersumber dari **BNPB InaRISK Indonesia** (`gis.bnpb.go.id`).
+- Didedikasikan untuk mendukung riset bioteknologi, ketahanan pangan nasional, dan pemuliaan tanaman padi modern berketahanan iklim ekstrem di Indonesia.

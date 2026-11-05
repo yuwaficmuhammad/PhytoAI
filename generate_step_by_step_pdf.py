@@ -125,7 +125,7 @@ class StepByStepNumberedCanvas(canvas.Canvas):
         # Footer (Semua halaman)
         footer_page = f"Halaman {self._pageNumber} dari {page_count}"
         self.drawRightString(A4[0] - 36, 24, footer_page)
-        self.drawString(36, 24, "Kementerian Pendidikan Tinggi, Sains, dan Teknologi RI  |  Pusat Riset Bioteknologi Pangan")
+        self.drawString(36, 24, "Karya Periset MA Salafiyah Kajen Pati  |  Inovasi Riset PhytoAI-Genetics Indonesia")
         self.setStrokeColor(HexColor("#cbd5e1"))
         self.setLineWidth(0.5)
         self.line(36, 33, A4[0] - 36, 33)
@@ -385,9 +385,10 @@ def build_step_by_step_pdf(output_path: str):
     # Banner Header Lembaga
     header_box = Table([
         [
-            Paragraph("<b>KEMENTERIAN PENDIDIKAN TINGGI, SAINS, DAN TEKNOLOGI REPUBLIK INDONESIA</b><br/>"
-                      "<font size='7.5' color='#64748b'>Pusat Riset Bioteknologi Pangan & Konsorsium Genomika Pertanian Tropis</font>",
-                      ParagraphStyle('GovHeader', fontName='SegoeUI-Bold', fontSize=8.5, leading=12, textColor=PRIMARY_DARK, alignment=TA_LEFT)),
+            Paragraph("<b>MADRASAH ALIYAH SALAFIYAH KAJEN PATI (MA SALAFIYAH)</b><br/>"
+                      "<font size='7.5' color='#059669'><b>Laboratorium Riset Bioteknologi & Komputasi Genomika Padi</b></font><br/>"
+                      "<font size='7' color='#64748b'>Kajen, Margoyoso, Kabupaten Pati, Jawa Tengah</font>",
+                      ParagraphStyle('GovHeader', fontName='SegoeUI-Bold', fontSize=8.5, leading=11, textColor=PRIMARY_DARK, alignment=TA_LEFT)),
             Paragraph("<font size='7.5' color='#059669'><b>DOKUMEN TEKNIS RESMI</b></font><br/>"
                       "<font size='7' color='#64748b'>Kode: PB-PHYTOAI-2026/A4</font>",
                       ParagraphStyle('GovDocId', fontName='SegoeUI', fontSize=8, leading=11, alignment=TA_RIGHT))
@@ -740,13 +741,13 @@ def build_step_by_step_pdf(output_path: str):
     # Closing Signature Table
     sig_table = Table([
         [
-            Paragraph("Disusun dan Diverifikasi Oleh:<br/>"
-                      "<b>Tim Peneliti Komputasi Genomika Padi</b><br/>"
-                      "Konsorsium Riset PhytoAI-Genetics RI",
+            Paragraph("Karya Inovasi Riset Disusun Oleh:<br/>"
+                      "<b>Tim Periset MA Salafiyah Kajen Pati</b><br/>"
+                      "Madrasah Aliyah Salafiyah Kajen, Pati, Jawa Tengah",
                       ParagraphStyle('SigL', fontName='SegoeUI', fontSize=7.5, leading=11, textColor=TEXT_MAIN)),
-            Paragraph("Mengetahui & Menyetujui:<br/>"
-                      "<b>Pusat Riset Bioteknologi Pangan</b><br/>"
-                      "Kementerian Pendidikan Tinggi, Sains, dan Teknologi RI",
+            Paragraph("Platform & Asisten Riset AI:<br/>"
+                      "<b>PhytoAI-Genetics Research Suite</b><br/>"
+                      "Karya Orisinal Periset MA Salafiyah Kajen Pati",
                       ParagraphStyle('SigR', fontName='SegoeUI', fontSize=7.5, leading=11, textColor=TEXT_MAIN, alignment=TA_RIGHT))
         ]
     ], colWidths=[printable_width/2, printable_width/2], style=[

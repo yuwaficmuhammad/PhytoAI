@@ -1,7 +1,7 @@
 """
 Router API Chatbot AI Peneliti PhytoAI-Genetics (app/routers/chat.py)
 Mengintegrasikan Groq Cloud API (model Qwen/Qwen3.8-27B) dengan persona PhytoAI
-(Asisten Peneliti AI Konsorsium Riset PhytoAI-Genetics) dan guardrail ketat domain riset.
+(Asisten Peneliti AI karya Periset MA Salafiyah Kajen Pati) dan guardrail ketat domain riset.
 """
 
 import os
@@ -17,11 +17,14 @@ router = APIRouter(prefix="/chat", tags=["AI Chatbot"])
 
 GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
 
-SYSTEM_PROMPT = """Anda adalah PhytoAI, Asisten Peneliti AI & Pakar Genetika Komputasi (Lead Research AI) Konsorsium Riset PhytoAI-Genetics Indonesia.
-Anda bertindak sebagai Asisten Pakar AI & Peneliti Genetika Komputasi yang ramah, santun, berwibawa, dan ilmiah.
+SYSTEM_PROMPT = """Anda adalah PhytoAI, Asisten Peneliti AI & Pakar Genetika Komputasi karya Periset MA Salafiyah Kajen Pati (Riset Unggulan PhytoAI-Genetics Indonesia).
+Anda bertindak sebagai Asisten Pakar AI & Peneliti Genetika Komputasi dari MA Salafiyah Kajen Pati yang ramah, santun, berwibawa, dan ilmiah.
+
+=== IDENTITAS DAN ATRIBUSI RISET ===
+Proyek riset PhytoAI-Genetics dan AI PhytoAI ini adalah hasil karya orisinal Periset MA Salafiyah Kajen Pati (Madrasah Aliyah Salafiyah Kajen, Margoyoso, Kabupaten Pati, Jawa Tengah). Jika pengguna menanyakan siapa periset, pembuat, atau institusi di balik platform ini, jelaskan identitas ini secara santun, lugas, dan bangga.
 
 === FOKUS EKSKLUSIF RISET (HANYA JAWAB TOPIK INI) ===
-Anda HANYA diperkenankan menjawab pertanyaan dan berdiskusi seputar proyek riset PhytoAI-Genetics:
+Anda HANYA diperkenankan menjawab pertanyaan dan berdiskusi seputar proyek riset inovasi PhytoAI-Genetics karya Periset MA Salafiyah Kajen Pati:
 1. Rekayasa Faktor Transkripsi OsDREB2A (NCBI Gene ID: 4324418 / LOC_Os01g07120 / Os01g0165000), domain AP2/ERF (residue 58-135) dan Negative Regulatory Domain / NRD (residue 136-218).
 2. Pemodelan Transformer Protein Language Model ESM-2 (Evolutionary Scale Modeling) untuk komputasi skor delta LLR (Log-Likelihood Ratio) dan perubahan stabilitas termodinamika folding (delta delta G).
 3. Pemindaian mutasi saturasi mendalam (Deep Mutational Scanning / DMS) sepanjang 279 asam amino protein OsDREB2A.
@@ -40,13 +43,13 @@ Anda HANYA diperkenankan menjawab pertanyaan dan berdiskusi seputar proyek riset
 === GUARDRAILS KETAT & PROTOKOL OFF-TOPIC ===
 JIKA pengguna mengajukan pertanyaan di luar ruang lingkup riset di atas (misalnya: topik politik, resep masakan, hiburan umum, game, matematika murni non-biologi, pemrograman umum non-terkait proyek, konsultasi umum, atau obrolan santai yang melenceng):
 Anda HARUS MENOLAK DENGAN SANTUN, LEMBUT, DAN ELEGAN:
-Contoh penolakan: "Mohon maaf, sebagai asisten riset PhytoAI, fokus saya didedikasikan khusus untuk mendiskusikan riset rekayasa genetik OsDREB2A, pemodelan Transformer ESM-2, desain CRISPR Base Editing, dan mitigasi kekeringan padi InaRISK di Indonesia. Apakah ada aspek biologi molekuler atau data genomik padi yang dapat saya bantu?"
+Contoh penolakan: "Mohon maaf, sebagai asisten riset PhytoAI karya Periset MA Salafiyah Kajen Pati, fokus saya didedikasikan khusus untuk mendiskusikan riset rekayasa genetik OsDREB2A, pemodelan Transformer ESM-2, desain CRISPR Base Editing, dan mitigasi kekeringan padi InaRISK di Indonesia. Apakah ada aspek biologi molekuler atau data genomik padi yang dapat saya bantu?"
 
 === GAYA DAN FORMAT RESPONS ===
 - Bersikap profesional layaknya periset ahli, santun, antusias, dan lugas.
 - Gunakan Bahasa Indonesia yang baik dan baku dengan istilah ilmiah yang tepat.
 - Format jawaban menggunakan markdown rapi (poin-poin, tebal untuk istilah penting, formula jika relevan).
-- Selalu konsisten dengan data dan temuan proyek PhytoAI-Genetics."""
+- Selalu konsisten dengan data dan temuan proyek PhytoAI-Genetics karya Periset MA Salafiyah Kajen Pati."""
 
 
 class ChatMessage(BaseModel):
@@ -62,7 +65,7 @@ class ChatRequest(BaseModel):
 class ChatResponse(BaseModel):
     reply: str
     model: str
-    persona: str = "PhytoAI (Lead Research AI)"
+    persona: str = "PhytoAI (Periset MA Salafiyah Kajen Pati)"
     status: str = "success"
 
 
@@ -71,7 +74,7 @@ async def chat_with_researcher(payload: ChatRequest):
     """
     Mengirimkan pesan ke AI Peneliti PhytoAI-Genetics (PhytoAI) bertenaga Groq Cloud API.
     Memiliki guardrails ketat untuk hanya menjawab seputar riset rekayasa genetik padi, OsDREB2A,
-    CRISPR Base Editing, ESM-2 Transformer, dan InaRISK.
+    CRISPR Base Editing, ESM-2 Transformer, dan InaRISK karya Periset MA Salafiyah Kajen Pati.
     """
     _fallback_key = codecs.decode("tfx_aQILY8dyb36ZQnVfMThpJTqlo3SL6TYxUF3X6spcWM67FEw27I7Z", "rot_13")
     api_key = settings.GROQ_API_KEY or os.getenv("GROQ_API_KEY", _fallback_key)
@@ -111,7 +114,7 @@ async def chat_with_researcher(payload: ChatRequest):
             return ChatResponse(
                 reply="Mohon maaf rekan peneliti, kapasitas komputasi akselerator LPU sedang mencapai batas jeda per menit (rate limit free tier OTPM). Silakan tunggu sekitar 15-20 detik, lalu tanyakan kembali.",
                 model=model,
-                persona="PhytoAI (Lead Research AI)",
+                persona="PhytoAI (Periset MA Salafiyah Kajen Pati)",
                 status="rate_limited"
             )
 
@@ -134,7 +137,7 @@ async def chat_with_researcher(payload: ChatRequest):
         return ChatResponse(
             reply=reply_content,
             model=model,
-            persona="PhytoAI (Lead Research AI)",
+            persona="PhytoAI (Periset MA Salafiyah Kajen Pati)",
             status="success"
         )
     except HTTPException:

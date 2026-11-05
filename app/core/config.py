@@ -18,8 +18,8 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = "PhytoAI-Genetics: Transformer Modeling of DREB2A Mutations and Drought Tolerance in Local Rice (Oryza sativa)"
     VERSION: str = "1.0.0"
     DESCRIPTION: str = (
-        "Platform bioinformatika dan AI berbasis model Transformer (pLM) untuk memodelkan mutasi OsDREB2A, "
-        "pemetaan domain AP2/NRD, desain CRISPR Base Editing, dan integrasi risiko kekeringan spasial BNPB InaRISK "
+        "Platform bioinformatika dan AI berbasis model Transformer (pLM) karya Periset MA Salafiyah Kajen Pati "
+        "untuk memodelkan mutasi OsDREB2A, pemetaan domain AP2/NRD, desain CRISPR Base Editing, dan integrasi risiko kekeringan spasial BNPB InaRISK "
         "di seluruh agroekosistem padi Indonesia yang mengonsumsi NCBI Datasets v2 API."
     )
     
