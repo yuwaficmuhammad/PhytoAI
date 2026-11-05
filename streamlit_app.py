@@ -17,6 +17,14 @@ ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 if ROOT_DIR not in sys.path:
     sys.path.insert(0, ROOT_DIR)
 
+# Pastikan modul 'app' terimpor stabil dan aman dari race condition reload di Streamlit Cloud
+try:
+    import app
+except KeyError:
+    if "app" in sys.modules:
+        del sys.modules["app"]
+    import app
+
 try:
     import pandas as pd
     HAS_PANDAS = True
@@ -45,6 +53,16 @@ from app.services.db_service import (
     get_db_crispr_guides
 )
 from app.services.studio_bundle import build_standalone_studio_html
+
+
+def render_iframe(html_content: str, height: int = 600, scrolling: bool = True):
+    """Merender konten HTML/iframe secara kompatibel di Streamlit versi baru (st.iframe) maupun lama (st.components.v1.html)."""
+    if hasattr(st, "iframe"):
+        try:
+            return st.iframe(html_content, height=height)
+        except Exception:
+            pass
+    return components.html(html_content, height=height, scrolling=scrolling)
 
 
 def _register_direct_pdf_handlers():
@@ -360,9 +378,9 @@ if not is_native_mode:
     )
 
     # Embed aplikasi web studio FastAPI secara utuh, mandiri, dan responsif
-    # Menggunakan components.html() agar berjalan 100% sempurna di localhost maupun cloud share.streamlit.io
+    # Menggunakan render_iframe() agar berjalan 100% sempurna di localhost maupun cloud share.streamlit.io (bebas peringatan deprecation)
     studio_html = get_cached_studio_html()
-    components.html(studio_html, height=1200, scrolling=True)
+    render_iframe(studio_html, height=1200, scrolling=True)
 
 
 # ==================== 2. MODE DASHBOARD STREAMLIT NATIVE (?view=native) ====================
@@ -672,7 +690,7 @@ else:
 
         # Komponen Peta Interaktif Leaflet.js
         st.markdown("#### 📍 Tampilan Peta Spasial Indonesia (Leaflet GIS):")
-        components.html(get_inarisk_leaflet_html(center_lat=lat, center_lon=lon, zoom=6), height=470)
+        render_iframe(get_inarisk_leaflet_html(center_lat=lat, center_lon=lon, zoom=6), height=470)
 
         f1 = get_image_path("indonesia_rice_agroecosystem.png")
         f2 = get_image_path("rice_drought_vertisol_field.png")
@@ -912,7 +930,7 @@ else:
                 "let activeMutationKey = urlParams.get('mut') || 'P168L';",
                 f"let activeMutationKey = '{selected_mut_key}';",
             )
-            components.html(html_code, height=720, scrolling=False)
+            render_iframe(html_code, height=720, scrolling=False)
         else:
             st.warning("File aset simulasi 3D (`crispr_3d.html`) sedang disiapkan.")
 
@@ -1061,7 +1079,7 @@ else:
 
         with st.expander("📌 Alur Kerja Riset 5 Tahap PhytoAI-Genetics", expanded=True):
             st.markdown(
-                """
+                r"""
             1. **Tahap 1 (In Silico - InaRISK & AI)**: Pemetaan kerentanan geospasial resolusi 100m dan evaluasi skor termodinamika mutasi menggunakan model Transformer pLM ($\Delta$LLR).
             2. **Tahap 2 (Desain Presisi CRISPR Base Editing)**: Pemilihan enzim deaminase (CBE/ABE) dan perancangan sgRNA 20-nt dari CDS NCBI dengan verifikasi bebas off-target & terminator Pol III.
             3. **Tahap 3 (Validasi In Vitro)**: Uji aktivitas deaminasi rekombinan dan efisiensi konversi basa C $\rightarrow$ T atau A $\rightarrow$ G pada oligonukleotida target.
@@ -1072,29 +1090,29 @@ else:
 
         with st.expander("📐 4 Formula Biofisika Komputasi"):
             st.markdown(
-                """
+                r"""
             * **Formula 1: Delta Log-Likelihood Ratio (ΔLLR) & Stabilitas Konformasi:**
-              $$\Delta\\text{LLR} = \\log P(x_{\\text{mut}} \\mid \\mathbf{x}_{\\backslash i}) - \\log P(x_{\\text{wt}} \\mid \\mathbf{x}_{\\backslash i}) \\propto -\\frac{\Delta\Delta G}{k_B T}$$
+              $$\Delta\text{LLR} = \log P(x_{\text{mut}} \mid \mathbf{x}_{\backslash i}) - \log P(x_{\text{wt}} \mid \mathbf{x}_{\backslash i}) \propto -\frac{\Delta\Delta G}{k_B T}$$
               *Nilai positif mengindikasikan mutasi disukai secara termodinamika dan meningkatkan stabilitas protein.*
 
             * **Formula 2: Jarak Geodesik Haversine & Indeks Bahaya InaRISK:**
-              $$d = 2R \\arcsin \\sqrt{\\sin^2\\left(\\frac{\Delta\\phi}{2}\\right) + \\cos\\phi_1 \\cos\\phi_2 \\sin^2\\left(\\frac{\Delta\\lambda}{2}\\right)}$$
-              $$H_{\\text{coord}} = H_{\\text{cluster}} \\cdot \\exp(-0.005 \\cdot d) \\cdot I_{\\text{soil}}$$
+              $$d = 2R \arcsin \sqrt{\sin^2\left(\frac{\Delta\phi}{2}\right) + \cos\phi_1 \cos\phi_2 \sin^2\left(\frac{\Delta\lambda}{2}\right)}$$
+              $$H_{\text{coord}} = H_{\text{cluster}} \cdot \exp(-0.005 \cdot d) \cdot I_{\text{soil}}$$
 
             * **Formula 3: Termodinamika SantaLucia Nearest-Neighbor Melting Temperature ($T_m$):**
-              $$T_m = \\frac{\Delta H^\\circ}{\Delta S^\\circ + R \\ln([C]/4)} - 273.15 + 16.6 \\log_{10}[\\text{Na}^+]$$
-              $$\\text{GC}\\% = \\frac{\\text{Count}(G) + \\text{Count}(C)}{\\text{Length}(\\text{sgRNA})} \\times 100\\%$$
+              $$T_m = \frac{\Delta H^\circ}{\Delta S^\circ + R \ln([C]/4)} - 273.15 + 16.6 \log_{10}[\text{Na}^+]$$
+              $$\text{GC}\% = \frac{\text{Count}(G) + \text{Count}(C)}{\text{Length}(\text{sgRNA})} \times 100\%$$
 
             * **Formula 4: Jendela Efisiensi Deaminasi Base Editing (Posisi 4–8 Protospacer):**
-              $$E_{\\text{edit}}(p) = E_0 \\cdot \\exp\\left(-\\frac{(p - p_{\\text{opt}})^2}{2\\sigma^2}\\right) \\cdot (1 - P_{\\text{bystander}})$$
+              $$E_{\text{edit}}(p) = E_0 \cdot \exp\left(-\frac{(p - p_{\text{opt}})^2}{2\sigma^2}\right) \cdot (1 - P_{\text{bystander}})$$
             """
             )
 
         with st.expander("🎓 10 Simulasi Tanya Jawab Kritis Sidang Dewan Penguji (Master Defense Q&A)"):
             st.markdown(
-                """
+                r"""
             **1. Apakah padi hasil rekayasa ini termasuk produk transgenik (GMO) dan bagaimana status regulasinya?**  
-            *Bukan, Bapak/Ibu Penguji. Pendekatan ini menggunakan CRISPR Base Editing (CBE/ABE) yang hanya menukar satu pasang basa endogen (misal C $\\rightarrow$ T pada kodon 168). Tidak ada DNA asing terintegrasi permanen, sehingga menurut pedoman KKH PRG diklasifikasikan sebagai non-transgenik konvensional (SDN-1).*
+            *Bukan, Bapak/Ibu Penguji. Pendekatan ini menggunakan CRISPR Base Editing (CBE/ABE) yang hanya menukar satu pasang basa endogen (misal C $\rightarrow$ T pada kodon 168). Tidak ada DNA asing terintegrasi permanen, sehingga menurut pedoman KKH PRG diklasifikasikan sebagai non-transgenik konvensional (SDN-1).*
 
             **2. Bagaimana model AI Transformer pLM memvalidasi bahwa mutasi P168L tidak merusak konformasi protein?**  
             *Model pLM mengevaluasi ruang urutan evolusi protein. Mutasi P168L pada domain NRD menghasilkan skor $\Delta$LLR positif (+1.85), membuktikan substitusi Leusin disukai secara biofisika dan mencegah pengikatan ubiquitin tanpa merusak lipatan DNA-binding AP2.*
