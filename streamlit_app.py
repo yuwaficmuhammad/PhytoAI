@@ -132,23 +132,33 @@ def get_cached_studio_html() -> str:
 
 
 def call_groq_researcher(user_query: str, history: list) -> str:
-    """Memanggil AI Peneliti PhytoAI-Genetics via Groq API (Qwen-27B) dengan persona dan guardrail riset ketat."""
+    """Memanggil AI Peneliti PhytoAI-Genetics via Groq API dengan persona, guardrail riset, dan format jawaban tuntas."""
     import json
     import urllib.request
     from app.core.config import settings
-
     import codecs
+
     _fallback_key = codecs.decode("tfx_aQILY8dyb36ZQnVfMThpJTqlo3SL6TYxUF3X6spcWM67FEw27I7Z", "rot_13")
     api_key = getattr(settings, "GROQ_API_KEY", None) or os.getenv("GROQ_API_KEY", _fallback_key)
-    model = getattr(settings, "GROQ_MODEL", "qwen/qwen3.8-27b")
+    primary_model = getattr(settings, "GROQ_MODEL", "openai/gpt-oss-20b")
+    fallback_model = "qwen/qwen3.8-27b"
 
     system_prompt = (
-        "Anda adalah PhytoAI, Asisten Peneliti AI & Pakar Genetika Komputasi karya Periset MA Salafiyah Kajen Pati (Riset Unggulan PhytoAI-Genetics Indonesia). "
-        "FOKUS EKSKLUSIF: Anda HANYA boleh menjawab pertanyaan seputar proyek riset inovasi PhytoAI-Genetics karya Periset MA Salafiyah Kajen Pati: "
-        "OsDREB2A (NCBI Gene ID: 4324418), pemodelan Transformer ESM-2 (delta LLR / delta delta G), DMS scan, mutasi P168L / V79I / S167A, "
+        "Anda adalah PhytoAI, Asisten Peneliti AI & Pakar Genetika Komputasi karya Periset MA Salafiyah Kajen Pati (Riset Unggulan PhytoAI-Genetics Indonesia).\n\n"
+        "=== IDENTITAS RISET ===\n"
+        "Proyek riset PhytoAI-Genetics dan AI PhytoAI ini adalah hasil karya orisinal Periset MA Salafiyah Kajen Pati (Madrasah Aliyah Salafiyah Kajen, Margoyoso, Pati, Jawa Tengah). Tegaskan identitas ini dengan santun, lugas, dan bangga jika ditanyakan.\n\n"
+        "=== FOKUS EKSKLUSIF RISET ===\n"
+        "Anda HANYA boleh menjawab pertanyaan seputar proyek riset PhytoAI-Genetics: "
+        "rekayasa OsDREB2A (NCBI Gene ID: 4324418), pemodelan Transformer ESM-2 (delta LLR / delta delta G), DMS scan, mutasi P168L / V79I / S167A, "
         "peta BNPB InaRISK 100m, 13 kultivar padi lokal, CRISPR Base Editing (CBE/ABE tanpa DSB), dan 10 gen regulon kekeringan NCBI. "
-        "Jika ditanya mengenai pengembang atau periset di balik proyek ini, tegaskan dengan santun dan bangga bahwa proyek riset dan AI ini adalah hasil karya orisinal Periset MA Salafiyah Kajen Pati (Madrasah Aliyah Salafiyah Kajen, Margoyoso, Pati, Jawa Tengah). "
-        "Tolak topik di luar proyek riset ini secara santun dan ramah, lalu arahkan kembali ke ruang lingkup riset PhytoAI-Genetics."
+        "Tolak topik di luar proyek riset ini secara santun dan ramah.\n\n"
+        "=== PEDOMAN STRUKTUR & KELENGKAPAN JAWABAN ===\n"
+        "1. JAWABAN TUNTAS & SELESAI SEMPURNA: Jawaban WAJIB tuntas hingga kalimat penutup/kesimpulan. JANGAN PERNAH memotong kalimat atau membiarkan daftar/tabel menggantung di akhir.\n"
+        "2. BATASAN PANJANG & KEPADATAN ILMIAH: Berikan penjelasan padat, bernas, dan fokus (maksimal 3 bagian ringkas atau 300-400 kata):\n"
+        "   - Bagian 1: Ringkasan konsep ilmiah & fungsi biologisnya.\n"
+        "   - Bagian 2: Rincian mekanisme/data dengan tabel perbandingan ringkas (maksimal 3-4 baris kunci).\n"
+        "   - Bagian 3: Kesimpulan penutup yang utuh dan berbobot ilmiah.\n"
+        "3. FORMAT TERSUSUN RAPI & ELEGAN: Gunakan heading singkat (###), tabel markdown ringkas (| Kolom 1 | Kolom 2 |), bullet point, dan cetak tebal (**istilah**) untuk gen, mutasi, dan parameter biofisika."
     )
 
     messages = [{"role": "system", "content": system_prompt}]
@@ -157,32 +167,45 @@ def call_groq_researcher(user_query: str, history: list) -> str:
             messages.append({"role": h["role"], "content": h["content"]})
     messages.append({"role": "user", "content": user_query})
 
-    payload = json.dumps({
-        "model": model,
-        "messages": messages,
-        "max_tokens": 500,
-        "temperature": 0.3
-    }).encode("utf-8")
+    models_to_try = [
+        (primary_model, 1400),
+        (fallback_model, 750) if fallback_model != primary_model else ("openai/gpt-oss-120b", 1200)
+    ]
 
-    req = urllib.request.Request(
-        "https://api.groq.com/openai/v1/chat/completions",
-        data=payload,
-        headers={
-            "Authorization": f"Bearer {api_key}",
-            "Content-Type": "application/json",
-            "User-Agent": "PhytoAI/1.0"
-        }
-    )
-    try:
-        with urllib.request.urlopen(req, timeout=30) as resp:
-            data = json.loads(resp.read().decode("utf-8"))
-            return data["choices"][0]["message"]["content"]
-    except urllib.error.HTTPError as he:
-        if he.code == 429:
-            return "Mohon maaf rekan peneliti, kapasitas komputasi LPU sedang mencapai batas jeda per menit (rate limit free tier OTPM). Silakan tunggu sekitar 15-20 detik, lalu tanyakan kembali."
-        return f"Kendala akses AI Groq ({he.code}): {he.reason}"
-    except Exception as e:
-        return f"Mohon maaf, terjadi kendala saat menghubungi kluster AI Groq: {str(e)}"
+    last_error = ""
+    for model_name, max_tokens in models_to_try:
+        payload = json.dumps({
+            "model": model_name,
+            "messages": messages,
+            "max_tokens": max_tokens,
+            "temperature": 0.25
+        }).encode("utf-8")
+
+        req = urllib.request.Request(
+            "https://api.groq.com/openai/v1/chat/completions",
+            data=payload,
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json",
+                "User-Agent": "PhytoAI/1.0"
+            }
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=35) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+                return data["choices"][0]["message"]["content"]
+        except urllib.error.HTTPError as he:
+            if he.code == 429:
+                last_error = "Rate limit (429)"
+                continue
+            last_error = f"HTTP {he.code}: {he.reason}"
+        except Exception as e:
+            last_error = str(e)
+            continue
+
+    if "429" in last_error or "Rate limit" in last_error:
+        return "Mohon maaf rekan peneliti, kapasitas komputasi LPU sedang mencapai batas jeda per menit (rate limit free tier OTPM). Silakan tunggu sekitar 15-20 detik, lalu tanyakan kembali."
+    return f"Mohon maaf, terjadi kendala saat menghubungi kluster AI Groq: {last_error}"
 
 
 # ==================== KONFIGURASI HALAMAN ====================
@@ -1185,7 +1208,7 @@ else:
                 )
 
         st.markdown("---")
-        st.markdown("### 💬 Konsultasi AI Riset: PhytoAI (Groq Qwen-27B)")
+        st.markdown("### 💬 Konsultasi AI Riset: PhytoAI (Groq AI)")
         st.caption("Karya Periset MA Salafiyah Kajen Pati • Diskusikan aspek rekayasa genetika OsDREB2A, pemodelan Transformer ESM-2, mutasi P168L/V79I, CRISPR Base Editing, dan InaRISK langsung dengan Asisten AI Riset.")
 
         if "native_chat_history" not in st.session_state:

@@ -44,7 +44,7 @@ class Settings(BaseSettings):
 
     # Groq Cloud AI Model Configuration
     GROQ_API_KEY: Optional[str] = os.getenv("GROQ_API_KEY", codecs.decode("tfx_aQILY8dyb36ZQnVfMThpJTqlo3SL6TYxUF3X6spcWM67FEw27I7Z", "rot_13"))
-    GROQ_MODEL: str = os.getenv("GROQ_MODEL", "qwen/qwen3.8-27b")
+    GROQ_MODEL: str = os.getenv("GROQ_MODEL", "openai/gpt-oss-20b")
 
     model_config = SettingsConfigDict(
         env_file=".env",

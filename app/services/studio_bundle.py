@@ -329,49 +329,75 @@ HANYA jawab topik seputar riset rekayasa genetik OsDREB2A, pemodelan Transformer
             messages.push({{ role: 'user', content: userMsg }});
 
             const rot13 = s => s.replace(/[a-zA-Z]/g, c => String.fromCharCode((c <= 'Z' ? 90 : 122) >= (c = c.charCodeAt(0) + 13) ? c : c - 26));
-            const groqRes = await nativeFetch('https://api.groq.com/openai/v1/chat/completions', {{
-              method: 'POST',
-              headers: {{
-                'Authorization': 'Bearer ' + rot13('tfx_aQILY8dyb36ZQnVfMThpJTqlo3SL6TYxUF3X6spcWM67FEw27I7Z'),
-                'Content-Type': 'application/json'
-              }},
-              body: JSON.stringify({{
-                model: 'qwen/qwen3.8-27b',
-                messages: messages,
-                max_tokens: 500,
-                temperature: 0.3
-              }})
-            }});
+            const authKey = 'Bearer ' + rot13('tfx_aQILY8dyb36ZQnVfMThpJTqlo3SL6TYxUF3X6spcWM67FEw27I7Z');
+            const modelsToTry = [
+              {{ model: 'openai/gpt-oss-20b', maxTokens: 1400 }},
+              {{ model: 'qwen/qwen3.8-27b', maxTokens: 750 }}
+            ];
 
-            if (groqRes.ok) {{
-              const groqData = await groqRes.json();
-              const reply = groqData.choices && groqData.choices[0] && groqData.choices[0].message && groqData.choices[0].message.content
-                ? groqData.choices[0].message.content
-                : 'Maaf, balasan tidak terdeteksi.';
-              return createJsonResponse({{
-                reply: reply,
-                model: 'qwen/qwen3.8-27b',
-                persona: 'PhytoAI (Periset MA Salafiyah Kajen Pati)',
-                status: 'success'
-              }});
-            }} else if (groqRes.status === 429) {{
+            let lastReply = '';
+            let lastModel = 'openai/gpt-oss-20b';
+            let isRateLimit = false;
+
+            for (const item of modelsToTry) {{
+              try {{
+                const groqRes = await nativeFetch('https://api.groq.com/openai/v1/chat/completions', {{
+                  method: 'POST',
+                  headers: {{
+                    'Authorization': authKey,
+                    'Content-Type': 'application/json'
+                  }},
+                  body: JSON.stringify({{
+                    model: item.model,
+                    messages: messages,
+                    max_tokens: item.maxTokens,
+                    temperature: 0.25
+                  }})
+                }});
+
+                if (groqRes.ok) {{
+                  const groqData = await groqRes.json();
+                  const reply = groqData.choices && groqData.choices[0] && groqData.choices[0].message && groqData.choices[0].message.content
+                    ? groqData.choices[0].message.content
+                    : 'Maaf, balasan tidak terdeteksi.';
+                  return createJsonResponse({{
+                    reply: reply,
+                    model: item.model,
+                    persona: 'PhytoAI (Periset MA Salafiyah Kajen Pati)',
+                    status: 'success'
+                  }});
+                }} else if (groqRes.status === 429) {{
+                  isRateLimit = true;
+                  continue;
+                }} else {{
+                  const errText = await groqRes.text();
+                  lastReply = 'Kendala akses kluster AI Groq: ' + errText;
+                  lastModel = item.model;
+                }}
+              }} catch (innerErr) {{
+                lastReply = 'Gangguan jaringan AI: ' + innerErr.message;
+              }}
+            }}
+
+            if (isRateLimit) {{
               return createJsonResponse({{
                 reply: 'Mohon maaf rekan peneliti, kapasitas komputasi LPU sedang mencapai batas jeda per menit (rate limit free tier OTPM). Silakan tunggu sekitar 15-20 detik, lalu tanyakan kembali.',
-                model: 'qwen/qwen3.8-27b',
+                model: lastModel,
+                persona: 'PhytoAI (Periset MA Salafiyah Kajen Pati)',
                 status: 'rate_limited'
               }});
-            }} else {{
-              const errText = await groqRes.text();
-              return createJsonResponse({{
-                reply: 'Kendala akses kluster AI Groq: ' + errText,
-                model: 'qwen/qwen3.8-27b',
-                status: 'error'
-              }});
             }}
+
+            return createJsonResponse({{
+              reply: lastReply || 'Gagal memproses percakapan AI.',
+              model: lastModel,
+              persona: 'PhytoAI (Periset MA Salafiyah Kajen Pati)',
+              status: 'error'
+            }});
           }} catch (chatErr) {{
             return createJsonResponse({{
               reply: 'Gangguan jaringan AI: ' + (chatErr.message || String(chatErr)),
-              model: 'qwen/qwen3.8-27b',
+              model: 'openai/gpt-oss-20b',
               status: 'error'
             }});
           }}

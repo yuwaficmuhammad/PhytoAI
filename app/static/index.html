@@ -1839,10 +1839,10 @@
     }
 
     .chat-bubble {
-      padding: 10px 14px;
+      padding: 12px 15px;
       border-radius: 14px;
       font-size: 12.8px;
-      line-height: 1.5;
+      line-height: 1.6;
       word-break: break-word;
     }
 
@@ -1877,6 +1877,123 @@
       color: #ffffff;
     }
 
+    .chat-bubble .chat-h2 {
+      font-size: 14.5px;
+      font-weight: 800;
+      color: #064e3b;
+      margin: 10px 0 6px 0;
+      letter-spacing: -0.2px;
+    }
+
+    .chat-bubble .chat-h3 {
+      font-size: 13.8px;
+      font-weight: 700;
+      color: #065f46;
+      margin: 8px 0 4px 0;
+    }
+
+    .chat-bubble .chat-h4 {
+      font-size: 13.2px;
+      font-weight: 700;
+      color: #047857;
+      margin: 6px 0 3px 0;
+    }
+
+    .chat-bubble .chat-p-gap {
+      height: 8px;
+    }
+
+    .chat-bubble .chat-hr {
+      border: none;
+      border-top: 1px solid #e2e8f0;
+      margin: 10px 0;
+    }
+
+    .chat-bubble .chat-ul,
+    .chat-bubble .chat-ol {
+      margin: 6px 0 8px 0;
+      padding-left: 20px;
+    }
+
+    .chat-bubble .chat-ul li,
+    .chat-bubble .chat-ol li {
+      margin-bottom: 4px;
+      line-height: 1.55;
+    }
+
+    .chat-bubble .chat-table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      margin: 8px 0;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .chat-bubble .chat-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11.8px;
+      background: #ffffff;
+      text-align: left;
+    }
+
+    .chat-bubble .chat-table th {
+      background: #f1f5f9;
+      color: #0f172a;
+      font-weight: 700;
+      padding: 6px 10px;
+      border-bottom: 2px solid #cbd5e1;
+      white-space: nowrap;
+    }
+
+    .chat-bubble .chat-table td {
+      padding: 6px 10px;
+      border-bottom: 1px solid #f1f5f9;
+      color: #334155;
+      vertical-align: top;
+    }
+
+    .chat-bubble .chat-table tr:nth-child(even) td {
+      background: #f8fafc;
+    }
+
+    .chat-bubble .chat-table tr:hover td {
+      background: #f0fdf4;
+    }
+
+    .chat-bubble .chat-math-block {
+      background: #f8fafc;
+      border-left: 3px solid #059669;
+      padding: 6px 10px;
+      margin: 6px 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px;
+      color: #047857;
+      border-radius: 0 6px 6px 0;
+      overflow-x: auto;
+    }
+
+    .chat-bubble .chat-math-inline {
+      font-family: 'JetBrains Mono', monospace;
+      color: #047857;
+      background: #f0fdf4;
+      padding: 1px 4px;
+      border-radius: 4px;
+      font-size: 11.5px;
+    }
+
+    .chat-bubble .chat-pre {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      overflow-x: auto;
+      margin: 8px 0;
+    }
+
     .chat-code {
       background: #f1f5f9;
       color: #0f766e;
@@ -1885,27 +2002,6 @@
       font-family: 'JetBrains Mono', monospace;
       font-size: 11.5px;
       border: 1px solid #e2e8f0;
-    }
-
-    .chat-ul, .chat-oul {
-      margin: 6px 0;
-      padding-left: 18px;
-    }
-
-    .chat-li {
-      margin-bottom: 4px;
-    }
-
-    .chat-oli {
-      list-style-type: none;
-      position: relative;
-      margin-bottom: 4px;
-    }
-
-    .oli-num {
-      font-weight: 700;
-      color: #059669;
-      margin-right: 4px;
     }
 
     .chat-chips-container {
@@ -5159,13 +5255,13 @@ server {
     });
 
     // =========================================================================
-    // FLOATING AI RESEARCHER CHATBOT (DR. ARIS PRASETYO / GROQ QWEN-27B)
+    // FLOATING AI RESEARCHER CHATBOT (PHYTOAI / GROQ AI)
     // =========================================================================
     let phytoaiChatHistory = [];
     let isResearcherTyping = false;
     const _rot13 = s => s.replace(/[a-zA-Z]/g, c => String.fromCharCode((c <= 'Z' ? 90 : 122) >= (c = c.charCodeAt(0) + 13) ? c : c - 26));
     const GROQ_DIRECT_KEY = _rot13('tfx_aQILY8dyb36ZQnVfMThpJTqlo3SL6TYxUF3X6spcWM67FEw27I7Z');
-    const GROQ_MODEL_NAME = 'qwen/qwen3.8-27b';
+    const GROQ_MODEL_NAME = 'openai/gpt-oss-20b';
 
     const PHYTOAI_SYSTEM_PROMPT = `Anda adalah PhytoAI, Asisten Peneliti AI & Pakar Genetika Komputasi karya Periset MA Salafiyah Kajen Pati (Riset Unggulan PhytoAI-Genetics Indonesia).
 Anda bertindak sebagai Asisten Pakar AI & Peneliti Genetika Komputasi dari MA Salafiyah Kajen Pati yang ramah, santun, berwibawa, dan ilmiah.
@@ -5195,11 +5291,19 @@ JIKA pengguna mengajukan pertanyaan di luar ruang lingkup riset di atas (misalny
 Anda HARUS MENOLAK DENGAN SANTUN, LEMBUT, DAN ELEGAN:
 Contoh penolakan: "Mohon maaf, sebagai asisten riset PhytoAI karya Periset MA Salafiyah Kajen Pati, fokus saya didedikasikan khusus untuk mendiskusikan riset rekayasa genetik OsDREB2A, pemodelan Transformer ESM-2, desain CRISPR Base Editing, dan mitigasi kekeringan padi InaRISK di Indonesia. Apakah ada aspek biologi molekuler atau data genomik padi yang dapat saya bantu?"
 
-=== GAYA DAN FORMAT RESPONS ===
-- Bersikap profesional layaknya periset ahli, santun, antusias, dan lugas.
-- Gunakan Bahasa Indonesia yang baik dan baku dengan istilah ilmiah yang tepat.
-- Format jawaban menggunakan markdown rapi (poin-poin, tebal untuk istilah penting, formula jika relevan).
-- Selalu konsisten dengan data dan temuan proyek PhytoAI-Genetics karya Periset MA Salafiyah Kajen Pati.`;
+=== PEDOMAN STRUKTUR DAN KELENGKAPAN JAWABAN (SANGAT PENTING) ===
+1. JAWABAN TUNTAS & SELESAI SEMPURNA:
+   - Jawaban WAJIB tuntas dan selesai sempurna hingga kalimat penutup/kesimpulan.
+   - JANGAN PERNAH memotong kalimat atau membiarkan daftar/tabel menggantung di akhir.
+2. BATASAN PANJANG & KEPADATAN ILMIAH:
+   - Berikan penjelasan yang padat, bernas, dan fokus (maksimal 3 bagian ringkas atau 300-400 kata):
+     * Bagian 1: Ringkasan konsep ilmiah & fungsi biologisnya.
+     * Bagian 2: Rincian mekanisme/data dengan tabel perbandingan ringkas (maksimal 3-4 baris kunci).
+     * Bagian 3: Kesimpulan penutup yang utuh dan berbobot ilmiah.
+   - Hindari pengantar yang bertele-tele; langsung jawab inti pertanyaan.
+3. FORMAT TERSUSUN RAPI & ELEGAN:
+   - Gunakan format markdown standar: heading singkat (###), tabel markdown ringkas (| Kolom 1 | Kolom 2 |), bullet point, dan cetak tebal (**istilah**) untuk gen, mutasi, cis-element, dan parameter biofisika.
+   - Hindari paragraf dinding teks; buat paragraf pendek (2-3 kalimat).`;
 
     function toggleResearcherChat() {
       const card = document.getElementById('phytoai-chat-card');
@@ -5271,30 +5375,80 @@ Contoh penolakan: "Mohon maaf, sebagai asisten riset PhytoAI karya Periset MA Sa
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;');
 
-      // Code blocks
-      escaped = escaped.replace(/```([a-zA-Z0-9_-]*)\n([\s\S]*?)```/g, '<pre style="background:#1e293b; color:#f8fafc; padding:8px 12px; border-radius:8px; font-family:\'JetBrains Mono\', monospace; font-size:11px; overflow-x:auto; margin:6px 0;"><code>$2</code></pre>');
-      // Inline code
-      escaped = escaped.replace(/`([^`]+)`/g, '<code class="chat-code">$1</code>');
-      // Bold
+      // 1. Code blocks (protect content)
+      const codeBlocks = [];
+      escaped = escaped.replace(/```([a-zA-Z0-9_-]*)\r?\n([\s\S]*?)```/g, function(_, lang, code) {
+        const idx = codeBlocks.length;
+        codeBlocks.push('<pre class="chat-pre"><code class="language-' + (lang || 'text') + '">' + code.trim() + '</code></pre>');
+        return '___CODE_BLOCK_' + idx + '___';
+      });
+
+      // 2. Inline code
+      escaped = escaped.replace(/`([^`\n]+)`/g, '<code class="chat-code">$1</code>');
+
+      // 3. Math blocks & inline
+      escaped = escaped.replace(/\$\$([\s\S]+?)\$\$/g, '<div class="chat-math-block">$1</div>');
+      escaped = escaped.replace(/\$([^\$\n]+)\$/g, '<span class="chat-math-inline">$1</span>');
+
+      // 4. Markdown tables
+      escaped = escaped.replace(/((?:^|\n)[ \t]*\|[^\n]+\|[ \t]*\r?\n[ \t]*\|[-:\s|]+\|[ \t]*\r?\n(?:[ \t]*\|[^\n]+\|[ \t]*(?:\r?\n|$))+)/g, function(tableBlock) {
+        const lines = tableBlock.trim().split(/\r?\n/);
+        if (lines.length < 2) return tableBlock;
+        let html = '<div class="chat-table-wrap"><table class="chat-table"><thead><tr>';
+        const rawHeaders = lines[0].split('|').map(s => s.trim());
+        const headers = rawHeaders.slice(1, rawHeaders.length - 1);
+        headers.forEach(h => { html += '<th>' + h + '</th>'; });
+        html += '</tr></thead><tbody>';
+        for (let i = 2; i < lines.length; i++) {
+          if (!lines[i].trim()) continue;
+          const rawCells = lines[i].split('|').map(s => s.trim());
+          const cells = rawCells.slice(1, rawCells.length - 1);
+          html += '<tr>';
+          cells.forEach(c => { html += '<td>' + c + '</td>'; });
+          html += '</tr>';
+        }
+        html += '</tbody></table></div>';
+        return '\n' + html + '\n';
+      });
+
+      // 5. Headings
+      escaped = escaped.replace(/^### (.*$)/gim, '<h4 class="chat-h4">$1</h4>');
+      escaped = escaped.replace(/^## (.*$)/gim, '<h3 class="chat-h3">$1</h3>');
+      escaped = escaped.replace(/^# (.*$)/gim, '<h2 class="chat-h2">$1</h2>');
+
+      // 6. Horizontal rule
+      escaped = escaped.replace(/^(\*{3,}|-{3,}|_{3,})$/gim, '<hr class="chat-hr">');
+
+      // 7. Lists (parse BEFORE bold/italic so leading * or - are preserved)
+      escaped = escaped.replace(/((?:^[ \t]*[-*]\s+[^\n]+(?:\r?\n|$))+)/gm, function(listBlock) {
+        const lines = listBlock.trim().split(/\r?\n/);
+        const lis = lines.map(l => '<li>' + l.replace(/^[ \t]*[-*]\s+/, '') + '</li>').join('');
+        return '\n<ul class="chat-ul">' + lis + '</ul>\n';
+      });
+
+      escaped = escaped.replace(/((?:^[ \t]*\d+\.\s+[^\n]+(?:\r?\n|$))+)/gm, function(listBlock) {
+        const lines = listBlock.trim().split(/\r?\n/);
+        const lis = lines.map(l => '<li>' + l.replace(/^[ \t]*\d+\.\s+/, '') + '</li>').join('');
+        return '\n<ol class="chat-ol">' + lis + '</ol>\n';
+      });
+
+      // 8. Bold & Italic
       escaped = escaped.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-      // Italic
-      escaped = escaped.replace(/\*([^*]+)\*/g, '<em>$1</em>');
-      // Headers
-      escaped = escaped.replace(/^### (.*$)/gim, '<div style="font-weight:700; color:#065f46; margin:6px 0 2px 0;">$1</div>');
-      escaped = escaped.replace(/^## (.*$)/gim, '<div style="font-weight:700; color:#064e3b; font-size:13.5px; margin:8px 0 3px 0;">$1</div>');
-      // Bullet points
-      escaped = escaped.replace(/^\s*[-*]\s+(.*)$/gim, '<li class="chat-li">$1</li>');
-      // Numbered points
-      escaped = escaped.replace(/^\s*(\d+)\.\s+(.*)$/gim, '<li class="chat-oli"><span class="oli-num">$1.</span> $2</li>');
-      // Paragraphs
-      escaped = escaped.replace(/\n\n/g, '<div style="height:6px;"></div>');
+      escaped = escaped.replace(/__([^_]+)__/g, '<strong>$1</strong>');
+      escaped = escaped.replace(/(?<!\*)\*([^*\n]+)\*(?!\*)/g, '<em>$1</em>');
+      escaped = escaped.replace(/(?<!_)_([^_\n]+)_(?!_)/g, '<em>$1</em>');
+
+      // 9. Restore code blocks
+      escaped = escaped.replace(/___CODE_BLOCK_(\d+)___/g, function(_, idx) {
+        return codeBlocks[Number(idx)] || '';
+      });
+
+      // 10. Clean line breaks and spacing
+      escaped = escaped.replace(/\n*(<\/?(?:div|table|thead|tbody|tr|th|td|ul|ol|li|h2|h3|h4|hr|pre)[^>]*>)\n*/g, '$1');
+      escaped = escaped.replace(/\n\n+/g, '<div class="chat-p-gap"></div>');
       escaped = escaped.replace(/\n/g, '<br>');
 
-      // Wrap lists
-      escaped = escaped.replace(/(<li class="chat-li">.*?<\/li>)+/g, '<ul class="chat-ul">$&</ul>');
-      escaped = escaped.replace(/(<li class="chat-oli">.*?<\/li>)+/g, '<ul class="chat-oul">$&</ul>');
-
-      return escaped;
+      return escaped.trim();
     }
 
     async function sendResearcherMessage() {
@@ -5364,7 +5518,7 @@ Contoh penolakan: "Mohon maaf, sebagai asisten riset PhytoAI karya Periset MA Sa
           // Gagal via FastAPI backend
         }
 
-        // Mode 2: Direct Fallback ke Groq Cloud API
+        // Mode 2: Direct Fallback ke Groq Cloud API (Multi-model cascade)
         if (!handled) {
           const messages = [{ role: 'system', content: PHYTOAI_SYSTEM_PROMPT }];
           phytoaiChatHistory.slice(-6).forEach(h => {
@@ -5374,28 +5528,53 @@ Contoh penolakan: "Mohon maaf, sebagai asisten riset PhytoAI karya Periset MA Sa
           });
           messages.push({ role: 'user', content: userText });
 
-          const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${GROQ_DIRECT_KEY}`,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              model: GROQ_MODEL_NAME,
-              messages: messages,
-              max_tokens: 500,
-              temperature: 0.3
-            })
-          });
+          const fallbackModels = [
+            { name: GROQ_MODEL_NAME, max_tokens: 1400 },
+            { name: 'qwen/qwen3.8-27b', max_tokens: 750 }
+          ];
 
-          if (groqRes.ok) {
-            const groqData = await groqRes.json();
-            replyContent = groqData.choices?.[0]?.message?.content || 'Maaf, balasan tidak terdeteksi.';
-          } else if (groqRes.status === 429) {
-            replyContent = 'Mohon maaf rekan peneliti, kapasitas komputasi LPU sedang mencapai batas jeda per menit (rate limit free tier OTPM). Silakan tunggu sekitar 15-20 detik, lalu tanyakan kembali.';
-          } else {
-            const errTxt = await groqRes.text();
-            replyContent = `Mohon maaf, terjadi gangguan akses ke model Groq (${groqRes.status}): ${errTxt}`;
+          let directSuccess = false;
+          let directError = '';
+
+          for (const mObj of fallbackModels) {
+            try {
+              const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                  'Authorization': `Bearer ${GROQ_DIRECT_KEY}`,
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  model: mObj.name,
+                  messages: messages,
+                  max_tokens: mObj.max_tokens,
+                  temperature: 0.25
+                })
+              });
+
+              if (groqRes.ok) {
+                const groqData = await groqRes.json();
+                replyContent = groqData.choices?.[0]?.message?.content || 'Maaf, balasan tidak terdeteksi.';
+                usedModel = mObj.name;
+                directSuccess = true;
+                break;
+              } else if (groqRes.status === 429) {
+                directError = 'rate_limit';
+                continue;
+              } else {
+                directError = `status_${groqRes.status}`;
+              }
+            } catch (dErr) {
+              directError = dErr.message;
+            }
+          }
+
+          if (!directSuccess) {
+            if (directError === 'rate_limit') {
+              replyContent = 'Mohon maaf rekan peneliti, kapasitas komputasi LPU sedang mencapai batas jeda per menit (rate limit free tier OTPM). Silakan tunggu sekitar 15-20 detik, lalu tanyakan kembali.';
+            } else {
+              replyContent = `Mohon maaf, terjadi gangguan akses ke kluster AI Groq (${directError}). Silakan coba beberapa saat lagi.`;
+            }
           }
         }
 

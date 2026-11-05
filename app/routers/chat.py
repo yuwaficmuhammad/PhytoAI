@@ -1,6 +1,6 @@
 """
 Router API Chatbot AI Peneliti PhytoAI-Genetics (app/routers/chat.py)
-Mengintegrasikan Groq Cloud API (model Qwen/Qwen3.8-27B) dengan persona PhytoAI
+Mengintegrasikan Groq Cloud API (model OpenAI GPT-OSS-20B & Qwen-27B) dengan persona PhytoAI
 (Asisten Peneliti AI karya Periset MA Salafiyah Kajen Pati) dan guardrail ketat domain riset.
 """
 
@@ -45,11 +45,19 @@ JIKA pengguna mengajukan pertanyaan di luar ruang lingkup riset di atas (misalny
 Anda HARUS MENOLAK DENGAN SANTUN, LEMBUT, DAN ELEGAN:
 Contoh penolakan: "Mohon maaf, sebagai asisten riset PhytoAI karya Periset MA Salafiyah Kajen Pati, fokus saya didedikasikan khusus untuk mendiskusikan riset rekayasa genetik OsDREB2A, pemodelan Transformer ESM-2, desain CRISPR Base Editing, dan mitigasi kekeringan padi InaRISK di Indonesia. Apakah ada aspek biologi molekuler atau data genomik padi yang dapat saya bantu?"
 
-=== GAYA DAN FORMAT RESPONS ===
-- Bersikap profesional layaknya periset ahli, santun, antusias, dan lugas.
-- Gunakan Bahasa Indonesia yang baik dan baku dengan istilah ilmiah yang tepat.
-- Format jawaban menggunakan markdown rapi (poin-poin, tebal untuk istilah penting, formula jika relevan).
-- Selalu konsisten dengan data dan temuan proyek PhytoAI-Genetics karya Periset MA Salafiyah Kajen Pati."""
+=== PEDOMAN STRUKTUR DAN KELENGKAPAN JAWABAN (SANGAT PENTING) ===
+1. JAWABAN TUNTAS & SELESAI SEMPURNA:
+   - Jawaban WAJIB tuntas dan selesai sempurna hingga kalimat penutup/kesimpulan.
+   - JANGAN PERNAH memotong kalimat atau membiarkan daftar/tabel menggantung di akhir.
+2. BATASAN PANJANG & KEPADATAN ILMIAH:
+   - Berikan penjelasan yang padat, bernas, dan fokus (maksimal 3 bagian ringkas atau 300-400 kata):
+     * Bagian 1: Ringkasan konsep ilmiah & fungsi biologisnya.
+     * Bagian 2: Rincian mekanisme/data dengan tabel perbandingan ringkas (maksimal 3-4 baris kunci).
+     * Bagian 3: Kesimpulan penutup yang utuh dan berbobot ilmiah.
+   - Hindari pengantar yang bertele-tele; langsung jawab inti pertanyaan.
+3. FORMAT TERSUSUN RAPI & ELEGAN:
+   - Gunakan format markdown standar: heading singkat (###), tabel markdown ringkas (| Kolom 1 | Kolom 2 |), bullet point, dan cetak tebal (**istilah**) untuk gen, mutasi, cis-element, dan parameter biofisika.
+   - Hindari paragraf dinding teks; buat paragraf pendek (2-3 kalimat)."""
 
 
 class ChatMessage(BaseModel):
@@ -78,7 +86,8 @@ async def chat_with_researcher(payload: ChatRequest):
     """
     _fallback_key = codecs.decode("tfx_aQILY8dyb36ZQnVfMThpJTqlo3SL6TYxUF3X6spcWM67FEw27I7Z", "rot_13")
     api_key = settings.GROQ_API_KEY or os.getenv("GROQ_API_KEY", _fallback_key)
-    model = settings.GROQ_MODEL or os.getenv("GROQ_MODEL", "qwen/qwen3.8-27b")
+    primary_model = settings.GROQ_MODEL or os.getenv("GROQ_MODEL", "openai/gpt-oss-20b")
+    fallback_model = "qwen/qwen3.8-27b"
 
     # Siapkan percakapan terstruktur
     messages = [{"role": "system", "content": SYSTEM_PROMPT}]
@@ -92,58 +101,63 @@ async def chat_with_researcher(payload: ChatRequest):
     # Tambahkan pesan terbaru pengguna
     messages.append({"role": "user", "content": payload.message.strip()})
 
-    req_body = {
-        "model": model,
-        "messages": messages,
-        "max_tokens": 500,
-        "temperature": 0.3
-    }
+    models_to_try = [
+        (primary_model, 1400),
+        (fallback_model, 750) if fallback_model != primary_model else ("openai/gpt-oss-120b", 1200)
+    ]
 
-    try:
-        async with httpx.AsyncClient(timeout=45.0) as client:
-            resp = await client.post(
-                GROQ_API_URL,
-                headers={
-                    "Authorization": f"Bearer {api_key}",
-                    "Content-Type": "application/json"
-                },
-                json=req_body
-            )
+    last_error = ""
+    for model_name, max_tokens in models_to_try:
+        req_body = {
+            "model": model_name,
+            "messages": messages,
+            "max_tokens": max_tokens,
+            "temperature": 0.25
+        }
 
-        if resp.status_code == 429:
-            return ChatResponse(
-                reply="Mohon maaf rekan peneliti, kapasitas komputasi akselerator LPU sedang mencapai batas jeda per menit (rate limit free tier OTPM). Silakan tunggu sekitar 15-20 detik, lalu tanyakan kembali.",
-                model=model,
-                persona="PhytoAI (Periset MA Salafiyah Kajen Pati)",
-                status="rate_limited"
-            )
+        try:
+            async with httpx.AsyncClient(timeout=45.0) as client:
+                resp = await client.post(
+                    GROQ_API_URL,
+                    headers={
+                        "Authorization": f"Bearer {api_key}",
+                        "Content-Type": "application/json"
+                    },
+                    json=req_body
+                )
 
-        if resp.status_code != 200:
-            error_detail = resp.text
-            raise HTTPException(
-                status_code=status.HTTP_502_BAD_GATEWAY,
-                detail=f"Groq API error ({resp.status_code}): {error_detail}"
-            )
+            if resp.status_code == 200:
+                data = resp.json()
+                choices = data.get("choices", [])
+                if choices:
+                    reply_content = choices[0].get("message", {}).get("content", "")
+                    actual_model = data.get("model", model_name)
+                    return ChatResponse(
+                        reply=reply_content,
+                        model=actual_model,
+                        persona="PhytoAI (Periset MA Salafiyah Kajen Pati)",
+                        status="success"
+                    )
 
-        data = resp.json()
-        choices = data.get("choices", [])
-        if not choices:
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Groq API tidak mengembalikan respons pilihan."
-            )
+            if resp.status_code == 429:
+                last_error = "Rate limit (429)"
+                continue  # Coba model cadangan jika terkena limit
 
-        reply_content = choices[0].get("message", {}).get("content", "")
+            last_error = f"Groq API status {resp.status_code}: {resp.text[:200]}"
+        except Exception as exc:
+            last_error = str(exc)
+            continue
+
+    # Jika semua model di-rate limit atau gagal
+    if "429" in last_error or "Rate limit" in last_error:
         return ChatResponse(
-            reply=reply_content,
-            model=model,
+            reply="Mohon maaf rekan peneliti, kapasitas komputasi akselerator LPU sedang mencapai batas jeda per menit (rate limit free tier OTPM). Silakan tunggu sekitar 15-20 detik, lalu tanyakan kembali.",
+            model=primary_model,
             persona="PhytoAI (Periset MA Salafiyah Kajen Pati)",
-            status="success"
+            status="rate_limited"
         )
-    except HTTPException:
-        raise
-    except Exception as exc:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Gagal memproses percakapan AI: {str(exc)}"
-        )
+
+    raise HTTPException(
+        status_code=status.HTTP_502_BAD_GATEWAY,
+        detail=f"Gagal memproses percakapan AI melalui Groq: {last_error}"
+    )
