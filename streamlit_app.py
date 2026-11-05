@@ -864,6 +864,10 @@ else:
             "untuk Menyilangkan & Menggabungkan Sifat Unggul (Multi-Trait Pyramiding) Menjadi Varietas Baru yang Adaptif."
         )
 
+        banner_v = get_image_path("phytoai_genomic_platform_banner.png") or get_image_path("phytoai_genomic_platform_banner.jpg")
+        if banner_v:
+            st.image(banner_v, caption="Platform In Silico Rekayasa Genetika & Desainer Varietas Baru (Karya Periset MA Salafiyah Kajen Pati)", use_container_width=True)
+
         v_sub_charts, v_sub_gallery, v_sub1, v_sub2, v_sub3 = st.tabs([
             "📊 Data Analisis Grafik Riset",
             "🌾 Galeri Varietas Hasil Penelitian",
@@ -1492,6 +1496,41 @@ else:
 
             **10. Apa keunggulan komparatif platform PhytoAI-Genetics dibandingkan metode konvensional?**  
             *Memangkas siklus pemuliaan dari 7–10 tahun menjadi hanya 1–2 tahun dengan presisi molekuler tingkat nukleotida tunggal.*
+            """
+            )
+
+        with st.expander("📚 Direktori Jurnal Ilmiah (Scopus Q1/Q2 & SINTA 1/2) serta Landmark Papers"):
+            st.markdown(
+                r"""
+            #### 🌐 1. Jurnal Ilmiah Internasional Bereputasi (Scopus Q1/Q2 & Web of Science)
+            | Nama Jurnal | Penerbit | Kuartil & IF | Relevansi Riset PhytoAI |
+            |:---|:---|:---:|:---|
+            | **Nature Biotechnology** | Nature Portfolio | **Q1** (~46.9) | Rujukan utama dunia untuk CRISPR Base Editing (CBE/ABE) & bioteknologi komputasi presisi. |
+            | **Molecular Plant** | Cell Press | **Q1** (~27.5) | Genomik fungsional padi (*Oryza sativa*), faktor transkripsi DREB, dan respon cekaman. |
+            | **Nature Plants** | Nature Portfolio | **Q1** (~18.0) | Rekayasa molekuler fisiologi tanaman, mitigasi iklim, dan desain varietas masa depan. |
+            | **Plant Biotechnology Journal** | Wiley-Blackwell | **Q1** (~10.1) | Target utama artikel *plant genome editing* dan padi tahan kekeringan/rendaman. |
+            | **Trends in Plant Science** | Cell Press | **Q1** (~20.5) | Integrasi kecerdasan buatan (pLM Transformer), bioinformatika, dan *precision breeding*. |
+            | **Rice** | SpringerOpen | **Q1** (~5.5) | Jurnal rujukan nomor satu spesifik genomik, fisiologi, dan pemuliaan tanaman padi. |
+            | **Theoretical & Applied Genetics (TAG)** | Springer | **Q1** (~5.4) | Pemetaan lokus QTL kekeringan/rendaman dan pemuliaan molekuler tanaman pangan. |
+            | **Bioinformatics / Briefings in Bioinformatics** | Oxford Univ Press | **Q1** (5.8 - 9.5) | Algoritma pLM (ESM-2), evaluasi stabilitas protein ($\Delta$LLR), dan desain sgRNA *in silico*. |
+
+            #### 🇮🇩 2. Jurnal Ilmiah Nasional Terakreditasi (SINTA 1 & SINTA 2 - BRIN/Kemenristek)
+            | Nama Jurnal | Pengelola / Penerbit | Akreditasi | Fokus & Keselarasan |
+            |:---|:---|:---:|:---|
+            | **Hayati Journal of Biosciences** | IPB University | **SINTA 1** / Scopus Q2 | Biosains molekuler, bioinformatika, dan keragaman genetik Indonesia. |
+            | **Indonesian Journal of Biotechnology (IJBiotech)** | Universitas Gadjah Mada (UGM) | **SINTA 1** / Scopus Q3 | Bioteknologi molekuler, rekayasa genetika in vitro/in planta, dan sistem biologis. |
+            | **Indonesian Journal of Agricultural Science (IJAS)** | BRIN / Kementan | **SINTA 1** | Tanaman pangan strategis nasional, adaptasi tanah vertisol/masam & cekaman iklim. |
+            | **Jurnal AgroBiogen** | Pusat Riset Biologi Molekuler Terapan (BRIN) | **SINTA 2** | Sumber daya genetik pertanian, marka molekuler, dan bioteknologi tanaman nusantara. |
+            | **Jurnal Agronomi Indonesia** | PERAGI & IPB | **SINTA 2** | Fisiologi dan agronomi lapangan varietas padi toleran kekeringan (gogo) & rendaman. |
+            | **Jurnal Penelitian Pertanian Tanaman Pangan** | BBPSI Padi Sukamandi | **SINTA 2** | Karakterisasi varietas unggul nasional (Ciherang, Inpari, Inpago) & adaptasi El Niño. |
+
+            #### 📖 3. Landmark Papers Wajib Sitasi (APA 7th Edition)
+            1. **Dubouzet, J. G., et al. (2003).** OsDREB genes in rice encode transcription activators that function in drought-, high-salt- and cold-responsive gene expression. *The Plant Journal*, 33(4), 751–763.
+            2. **Komor, A. C., et al. (2016).** Programmable editing of a target base in genomic DNA without double-stranded DNA cleavage. *Nature*, 533(7603), 420–424. *(Invensi CBE)*.
+            3. **Gaudelli, N. M., et al. (2017).** Programmable base editing of A•T to G•C in genomic DNA without DNA cleavage. *Nature*, 551(7681), 464–471. *(Invensi ABE)*.
+            4. **Lin, Z., et al. (2023).** Evolutionary-scale prediction of atomic-level protein structure with a language model (ESM-2). *Science*, 379(6637), 1123–1130.
+            5. **Septiningsih, E. M., et al. (2009).** Development of submergence-tolerant rice cultivars: the *Sub1* locus and its application. *Molecular Breeding*, 24(3), 281–292.
+            6. **KKH-PRG Indonesia. (2022).** *Pedoman Teknis Pengkajian Keamanan Hayati Produk Rekayasa Genetik Hasil Genome Editing (SDN-1 & SDN-2)*. KLHK & Kementan RI.
             """
             )
 
