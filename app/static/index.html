@@ -2966,6 +2966,147 @@
                 </div>
               </div>
             </div>
+
+            <!-- SECTION SINTESIS VARIETAS UNGGUL BARU & MULTI-TRAIT PYRAMIDING -->
+            <div style="margin-top: 28px; border-top: 1px solid var(--border); padding-top: 24px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 12px; gap: 8px;">
+                <div>
+                  <div style="font-weight: 800; font-size: 16px; color: var(--text-main); display: flex; align-items: center; gap: 8px;">
+                    <span>🌾</span> Perancang & Sintesis Varietas Unggul Baru (Multi-Trait Gene Pyramiding)
+                  </div>
+                  <div style="font-size: 12.5px; color: var(--text-muted); margin-top: 2px;">
+                    Karya Periset MA Salafiyah Kajen Pati • Menyilangkan dan menggabungkan sifat unggul multi-gen ke dalam varietas lokal untuk melahirkan varietas baru adaptif.
+                  </div>
+                </div>
+                <span class="badge badge-success" style="font-size: 11px;">In Silico Breeding</span>
+              </div>
+
+              <div class="responsive-grid-2">
+                <div>
+                  <div class="form-group">
+                    <label class="form-label">Pilih Varietas Induk / Donor Lokal:</label>
+                    <select id="var-parent-select" class="form-control">
+                      <option value="Situ Bagendit">Situ Bagendit (Padi Gogo Unggul)</option>
+                      <option value="Ciherang">Ciherang (Varietas Populer Nasional)</option>
+                      <option value="Inpari 32 HDB">Inpari 32 HDB (Padi Sawah Toleran)</option>
+                      <option value="Gogo Jatiluhur">Gogo Jatiluhur (Lahan Kering Jawa)</option>
+                      <option value="Gogo Limboto">Gogo Limboto (Gorontalo/Sulawesi)</option>
+                      <option value="Batutegi">Batutegi (Sumatera)</option>
+                      <option value="Rojolele">Rojolele (Lokal Aromatik)</option>
+                      <option value="Memberamo">Memberamo (Papua)</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group" style="margin-top: 10px;">
+                    <label class="form-label">Pilih Kondisi Lahan & Tanah Target (InaRISK BNPB):</label>
+                    <select id="var-env-select" class="form-control">
+                      <option value="Lahan Vertisol Kering Retak (Indramayu, Grobogan, Bojonegoro)">Lahan Vertisol Kering Retak (Indramayu, Grobogan, Bojonegoro)</option>
+                      <option value="Lahan Sawah Pasang Surut / Rawan Banjir (Demak, Karawang, Subang)">Lahan Sawah Pasang Surut / Rawan Banjir (Demak, Karawang, Subang)</option>
+                      <option value="Lahan Tadah Hujan Semi-Arid Ekstrem (Sumba Timur, Bone, Lombok Timur)">Lahan Tadah Hujan Semi-Arid Ekstrem (Sumba Timur, Bone, Lombok Timur)</option>
+                      <option value="Lahan Endemik Hawar Daun Bakteri (Kresek) & Jamur Blas">Lahan Endemik Hawar Daun Bakteri (Kresek) & Jamur Blas</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group" style="margin-top: 10px;">
+                    <label class="form-label">Beri Nama Varietas Baru (Opsional):</label>
+                    <input type="text" id="var-custom-name" class="form-control" placeholder="Contoh: Salafiyah Agritama-DREB Super (Neo Situ Bagendit)" value="Salafiyah Agritama-DREB Super">
+                  </div>
+                </div>
+
+                <div>
+                  <label class="form-label" style="margin-bottom: 8px; display: block;">Pilih Sifat Unggul yang Ingin Digabungkan (Gene Stacking):</label>
+                  <div style="background: var(--surface-subtle); border: 1px solid var(--border); border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 8px;">
+                    <label style="display: flex; align-items: center; gap: 8px; font-size: 12px; cursor: pointer;">
+                      <input type="checkbox" id="chk-dreb" checked>
+                      <span><strong>🌟 Toleransi Kekeringan Ekstrem & Panas</strong> (<em>OsDREB2A</em>: mutasi P168L di bp #503 C&rarr;T + V79I di bp #235 G&rarr;A)</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; font-size: 12px; cursor: pointer;">
+                      <input type="checkbox" id="chk-root" checked>
+                      <span><strong>🌱 Perakaran Vertikal Tembus Lapisan Keras</strong> (<em>DRO1</em>: sudut akar curam tembus vertisol mencari air subsoil)</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; font-size: 12px; cursor: pointer;">
+                      <input type="checkbox" id="chk-sub">
+                      <span><strong>🌊 Toleransi Rendaman Air / Banjir Bandang</strong> (<em>Sub1A</em>: bertahan hidup >14 hari terendam air pasang)</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; font-size: 12px; cursor: pointer;">
+                      <input type="checkbox" id="chk-xa21" checked>
+                      <span><strong>🛡️ Kebal Hawar Daun Bakteri / Kresek</strong> (<em>Xa21</em>: reseptor kinase imun Xanthomonas oryzae)</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; font-size: 12px; cursor: pointer;">
+                      <input type="checkbox" id="chk-pita">
+                      <span><strong>🌾 Kebal Jamur Blas Daun</strong> (<em>Pi-ta</em>: imunitas infeksi jamur Pyricularia/Magnaporthe)</span>
+                    </label>
+                  </div>
+
+                  <button type="button" class="btn btn-primary" onclick="runVarietySynthesizer()" style="width: 100%; margin-top: 12px; padding: 12px; justify-content: center; font-size: 13px; font-weight: 700;">
+                    🚀 Rancang & Sintesis Varietas Baru Sekarang
+                  </button>
+                </div>
+              </div>
+
+              <div id="variety-result-card" style="margin-top: 16px; display: none;"></div>
+            </div>
+
+            <!-- SECTION MESIN GENOMIK UNIVERSAL MULTI-TANAMAN NCBI -->
+            <div style="margin-top: 24px; border-top: 1px solid var(--border); padding-top: 20px;">
+              <div style="font-weight: 800; font-size: 15px; color: var(--text-main); margin-bottom: 4px;">
+                🌐 Mesin Genomik Universal Multi-Tanaman NCBI (Arsitektur Tanaman Umum)
+              </div>
+              <div style="font-size: 12.5px; color: var(--text-muted); line-height: 1.6; margin-bottom: 12px;">
+                Arsitektur PhytoAI dirancang dapat digeneralisasi untuk semua jenis tanaman pangan dunia (Padi, Jagung, Kedelai, Sorgum, Gandum) dan berbagai cekaman lingkungan (kekeringan, salinitas, banjir, tanah masam). Data genomik bersumber langsung dari repositori NCBI Datasets API.
+              </div>
+              <div class="table-responsive">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Spesies Tanaman</th>
+                      <th>Assembly NCBI</th>
+                      <th>Simbol Gen Kunci</th>
+                      <th>NCBI Gene ID</th>
+                      <th>Sifat Cekaman Target</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>Oryza sativa (Padi)</strong></td>
+                      <td>IRGSP-1.0</td>
+                      <td><code>OsDREB2A</code>, <code>Sub1A</code>, <code>DRO1</code>, <code>Xa21</code></td>
+                      <td>4324418, 4347716, 4346853</td>
+                      <td>Kekeringan, Banjir, Perakaran, Hawar Daun</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Zea mays (Jagung)</strong></td>
+                      <td>Zm-B73-REFERENCE-NAM-5.0</td>
+                      <td><code>ZmDREB2A</code>, <code>ZmPP2C</code></td>
+                      <td>542385, 100282143</td>
+                      <td>Toleransi Dehidrasi & Penutupan Stomata</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Glycine max (Kedelai)</strong></td>
+                      <td>Glycine_max_v4.0</td>
+                      <td><code>GmDREB1</code>, <code>GmWRKY27</code></td>
+                      <td>100812984, 100780281</td>
+                      <td>Kekeringan Lahan Kering & Salinitas</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Sorghum bicolor (Sorgum)</strong></td>
+                      <td>Sorghum_bicolor_v3.1.1</td>
+                      <td><code>SbDREB2</code></td>
+                      <td>8062837</td>
+                      <td>Super-Adaptasi Iklim Semi-Arid Ekstrem</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Triticum aestivum (Gandum)</strong></td>
+                      <td>IWGSC_CS_RefSeq_v2.1</td>
+                      <td><code>TaDREB1</code></td>
+                      <td>543329</td>
+                      <td>Ketahanan Dehidrasi & Cekaman Suhu</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            </div>
           </div>
         </div>
 
@@ -5119,10 +5260,16 @@ server {
         });
 
         const targetMutName = data.target_mutation || mut;
+        const baseEditedNote = data.exact_base_change ? `<span style="background:#bbf7d0; color:#14532d; font-weight:700; padding:2px 8px; border-radius:4px; font-family:'JetBrains Mono';">${data.exact_base_change}</span>` : `Kodon ${data.wt_codon_ncbi}`;
+        const cutSiteNote = data.cas9_cut_site_bp ? ` | <strong>Titik Potong Cas9:</strong> Basa #${data.cas9_cut_site_bp}` : '';
+        const codonChangeNote = data.mutant_codon ? ` (Kodon: <code>${data.wt_codon_ncbi}</code> &rarr; <code>${data.mutant_codon}</code>)` : ` pada residu ke-${data.target_codon_index}`;
+
         card.innerHTML = `
-          <div style="font-weight:800; color:var(--accent-dark); font-size:14.5px; margin-bottom:8px;">Target Mutasi: ${targetMutName}</div>
-          <div style="font-size:12.5px; margin-bottom:6px;"><strong>Rekomendasi Editor:</strong> ${data.base_editor_recommendation}</div>
-          <div style="font-size:12px; margin-bottom:14px; color:var(--text-muted);"><strong>Kodon Asal NCBI:</strong> <code>${data.wt_codon_ncbi}</code> pada residu ke-${data.target_codon_index}</div>
+          <div style="font-weight:800; color:var(--accent-dark); font-size:15px; margin-bottom:8px;">Target Mutasi: ${targetMutName}</div>
+          <div style="background:#f0fdf4; border:1px solid #86efac; border-radius:8px; padding:10px 12px; margin-bottom:12px; font-size:12.5px; line-height:1.6;">
+            <strong>Nomor Basa CDS yang Diubah:</strong> ${baseEditedNote}${codonChangeNote}${cutSiteNote}<br>
+            <strong>Teknologi Rekayasa:</strong> ${data.editing_technology || data.base_editor_recommendation}
+          </div>
           <div style="font-size:12px; font-weight:800; color:var(--text-main); margin-bottom:8px;">Kandidat sgRNA Siap Sintesis Oligo:</div>
           ${sgHtml}
           <div style="font-size:12px; color:var(--text-body); margin-top:12px; background:#ffffff; border:1px solid var(--border); padding:10px 14px; border-radius:8px;">
@@ -5143,6 +5290,106 @@ server {
           text: e.message
         });
       }
+    }
+
+    // --- SINTESIS VARIETAS BARU (GENE PYRAMIDING) ---
+    async function runVarietySynthesizer() {
+      const parent = document.getElementById('var-parent-select')?.value || 'Ciherang';
+      const env = document.getElementById('var-env-select')?.value || 'Lahan Vertisol Kering Indramayu';
+      const customName = document.getElementById('var-custom-name')?.value || '';
+
+      const traits = [];
+      if (document.getElementById('chk-dreb')?.checked) traits.push('drought_dreb2a', 'helix_stabilizer_v79i');
+      if (document.getElementById('chk-root')?.checked) traits.push('deep_root_dro1');
+      if (document.getElementById('chk-sub')?.checked) traits.push('submergence_sub1a');
+      if (document.getElementById('chk-xa21')?.checked) traits.push('bacterial_blight_xa21');
+      if (document.getElementById('chk-pita')?.checked) traits.push('rice_blast_pita');
+
+      const card = document.getElementById('variety-result-card');
+      if (!card) return;
+      card.style.display = 'block';
+      card.innerHTML = '<div class="alert alert-info">Menjalankan simulasi persilangan genetik komputasi (Gene Pyramiding)...</div>';
+
+      try {
+        const res = await fetch('/api/v1/phytoai/variety-designer/synthesize', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            parent_cultivar: parent,
+            selected_traits: traits,
+            target_environment: env,
+            custom_name: customName
+          })
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || 'Gagal merancang varietas baru');
+
+        let bpRows = '';
+        (data.molecular_blueprints || []).forEach(b => {
+          bpRows += `
+            <tr>
+              <td style="font-weight:700; color:#064e3b; font-family:'JetBrains Mono';">${b.gene_symbol}</td>
+              <td style="font-weight:700;">${b.target_mutation}</td>
+              <td><span style="background:#bbf7d0; color:#14532d; padding:2px 6px; border-radius:4px; font-weight:700; font-family:'JetBrains Mono';">Basa #${b.exact_base_number_edited}</span></td>
+              <td><code>${b.wildtype_codon} &rarr; ${b.mutant_codon}</code></td>
+              <td>${b.editing_technology}</td>
+              <td style="font-family:'JetBrains Mono'; font-size:11px;">${b.protospacer_20nt}</td>
+              <td>${b.cas9_cut_site_bp ? 'bp #' + b.cas9_cut_site_bp : '-'}</td>
+            </tr>
+          `;
+        });
+
+        card.innerHTML = `
+          <div style="background:linear-gradient(135deg, #064e3b 0%, #047857 100%); color:#ffffff; border-radius:14px; padding:20px; margin-bottom:16px; box-shadow:0 8px 24px rgba(6,78,59,0.25);">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+              <div>
+                <span style="background:rgba(255,255,255,0.2); padding:3px 10px; border-radius:999px; font-size:11px; font-weight:700; letter-spacing:0.5px;">KARYA PERISET MA SALAFIYAH KAJEN PATI</span>
+                <h3 style="margin:8px 0 4px 0; color:#ffffff; font-size:22px; font-weight:800;">🌾 ${data.variety_name}</h3>
+                <div style="font-size:13px; opacity:0.9;">Kode Galur: <strong>${data.lineage_code}</strong> • Induk: <strong>${data.parent_cultivar}</strong></div>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-size:11px; opacity:0.85;">Estimasi Potensi Hasil</div>
+                <div style="font-size:22px; font-weight:800; color:#a7f3d0;">${data.estimated_yield_potential}</div>
+                <div style="font-size:11px; color:#bbf7d0;">${data.stress_survival_rate}</div>
+              </div>
+            </div>
+            <hr style="border:none; border-top:1px solid rgba(255,255,255,0.25); margin:14px 0;">
+            <div style="font-size:13px; line-height:1.6; opacity:0.95;">
+              ${data.scientific_summary}
+            </div>
+          </div>
+
+          <div style="font-weight:700; font-size:14px; color:#064e3b; margin:14px 0 8px 0;">🧬 Cetak Biru Presisi Basa DNA yang Diubah / Dipotong:</div>
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>Gen</th>
+                  <th>Mutasi Unggul</th>
+                  <th>Nomor Basa CDS</th>
+                  <th>Kodon Asal &rarr; Mutan</th>
+                  <th>Teknologi Enzim</th>
+                  <th>sgRNA Spacer (20-nt)</th>
+                  <th>Titik Potong Cas9</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${bpRows}
+              </tbody>
+            </table>
+          </div>
+        `;
+
+        PhytoToast.fire({
+          icon: 'success',
+          title: 'Varietas Baru Berhasil Dirancang!',
+          text: data.variety_name
+        });
+      } catch (err) {
+        card.innerHTML = `<div class="alert" style="background:var(--danger-subtle); color:var(--danger);">Error: ${err.message}</div>`;
+      }
+    }
     }
 
     // --- DROUGHT REGULON TARGETS LOADER ---
@@ -5304,6 +5551,19 @@ Anda HANYA diperkenankan menjawab pertanyaan dan berdiskusi seputar proyek riset
    - Desain spacer sgRNA 20-nt dengan jendela pengeditan aktif (posisi 4-8), PAM SpCas9 (NGG / AGG / TGG), dan vektor tanaman pRGEB32 / pCAMBIA1300.
 8. 10 gen regulon hilir respons kekeringan padi (OsLEA3, OsERD1, OsRAB16A, OsNAC6, OsDREB1A, OsCIPK23, OsP5CS, OsAP37, OsbZIP23, OsWRKY45) dan integrasi NCBI Datasets v2 API.
 9. 8 Alur tahapan proses riset (InaRISK -> NCBI -> ESM-2/DMS -> Golden Mutation -> CRISPR CBE -> Kultivar Lokal -> Verifikasi Basah -> Uji Lapang & Pelepasan Varietas).
+10. Pemetaan Presisi Nomor Basa Nukleotida DNA (CDS OsDREB2A 825 bp):
+   - Mutasi P168L: Kodon #168 pada CDS bp 502-504 (CCT -> CTT). Basa spesifik yang diubah: Basa #503 dari C (Sitosin) ke T (Timin) via Cytosine Base Editor (nCas9-evoCDA1). Titik potong Cas9 berada 3 bp di hulu PAM (TGG pada bp 515-517) yaitu tepat di basa #512.
+   - Mutasi V79I: Kodon #79 pada CDS bp 235-237 (GTC -> ATC). Basa #235 dari G ke A via Adenine Base Editor (ABE8e). PAM AGG pada bp 238-240, titik potong Cas9 di basa #235.
+   - Mutasi S167A: Kodon #167 pada CDS bp 499-501 (TCT -> GCT). Basa #499 dari T ke G.
+   - Mutasi A83V: Kodon #83 pada CDS bp 248-250 (GCC -> GTC). Basa #248 dari C ke T.
+   - Mutasi E170K: Kodon #170 pada CDS bp 508-510 (GAG -> AAG). Basa #508 dari G ke A.
+11. Sintesis Varietas Baru (Gene Stacking / Pyramiding):
+   - Kemampuan menyilangkan dan menumpuk beberapa sifat unggul (misal: Toleransi Kekeringan OsDREB2A, Arsitektur Akar Dalam DRO1, Toleransi Rendaman/Banjir 14 Hari Sub1A, Ketahanan Hawar Daun Bakteri Xa21, Ketahanan Blas Pi-ta, Toleransi Salinitas SKC1) ke dalam kultivar tetua (Situ Bagendit, Ciherang, Inpari 32 HDB, dll.).
+   - Menghasilkan varietas baru unggul dengan sertifikat molekuler rancangan Periset MA Salafiyah Kajen Pati (contoh: "Salafiyah Agritama-DREB Super"), lengkap dengan tabel koordinat nomor basa DNA yang disunting dan proyeksi kenaikan produktivitas panen di lahan marjinal.
+12. Mesin Genomik Universal Multi-Tanaman & Integrasi Lingkungan Lahan (InaRISK BNPB + NCBI):
+   - Arsitektur PhytoAI bersifat universal untuk semua spesies tanaman pangan, tidak terbatas hanya pada padi (Oryza sativa).
+   - Katalog genomik mencakup: Jagung (Zea mays: ZmDREB2A & ZmHKT1), Kedelai (Glycine max: GmDREB1B & GmNcl), Sorgum (Sorghum bicolor: SbDREB2 & SbMATE), dan Gandum (Triticum aestivum: TaDREB1 & TaHKT1;4) yang bersumber dari NCBI.
+   - Sistem menghubungkan kondisi tanah/lingkungan (kekeringan, salinitas, genangan, keasaman tanah) dengan rekomendasi rekayasa genetik dan persilangan multi-sifat secara in silico untuk mempercepat pemuliaan tanaman tanpa harus menguji satu per satu di lab basah bertahun-tahun.
 
 === GUARDRAILS KETAT & PROTOKOL OFF-TOPIC ===
 JIKA pengguna mengajukan pertanyaan di luar ruang lingkup riset di atas (misalnya: topik politik, resep masakan, hiburan umum, game, matematika murni non-biologi, pemrograman umum non-terkait proyek, konsultasi umum, atau obrolan santai yang melenceng):
@@ -5671,7 +5931,7 @@ Contoh penolakan: "Mohon maaf, sebagai asisten riset PhytoAI karya Periset MA Sa
       <!-- Scope Guardrail Banner -->
       <div class="chat-scope-banner">
         <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-        <span>Khusus riset <em>OsDREB2A</em>, mutasi P168L/V79I, CRISPR Base Editing, & InaRISK.</span>
+        <span>Khusus riset <em>OsDREB2A</em>, mutasi P168L, CRISPR base editing, sintesis varietas baru, & InaRISK.</span>
       </div>
 
       <!-- Messages Container -->
@@ -5679,10 +5939,11 @@ Contoh penolakan: "Mohon maaf, sebagai asisten riset PhytoAI karya Periset MA Sa
 
       <!-- Quick Suggestion Chips -->
       <div id="phytoai-chat-chips" class="chat-chips-container">
+        <button class="chat-chip" onclick="sendResearcherQuickMsg('Basa nomor berapa yang diubah pada mutasi P168L dan di mana titik potong Cas9?')">🧬 Nomor Basa P168L & Cas9</button>
+        <button class="chat-chip" onclick="sendResearcherQuickMsg('Bagaimana cara mensintesis Varietas Baru dengan menggabungkan gen DREB2A, DRO1, dan Sub1A?')">🌱 Sintesis Varietas Baru</button>
         <button class="chat-chip" onclick="sendResearcherQuickMsg('Mengapa mutasi P168L disebut mutasi emas dalam proyek ini?')">🌾 Kenapa P168L mutasi emas?</button>
-        <button class="chat-chip" onclick="sendResearcherQuickMsg('Bagaimana desain CRISPR Base Editing untuk mutasi P168L?')">🧬 Desain CRISPR CBE</button>
+        <button class="chat-chip" onclick="sendResearcherQuickMsg('Bagaimana arsitektur PhytoAI diterapkan untuk tanaman lain seperti Jagung atau Kedelai dari NCBI?')">🌐 Tanaman Lain (NCBI)</button>
         <button class="chat-chip" onclick="sendResearcherQuickMsg('Apa rekomendasi varietas dan mutasi untuk wilayah Indramayu?')">🗺️ Rekomendasi Indramayu</button>
-        <button class="chat-chip" onclick="sendResearcherQuickMsg('Bagaimana mutasi P168L mengaktifkan regulon OsLEA3 & OsRAB16A?')">📊 Regulon OsLEA3 & OsRAB16A</button>
       </div>
 
       <!-- Footer & Input Area -->

@@ -302,3 +302,60 @@ async def get_single_inarisk_assessment(region_id: str):
             detail=f"Wilayah '{region_id}' tidak ditemukan di katalog InaRISK. Pilihan: {list(INARISK_REGIONAL_ASSESSMENT.keys())}"
         )
     return reg
+
+
+# --- PERANCANG VARIETAS BARU & PRESISI BASA DNA ---
+from app.services.variety_designer_service import (
+    NucleotideEditBlueprint,
+    SynthesizedVarietyProfile,
+    PLANT_GENOMICS_CATALOG,
+    get_nucleotide_edit_blueprint,
+    synthesize_new_variety
+)
+from pydantic import BaseModel, Field
+
+
+class SynthesizeVarietyRequest(BaseModel):
+    parent_cultivar: str = Field("Ciherang", description="Kultivar padi induk lokal (donor/resipien)")
+    selected_traits: List[str] = Field(default_factory=lambda: ["drought_dreb2a", "deep_root_dro1"], description="Daftar ID sifat unggul yang di-stack")
+    target_environment: str = Field("Lahan Vertisol Kering (Indramayu / Grobogan)", description="Kondisi tanah dan lingkungan target")
+    custom_name: Optional[str] = Field(None, description="Nama kustom untuk varietas unggul baru yang dirancang")
+
+
+@router.get("/variety-designer/blueprint/{mutation_code}", response_model=NucleotideEditBlueprint, summary="Cetak Biru Presisi Nomor Basa DNA yang Diubah/Dipotong")
+async def get_blueprint_for_mutation(mutation_code: str):
+    """
+    Menampilkan nomor basa nukleotida CDS yang tepat diubah/dipotong (misal P168L di basa nomor 503 C->T),
+    kodon asal vs kodon baru, urutan spacer sgRNA 20-nt, posisi PAM, dan rekomendasi enzim base editor.
+    """
+    try:
+        return get_nucleotide_edit_blueprint(mutation_code)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.get("/variety-designer/plant-catalog", summary="Katalog Genomik Multi-Tanaman NCBI (Padi, Jagung, Kedelai, Sorgum, Gandum)")
+async def get_plant_genomics_catalog():
+    """
+    Menyediakan katalog gen ketahanan cekaman iklim/tanah dari berbagai tanaman pangan dunia di NCBI.
+    Membuktikan arsitektur PhytoAI dapat digeneralisasi untuk semua jenis organisme dan cekaman.
+    """
+    return PLANT_GENOMICS_CATALOG
+
+
+@router.post("/variety-designer/synthesize", response_model=SynthesizedVarietyProfile, summary="Rancang & Sintesis Varietas Unggul Baru (Multi-Trait Gene Pyramiding)")
+async def api_synthesize_new_variety(payload: SynthesizeVarietyRequest):
+    """
+    Menggabungkan sifat unggul pilihan (tahan kekeringan, perakaran dalam, tahan banjir, kebal hawar daun, kebal blas)
+    ke dalam genom kultivar induk lokal untuk melahirkan profil Varietas Baru karya Periset MA Salafiyah Kajen Pati.
+    """
+    try:
+        return synthesize_new_variety(
+            parent_cultivar=payload.parent_cultivar,
+            selected_traits=payload.selected_traits,
+            target_environment=payload.target_environment,
+            custom_name=payload.custom_name
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Gagal merancang varietas baru: {str(e)}")
+

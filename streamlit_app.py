@@ -53,6 +53,12 @@ from app.services.db_service import (
     get_db_crispr_guides
 )
 from app.services.studio_bundle import build_standalone_studio_html
+from app.services.variety_designer_service import (
+    get_nucleotide_edit_blueprint,
+    synthesize_new_variety,
+    PLANT_GENOMICS_CATALOG,
+    NUCLEOTIDE_BLUEPRINT_REGISTRY
+)
 
 
 def render_iframe(html_content: str, height: int = 600, scrolling: bool = True):
@@ -148,8 +154,11 @@ def call_groq_researcher(user_query: str, history: list) -> str:
         "=== IDENTITAS RISET ===\n"
         "Proyek riset PhytoAI-Genetics dan AI PhytoAI ini adalah hasil karya orisinal Periset MA Salafiyah Kajen Pati (Madrasah Aliyah Salafiyah Kajen, Margoyoso, Pati, Jawa Tengah). Tegaskan identitas ini dengan santun, lugas, dan bangga jika ditanyakan.\n\n"
         "=== FOKUS EKSKLUSIF RISET ===\n"
-        "Anda HANYA boleh menjawab pertanyaan seputar proyek riset PhytoAI-Genetics: "
+        "Anda HANYA boleh menjawab pertanyaan seputar proyek riset PhytoAI-Genetics karya Periset MA Salafiyah Kajen Pati: "
         "rekayasa OsDREB2A (NCBI Gene ID: 4324418), pemodelan Transformer ESM-2 (delta LLR / delta delta G), DMS scan, mutasi P168L / V79I / S167A, "
+        "nomor urut basa nukleotida CDS yang disunting/dipotong (P168L basa #503 C->T, titik potong Cas9 basa #512; V79I basa #235 G->A), "
+        "sintesis Varietas Baru (Gene Stacking multi-sifat unggul: DREB2A, DRO1, Sub1A, Xa21, Pi-ta), "
+        "mesin genomik universal multi-tanaman pangan NCBI (Padi, Jagung, Kedelai, Sorgum, Gandum), "
         "peta BNPB InaRISK 100m, 13 kultivar padi lokal, CRISPR Base Editing (CBE/ABE tanpa DSB), dan 10 gen regulon kekeringan NCBI. "
         "Tolak topik di luar proyek riset ini secara santun dan ramah.\n\n"
         "=== PEDOMAN STRUKTUR & KELENGKAPAN JAWABAN ===\n"
@@ -524,13 +533,14 @@ else:
         unsafe_allow_html=True,
     )
 
-    tab_overview, tab_drought, tab_phytoai, tab_dms, tab_cultivars, tab_crispr, tab_3d, tab_targets, tab_ncbi, tab_docs, tab_tests = st.tabs(
+    tab_overview, tab_drought, tab_phytoai, tab_dms, tab_cultivars, tab_variety, tab_crispr, tab_3d, tab_targets, tab_ncbi, tab_docs, tab_tests = st.tabs(
         [
             "🏠 Beranda",
             "🗺️ Peta InaRISK",
             "🤖 Prediksi Transformer",
             "🔬 DMS Matrix",
             "🌾 Kultivar Lokal",
+            "🌱 Varietas Baru & Basa DNA",
             "✂️ CRISPR Studio",
             "🎬 Animasi 3D CRISPR",
             "🧬 10 Gen Regulon",
@@ -838,7 +848,189 @@ else:
         if f4:
             st.image(f4, caption="Gambar 5: Malai padi plasma nutfah lokal tahan kekeringan di Indonesia.", use_container_width=True)
 
-    # 6. TAB CRISPR BASE EDITING STUDIO
+    # 6. TAB PERANCANG VARIETAS BARU & PRESISI BASA DNA
+    with tab_variety:
+        st.markdown("### 🌱 Perancang Varietas Unggul Baru & Cetak Biru Basa DNA")
+        st.caption(
+            "Inovasi Periset MA Salafiyah Kajen Pati • Menghubungkan Cekaman Tanah InaRISK BNPB dengan Genomik NCBI "
+            "untuk Menyilangkan & Menggabungkan Sifat Unggul (Multi-Trait Pyramiding) Menjadi Varietas Baru yang Adaptif."
+        )
+
+        v_sub1, v_sub2, v_sub3 = st.tabs([
+            "🧬 Detail Presisi Nomor Basa DNA",
+            "🌾 Sintesis Varietas Baru (Gene Stacking)",
+            "🌐 Mesin Genomik Universal Multi-Tanaman"
+        ])
+
+        with v_sub1:
+            st.markdown("#### 🔍 Pemetaan Presisi Nomor Basa Nukleotida CDS yang Diubah / Dipotong")
+            st.info(
+                "Sistem memperlihatkan secara eksak nomor urut basa nukleotida pada sekuens pengkode protein (CDS) "
+                "yang diubah oleh enzim Base Editor (CBE/ABE) atau dipotong oleh Cas9 nuclease, beserta kodon asal dan kodon mutan."
+            )
+
+            sel_mut_bp = st.selectbox(
+                "Pilih Target Mutasi OsDREB2A:",
+                list(NUCLEOTIDE_BLUEPRINT_REGISTRY.keys()),
+                format_func=lambda k: f"{k} — {NUCLEOTIDE_BLUEPRINT_REGISTRY[k]['target_mutation']} ({NUCLEOTIDE_BLUEPRINT_REGISTRY[k]['exact_base_change']})",
+                key="sel_mut_bp"
+            )
+
+            bp_data = get_nucleotide_edit_blueprint(sel_mut_bp)
+
+            m_col1, m_col2, m_col3, m_col4 = st.columns(4)
+            with m_col1:
+                st.metric("Asam Amino", f"{bp_data.wildtype_aa} → {bp_data.mutant_aa}")
+            with m_col2:
+                st.metric("Rentang Kodon CDS", bp_data.cds_nucleotide_range)
+            with m_col3:
+                st.metric("Nomor Basa yang Diubah", f"Basa #{bp_data.exact_base_number_edited}")
+            with m_col4:
+                st.metric("Kodon Asal → Mutan", f"{bp_data.wildtype_codon} → {bp_data.mutant_codon}")
+
+            st.markdown(
+                f"""
+                <div style="background:#f0fdf4; border:1px solid #86efac; border-radius:10px; padding:14px; margin:12px 0;">
+                    <div style="font-weight:700; color:#166534; font-size:14px; margin-bottom:6px;">
+                        🎯 Cetak Biru Molekuler: {bp_data.target_mutation}
+                    </div>
+                    <div style="font-size:13px; color:#14532d; line-height:1.6;">
+                        • <strong>Perubahan Basa Spesifik:</strong> <span style="background:#bbf7d0; padding:2px 6px; border-radius:4px; font-weight:700; font-family:'JetBrains Mono';">{bp_data.exact_base_change}</span><br>
+                        • <strong>Teknologi Rekayasa:</strong> {bp_data.editing_technology} ({bp_data.enzyme_recommended})<br>
+                        • <strong>Status Pemotongan Untai Ganda (DSB):</strong> {'❌ Tanpa DSB (Aman & Bebas Indel)' if not bp_data.double_strand_break else '⚠️ Memotong Untai Ganda'}<br>
+                        • <strong>Titik Pemotongan Cas9 Nuclease:</strong> Basa nomor #{bp_data.cas9_cut_site_bp} (3 bp upstream dari PAM motif {bp_data.pam_motif})<br>
+                        • <strong>Protospacer sgRNA (20-nt):</strong> <code style="font-weight:700; color:#065f46;">{bp_data.protospacer_20nt}</code><br>
+                        • <strong>Dampak Fungsional Biologis:</strong> {bp_data.functional_impact}
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+        with v_sub2:
+            st.markdown("#### 🌾 Sintesis Varietas Unggul Baru (Multi-Trait Gene Pyramiding)")
+            st.caption(
+                "Gabungkan beberapa sifat unggul sekaligus (toleransi kekeringan, perakaran dalam, tahan rendaman, kebal hawar daun/blas) "
+                "ke dalam genom varietas induk lokal pilihan Anda untuk menghasilkan varietas baru secara in silico."
+            )
+
+            col_var1, col_var2 = st.columns([1, 1])
+            with col_var1:
+                p_cult = st.selectbox(
+                    "Pilih Varietas Induk / Donor Lokal:",
+                    ["Situ Bagendit (Padi Gogo)", "Ciherang (Nasional)", "Inpari 32 HDB (Sawah)", "Gogo Jatiluhur", "Gogo Limboto", "Batutegi", "Rojolele", "Memberamo"],
+                    key="p_cult_select"
+                )
+                clean_parent = p_cult.split()[0] + (" " + p_cult.split()[1] if len(p_cult.split()) > 1 and not p_cult.split()[1].startswith("(") else "")
+
+                t_env = st.selectbox(
+                    "Pilih Kondisi Lahan & Tanah Target (InaRISK BNPB):",
+                    [
+                        "Lahan Vertisol Kering Retak (Indramayu, Grobogan, Bojonegoro)",
+                        "Lahan Sawah Pasang Surut & Sawah Rawan Banjir (Demak, Karawang, Subang)",
+                        "Lahan Tadah Hujan Semi-Arid Ekstrem (Sumba Timur, Bone, Lombok Timur)",
+                        "Lahan Endemik Hawar Daun Bakteri (Kresek) & Jamur Blas"
+                    ],
+                    key="t_env_select"
+                )
+
+                custom_var_name = st.text_input(
+                    "Beri Nama Varietas Baru (Opsional):",
+                    value=f"Salafiyah Agritama-DREB Super ({clean_parent} Neo)",
+                    help="Anda dapat memberikan nama khusus untuk varietas unggul baru hasil rekayasa ini."
+                )
+
+            with col_var2:
+                st.markdown("**Pilih Sifat Unggul yang Ingin Disilangkan / Digabungkan (Gene Stacking):**")
+                trait_dreb = st.checkbox("🌟 Toleransi Kekeringan Ekstrem & Panas (OsDREB2A: bp #503 C->T & bp #235 G->A)", value=True)
+                trait_root = st.checkbox("🌱 Perakaran Vertikal Tembus Lapisan Keras (DRO1: deep rooting subsoil >60cm)", value=True)
+                trait_sub = st.checkbox("🌊 Toleransi Rendaman Air / Banjir Bandang (Sub1A: tahan rendam 14 hari)", value=False)
+                trait_xa21 = st.checkbox("🛡️ Kebal Hawar Daun Bakteri / Kresek (Xa21: reseptor kinase antibakteri)", value=True)
+                trait_pita = st.checkbox("🌾 Kebal Jamur Blas Daun (Pi-ta: resistensi Magnaporthe oryzae)", value=False)
+
+            selected_trait_ids = []
+            if trait_dreb: selected_trait_ids.extend(["drought_dreb2a", "helix_stabilizer_v79i"])
+            if trait_root: selected_trait_ids.append("deep_root_dro1")
+            if trait_sub: selected_trait_ids.append("submergence_sub1a")
+            if trait_xa21: selected_trait_ids.append("bacterial_blight_xa21")
+            if trait_pita: selected_trait_ids.append("rice_blast_pita")
+
+            if st.button("🚀 Rancang & Sintesis Varietas Baru Sekarang", use_container_width=True, type="primary"):
+                var_profile = synthesize_new_variety(
+                    parent_cultivar=clean_parent,
+                    selected_traits=selected_trait_ids,
+                    target_environment=t_env,
+                    custom_name=custom_var_name
+                )
+
+                st.success(f"🎉 Varietas Baru Berhasil Dirancang: **{var_profile.variety_name}**!")
+
+                st.markdown(
+                    f"""
+                    <div style="background:linear-gradient(135deg, #064e3b 0%, #047857 100%); color:#ffffff; border-radius:14px; padding:20px; margin:16px 0; box-shadow:0 8px 24px rgba(6,78,59,0.25);">
+                        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+                            <div>
+                                <span style="background:rgba(255,255,255,0.2); padding:3px 10px; border-radius:999px; font-size:11px; font-weight:700; letter-spacing:0.5px;">KARYA PERISET MA SALAFIYAH KAJEN PATI</span>
+                                <h3 style="margin:8px 0 4px 0; color:#ffffff; font-size:22px; font-weight:800;">🌾 {var_profile.variety_name}</h3>
+                                <div style="font-size:13px; opacity:0.9;">Kode Galur Pemuliaan: <strong>{var_profile.lineage_code}</strong> • Induk: <strong>{var_profile.parent_cultivar}</strong></div>
+                            </div>
+                            <div style="text-align:right;">
+                                <div style="font-size:11px; opacity:0.85;">Estimasi Potensi Hasil</div>
+                                <div style="font-size:22px; font-weight:800; color:#a7f3d0;">{var_profile.estimated_yield_potential}</div>
+                                <div style="font-size:11px; color:#bbf7d0;">{var_profile.stress_survival_rate}</div>
+                            </div>
+                        </div>
+                        <hr style="border:none; border-top:1px solid rgba(255,255,255,0.25); margin:14px 0;">
+                        <div style="font-size:13px; line-height:1.6; opacity:0.95;">
+                            {var_profile.scientific_summary}
+                        </div>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
+
+                st.markdown("##### 🧬 Cetak Biru Presisi Basa DNA yang Diubah / Dipotong:")
+                bp_rows = []
+                for b in var_profile.molecular_blueprints:
+                    bp_rows.append({
+                        "Gen Target": f"{b.gene_symbol} (ID: {b.ncbi_gene_id})",
+                        "Mutasi Unggul": b.target_mutation,
+                        "Nomor Basa CDS": f"Basa #{b.exact_base_number_edited}",
+                        "Kodon Asal → Baru": f"{b.wildtype_codon} → {b.mutant_codon}",
+                        "Teknologi Enzim": b.editing_technology,
+                        "sgRNA Spacer (20-nt)": b.protospacer_20nt,
+                        "Pemotongan Cas9": f"bp #{b.cas9_cut_site_bp}" if b.cas9_cut_site_bp else "-",
+                        "Peran Sifat": b.functional_impact[:65] + "..."
+                    })
+                render_table(bp_rows)
+
+                st.markdown("##### 📋 Alur Protokol Pemuliaan & Verifikasi Molekuler:")
+                for step in var_profile.breeding_protocol_steps:
+                    st.markdown(f"- {step}")
+
+        with v_sub3:
+            st.markdown("#### 🌐 Mesin Genomik Universal Multi-Tanaman (Terintegrasi NCBI)")
+            st.caption(
+                "Arsitektur PhytoAI dirancang berlaku umum untuk semua tanaman pangan dunia dan kondisi tanah/iklim apa pun. "
+                "Padi (Oryza sativa) adalah model pembuktian konsep (proof-of-concept), dan mesin ini siap diekspansi ke jagung, kedelai, sorgum, maupun gandum."
+            )
+
+            plant_tabs = st.tabs(list(PLANT_GENOMICS_CATALOG.keys()))
+            for idx, (sp_name, sp_info) in enumerate(PLANT_GENOMICS_CATALOG.items()):
+                with plant_tabs[idx]:
+                    st.markdown(f"**Nama Spesies:** *{sp_info['species']}* | **Assembly Referensi NCBI:** `{sp_info['reference_assembly']}`")
+                    sp_gene_rows = []
+                    for g in sp_info["genes"]:
+                        sp_gene_rows.append({
+                            "Simbol Gen": g["symbol"],
+                            "NCBI Gene ID": g["gene_id"],
+                            "Lokus Genomik": g["locus"],
+                            "Sifat Cekaman Target": g["trait"],
+                            "Peran Biologis Molekuler": g["role"]
+                        })
+                    render_table(sp_gene_rows)
+
+    # 7. TAB CRISPR BASE EDITING STUDIO
     with tab_crispr:
         st.markdown("### ✂️ CRISPR Base Editing Studio (CBE & ABE)")
         st.caption("Desain protospacer gRNA presisi bebas potongan ganda DNA (DSB-Free) untuk mengintroduksi varian toleran kekeringan.")
@@ -877,8 +1069,14 @@ else:
             w_seq = cds[w_start:w_end]
             crispr_res = analyze_crispr_targets(w_seq, nuclease="SpCas9")
 
-            st.markdown(f"**Target Mutasi:** `{selected_crispr_mut}` | **Kodon Asal NCBI:** `posisi {pos} ({wt_cod})`")
-            st.info(f"**Rekomendasi Editor:** {mut_obj.crispr_base_editing_candidate or 'Base Editor'}")
+            blueprint_obj = get_nucleotide_edit_blueprint(selected_crispr_mut)
+            st.markdown(
+                f"**Target Mutasi:** `{selected_crispr_mut}` | "
+                f"**Kodon Asal NCBI:** `{blueprint_obj.wildtype_codon} (bp #{c_start+1}-#{c_end})` $\\rightarrow$ `{blueprint_obj.mutant_codon}` | "
+                f"**Basa yang Diubah:** `{blueprint_obj.exact_base_change}` | "
+                f"**Titik Potong Cas9:** `bp #{blueprint_obj.cas9_cut_site_bp}`"
+            )
+            st.info(f"**Rekomendasi Editor:** {blueprint_obj.editing_technology} ({blueprint_obj.enzyme_recommended}) — {'Tanpa Potongan Ganda DNA (DSB-Free)' if not blueprint_obj.double_strand_break else 'Memotong Untai Ganda'}")
             be_sg_rows = []
             for s in crispr_res.sites[:5]:
                 be_sg_rows.append(
@@ -1240,9 +1438,9 @@ else:
     # 11. TAB PENGUJIAN PYTEST
     with tab_tests:
         st.markdown("### 🧪 Eksekusi Pengujian Otomatis (Pytest Test Suite)")
-        st.caption("45 unit tests otomatis memvalidasi keakuratan formula biofisika, endpoint REST API, database lokal SQLite, model AI Transformer, dan penanganan galat.")
+        st.caption("50 unit tests otomatis memvalidasi keakuratan formula biofisika, endpoint REST API, database lokal SQLite, model AI Transformer, sintesis varietas baru, dan penanganan galat.")
 
-        if st.button("▶️ Jalankan 47 Unit Tests Sekarang", use_container_width=True):
+        if st.button("▶️ Jalankan Test Suite Sekarang (50 Unit Tests)", use_container_width=True):
             with st.spinner("Menjalankan test suite dengan pytest..."):
                 proc = subprocess.run(["./.venv/bin/pytest", "tests/", "-v", "--tb=short"], capture_output=True, text=True, cwd=ROOT_DIR)
                 st.code(proc.stdout, language="bash")

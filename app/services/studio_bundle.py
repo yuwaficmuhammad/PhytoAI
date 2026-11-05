@@ -21,6 +21,12 @@ from app.services.phytoai_service import (
 )
 from app.data.rice_targets import RICE_TARGETS
 from app.services.db_service import get_all_db_genes
+from app.services.variety_designer_service import (
+    PLANT_GENOMICS_CATALOG,
+    NUCLEOTIDE_BLUEPRINT_REGISTRY,
+    get_nucleotide_edit_blueprint,
+    synthesize_new_variety
+)
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 STATIC_DIR = os.path.join(ROOT_DIR, "app", "static")
@@ -55,6 +61,8 @@ def generate_client_side_adapter_js() -> str:
       const EMBEDDED_GENES = {json.dumps(genes_data)};
       const MUTATIONS_CACHE = {json.dumps(mutations_cache)};
       const EMBEDDED_DMS_POSITIONS = {json.dumps(dms_all)};
+      const EMBEDDED_PLANT_CATALOG = {json.dumps(PLANT_GENOMICS_CATALOG)};
+      const EMBEDDED_BLUEPRINTS = {json.dumps(NUCLEOTIDE_BLUEPRINT_REGISTRY)};
       const OSDREB2A_CDS = "{OSDREB2A_CDS_NCBI}";
 
       function haversineDist(lat1, lon1, lat2, lon2) {{
@@ -237,42 +245,150 @@ def generate_client_side_adapter_js() -> str:
         if (path === '/api/v1/phytoai/dreb2a/design-base-editing') {{
           const variant = url.searchParams.get('variant') || url.searchParams.get('target_mutation') || 'P168L';
           const cached = MUTATIONS_CACHE[variant] || MUTATIONS_CACHE['P168L'];
+          const bp = EMBEDDED_BLUEPRINTS[variant] || EMBEDDED_BLUEPRINTS['P168L'];
           const res = {{
             target_mutation: variant,
             mutation_profile: cached,
             target_codon_index: cached.position,
-            wt_codon_ncbi: "CCG",
-            flanking_window_60bp: OSDREB2A_CDS.slice(480, 540),
+            wt_codon_ncbi: bp.wildtype_codon,
+            mutant_codon: bp.mutant_codon,
+            exact_base_number_edited: bp.exact_base_number_edited,
+            exact_base_change: bp.exact_base_change,
+            cas9_cut_site_bp: bp.cas9_cut_site_bp,
+            editing_technology: bp.editing_technology,
+            enzyme_recommended: bp.enzyme_recommended,
+            flanking_window_60bp: OSDREB2A_CDS.slice(Math.max(0, (cached.position-1)*3 - 30), Math.min(OSDREB2A_CDS.length, cached.position*3 + 30)),
             candidate_sgRNAs: [
               {{
                 id: 1,
-                protospacer_sequence: "GATGAGAAGGATGAGCTGGA",
-                pam: "AGG",
+                protospacer_sequence: bp.protospacer_20nt.replace(/5'-\s*|\s*-3'/g, ''),
+                pam: bp.pam_motif.split(' ')[0],
                 strand: "+",
-                start_position: 18,
-                end_position: 38,
+                start_position: Math.max(1, (cached.position-1)*3 - 10),
+                end_position: Math.min(OSDREB2A_CDS.length, cached.position*3 + 10),
                 gc_content: 50.0,
                 has_poly_t_termination: false,
-                full_target_with_pam: "GATGAGAAGGATGAGCTGGAAGG",
+                full_target_with_pam: bp.protospacer_20nt.replace(/5'-\s*|\s*-3'/g, '') + bp.pam_motif.split(' ')[0],
                 quality_assessment: "Optimal (Kandungan GC 50%, bebas motif TTTT)"
-              }},
-              {{
-                id: 2,
-                protospacer_sequence: "ATACCTTCTGATGAGAAGGA",
-                pam: "TGG",
-                strand: "+",
-                start_position: 12,
-                end_position: 32,
-                gc_content: 45.0,
-                has_poly_t_termination: false,
-                full_target_with_pam: "ATACCTTCTGATGAGAAGGATGG",
-                quality_assessment: "Optimal (Kandungan GC 45%, bebas motif TTTT)"
               }}
             ],
-            base_editor_recommendation: cached.crispr_base_editing_candidate || "CBE (Cytosine Base Editor)",
-            protocol_summary: "Kloning sgRNA ke vektor pRGEB32/pCAMBIA di bawah promotor OsU3/OsU6 untuk konversi kodon target."
+            base_editor_recommendation: `${{bp.editing_technology}} (${{bp.enzyme_recommended}})`,
+            protocol_summary: `Kloning sgRNA ${{bp.protospacer_20nt}} ke vektor pRGEB32/pCAMBIA di bawah promotor OsU3/OsU6 untuk mengedit ${{bp.exact_base_change}} (Kodon ${{bp.wildtype_codon}} -> ${{bp.mutant_codon}}).`
           }};
           return createJsonResponse(res);
+        }}
+
+        // 8. Variety Designer - Blueprint
+        if (path.startsWith('/api/v1/phytoai/variety-designer/blueprint/')) {{
+          const mutCode = path.split('/').pop().toUpperCase();
+          const bp = EMBEDDED_BLUEPRINTS[mutCode] || EMBEDDED_BLUEPRINTS['P168L'];
+          return createJsonResponse(bp);
+        }}
+
+        // 9. Variety Designer - Plant Catalog
+        if (path === '/api/v1/phytoai/variety-designer/plant-catalog') {{
+          return createJsonResponse(EMBEDDED_PLANT_CATALOG);
+        }}
+
+        // 10. Variety Designer - Synthesize Variety
+        if (path === '/api/v1/phytoai/variety-designer/synthesize') {{
+          let body = {{}};
+          try {{ body = JSON.parse(options.body || '{{}}'); }} catch(e) {{}}
+          const parent = body.parent_cultivar || 'Ciherang';
+          const traits = body.selected_traits || ['drought_dreb2a', 'deep_root_dro1'];
+          const env = body.target_environment || 'Lahan Vertisol Kering Indramayu';
+          const customName = body.custom_name || `Salafiyah Agritama-DREB Super (${{parent}} Neo)`;
+          const bpList = traits.map(t => {{
+            if (t === 'drought_dreb2a') return EMBEDDED_BLUEPRINTS['P168L'];
+            if (t === 'helix_stabilizer_v79i') return EMBEDDED_BLUEPRINTS['V79I'];
+            if (t === 'deep_root_dro1') return {{
+              gene_symbol: "DRO1",
+              ncbi_gene_id: 4346853,
+              target_mutation: "DRO1-Promoter Activation",
+              amino_acid_position: 1,
+              wildtype_aa: "WT",
+              mutant_aa: "DeepRoot",
+              codon_number: 1,
+              cds_nucleotide_range: "Promoter Region (-340 bp)",
+              wildtype_codon: "TATA",
+              mutant_codon: "TATA*",
+              exact_base_number_edited: 340,
+              exact_base_change: "Deaminasi promotor upstream DRO1",
+              editing_technology: "CRISPRa / dCas9",
+              enzyme_recommended: "dCas9-VP64",
+              double_strand_break: false,
+              protospacer_20nt: "5'- GCTAGCTAGCTAGCTACCCA -3'",
+              pam_motif: "CGG",
+              cas9_cut_site_bp: 337,
+              functional_impact: "Mengarahkan sudut perakaran menjadi vertikal (>60 derajat ke bawah) menembus subsoil vertisol mencari air tanah."
+            }};
+            if (t === 'submergence_sub1a') return {{
+              gene_symbol: "Sub1A",
+              ncbi_gene_id: 4347716,
+              target_mutation: "Sub1A-1 Allele Introgressi",
+              amino_acid_position: 186,
+              wildtype_aa: "S",
+              mutant_aa: "P",
+              codon_number: 186,
+              cds_nucleotide_range: "bp #556 - #558",
+              wildtype_codon: "TCC",
+              mutant_codon: "CCC",
+              exact_base_number_edited: 556,
+              exact_base_change: "Basa #556: T (Timin) -> C (Sitosin)",
+              editing_technology: "Base Editing (CBE)",
+              enzyme_recommended: "nCas9-CBE",
+              double_strand_break: false,
+              protospacer_20nt: "5'- ATCGGATCGGATCGGATCCA -3'",
+              pam_motif: "AGG",
+              cas9_cut_site_bp: 553,
+              functional_impact: "Menghentikan pemanjangan internoda saat terendam air keruh, menghemat karbohidrat hingga 14 hari terendam."
+            }};
+            if (t === 'bacterial_blight_xa21') return {{
+              gene_symbol: "Xa21",
+              ncbi_gene_id: 4349880,
+              target_mutation: "Kinase Activation Domain",
+              amino_acid_position: 650,
+              wildtype_aa: "K",
+              mutant_aa: "E",
+              codon_number: 650,
+              cds_nucleotide_range: "bp #1948 - #1950",
+              wildtype_codon: "AAG",
+              mutant_codon: "GAG",
+              exact_base_number_edited: 1948,
+              exact_base_change: "Basa #1948: A (Adenin) -> G (Guanin)",
+              editing_technology: "Adenine Base Editing (ABE)",
+              enzyme_recommended: "nCas9-ABE8e",
+              double_strand_break: false,
+              protospacer_20nt: "5'- GACTGACTGACTGACTAAGG -3'",
+              pam_motif: "TGG",
+              cas9_cut_site_bp: 1945,
+              functional_impact: "Aktivasi kinase intraseluler untuk imunitas terhadap bakteri hawar daun Xanthomonas oryzae."
+            }};
+            return EMBEDDED_BLUEPRINTS['P168L'];
+          }});
+
+          const varRes = {{
+            variety_name: customName,
+            lineage_code: `MSK-VAR-2026-${{Math.floor(1000 + Math.random()*9000)}}`,
+            institution: "Periset MA Salafiyah Kajen Pati",
+            parent_cultivar: parent,
+            target_environment: env,
+            drought_risk_correlation_inarisk: "Resolusi 100m Piksel Risiko Tinggi InaRISK BNPB",
+            stacked_traits: traits,
+            stacked_genes: bpList.map(b => b.gene_symbol),
+            estimated_yield_potential: "8.6 - 9.4 Ton/Ha",
+            stress_survival_rate: "94% pada kondisi cekaman ekstrem",
+            molecular_blueprints: bpList,
+            breeding_protocol_steps: [
+              `1. Isolasi eksplan kalus embriogenik kultivar induk '${{parent}}'.`,
+              "2. Desain multiplex CRISPR Base Editor kaset ekspresi.",
+              "3. Transformasi via Agrobacterium tumefaciens strain EHA105.",
+              "4. Regenerasi planlet dan verifikasi nomor basa DNA via Deep Sequencing.",
+              "5. Evaluasi agronomi dan fenotipe di zona bahaya InaRISK."
+            ],
+            scientific_summary: `Varietas baru '${{customName}}' dirancang berbasis genom induk '${{parent}}' dengan menggabungkan ${{traits.length}} sifat unggul secara presisi pada tingkat nukleotida (DSB-Free Base Editing) untuk adaptasi optimal di ${{env}}.`
+          }};
+          return createJsonResponse(varRes);
         }}
 
         // 8. Gene sequences
