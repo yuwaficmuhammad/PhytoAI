@@ -3,12 +3,94 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PhytoAI-Genetics | Transformer Modeling of DREB2A Mutations & Rice Drought Tolerance</title>
   
-  <!-- Favicon: High-precision SVG + PNG Fallback -->
+  <!-- Primary SEO Meta Tags -->
+  <title>PhytoAI-Genetics | Transformer Modeling of DREB2A Mutations & Rice Drought Tolerance</title>
+  <meta name="title" content="PhytoAI-Genetics | Inovasi Riset Genomika Padi & AI Karya Periset MA Salafiyah Kajen Pati">
+  <meta name="description" content="Platform bioinformatika & kecerdasan buatan terintegrasi untuk pemodelan Transformer pLM mutasi OsDREB2A, desain CRISPR Base Editing, dan mitigasi risiko kekeringan InaRISK BNPB. Karya orisinal Periset MA Salafiyah Kajen Pati.">
+  <meta name="keywords" content="PhytoAI, OsDREB2A, CRISPR, Base Editing, InaRISK BNPB, Transformer ESM-2, Padi Tahan Kekeringan, MA Salafiyah Kajen Pati, Bioinformatika, Genetika Padi, Oryza sativa, El Nino, P168L, V79I, S167A, NCBI Datasets">
+  <meta name="author" content="Periset MA Salafiyah Kajen Pati">
+  <meta name="publisher" content="MA Salafiyah Kajen Pati">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <link rel="canonical" href="https://phytoai-masakapati.streamlit.app/">
+
+  <!-- Mobile & PWA Theme Meta -->
+  <meta name="theme-color" content="#059669">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="PhytoAI">
+
+  <!-- Open Graph / Facebook / WhatsApp / Telegram Preview -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="PhytoAI-Genetics Research Suite">
+  <meta property="og:url" content="https://phytoai-masakapati.streamlit.app/">
+  <meta property="og:title" content="PhytoAI-Genetics | Riset Genomika Padi & AI Karya Periset MA Salafiyah Kajen Pati">
+  <meta property="og:description" content="Platform bioinformatika & AI terintegrasi untuk pemodelan Transformer pLM mutasi OsDREB2A, pemetaan spasial InaRISK 100m, dan presisi CRISPR Base Editing.">
+  <meta property="og:image" content="https://raw.githubusercontent.com/yuwaficmuhammad/PhytoAI/main/app/static/images/rice_dreb2a_hero.png">
+  <meta property="og:image:secure_url" content="https://raw.githubusercontent.com/yuwaficmuhammad/PhytoAI/main/app/static/images/rice_dreb2a_hero.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="670">
+  <meta property="og:image:alt" content="Arsitektur Faktor Transkripsi OsDREB2A PhytoAI-Genetics">
+  <meta property="og:locale" content="id_ID">
+
+  <!-- Twitter / X Cards -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://phytoai-masakapati.streamlit.app/">
+  <meta name="twitter:title" content="PhytoAI-Genetics | Transformer Modeling & Rice Drought Tolerance">
+  <meta name="twitter:description" content="Inovasi riset bioteknologi & AI Transformer ESM-2 OsDREB2A padi karya Periset MA Salafiyah Kajen Pati.">
+  <meta name="twitter:image" content="https://raw.githubusercontent.com/yuwaficmuhammad/PhytoAI/main/app/static/images/rice_dreb2a_hero.png">
+  <meta name="twitter:image:alt" content="PhytoAI-Genetics Research Platform">
+
+  <!-- Schema.org JSON-LD Structured Data (Google Rich Snippets) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "ResearchProject",
+        "@id": "https://phytoai-masakapati.streamlit.app/#project",
+        "name": "PhytoAI-Genetics: Pemodelan Transformer Mutasi OsDREB2A & Rekayasa Toleransi Kekeringan Padi Lokal",
+        "alternateName": ["PhytoAI", "PhytoAI-Genetics"],
+        "description": "Platform bioinformatika & kecerdasan buatan terintegrasi untuk pemodelan Transformer pLM mutasi OsDREB2A, pemetaan geospasial risiko kekeringan BNPB InaRISK resolusi 100m, dan desain CRISPR Base Editing.",
+        "url": "https://phytoai-masakapati.streamlit.app/",
+        "funder": {
+          "@type": "EducationalOrganization",
+          "name": "MA Salafiyah Kajen Pati",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Kajen, Margoyoso",
+            "addressLocality": "Kabupaten Pati",
+            "addressRegion": "Jawa Tengah",
+            "addressCountry": "ID"
+          }
+        },
+        "creator": {
+          "@type": "Organization",
+          "name": "Periset MA Salafiyah Kajen Pati"
+        }
+      },
+      {
+        "@type": "WebApplication",
+        "@id": "https://phytoai-masakapati.streamlit.app/#app",
+        "name": "PhytoAI-Genetics Studio",
+        "applicationCategory": "ScientificApplication",
+        "operatingSystem": "All",
+        "url": "https://phytoai-masakapati.streamlit.app/",
+        "creator": {
+          "@type": "EducationalOrganization",
+          "name": "MA Salafiyah Kajen Pati"
+        }
+      }
+    ]
+  }
+  </script>
+  
+  <!-- Favicon: High-precision SVG + Apple Touch + Multi-size ICO/PNG -->
   <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
-  <link rel="alternate icon" type="image/png" href="/static/favicon.png">
-  <link rel="apple-touch-icon" href="/static/favicon.png">
+  <link rel="alternate icon" type="image/png" sizes="64x64" href="/static/favicon.png">
+  <link rel="shortcut icon" type="image/x-icon" href="/static/favicon.ico">
+  <link rel="apple-touch-icon" sizes="192x192" href="/static/apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@8..144,300..800&family=Google+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">

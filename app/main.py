@@ -115,12 +115,15 @@ async def root_studio():
 @app.get("/favicon.ico", include_in_schema=False)
 async def favicon():
     """Mengembalikan berkas favicon ikon studio."""
-    icon_svg = os.path.join(static_dir, "favicon.svg")
-    if os.path.exists(icon_svg):
-        return FileResponse(icon_svg, media_type="image/svg+xml")
+    icon_ico = os.path.join(static_dir, "favicon.ico")
+    if os.path.exists(icon_ico):
+        return FileResponse(icon_ico, media_type="image/x-icon")
     icon_png = os.path.join(static_dir, "favicon.png")
     if os.path.exists(icon_png):
         return FileResponse(icon_png, media_type="image/png")
+    icon_svg = os.path.join(static_dir, "favicon.svg")
+    if os.path.exists(icon_svg):
+        return FileResponse(icon_svg, media_type="image/svg+xml")
     return HTMLResponse(status_code=404)
 
 

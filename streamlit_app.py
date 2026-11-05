@@ -186,9 +186,12 @@ def call_groq_researcher(user_query: str, history: list) -> str:
 
 
 # ==================== KONFIGURASI HALAMAN ====================
+_fav_path = os.path.join(ROOT_DIR, "app", "static", "favicon.png")
+_page_icon = _fav_path if os.path.exists(_fav_path) else "🌾"
+
 st.set_page_config(
     page_title="PhytoAI-Genetics | Transformer Modeling & Rice Drought Tolerance",
-    page_icon="🌾",
+    page_icon=_page_icon,
     layout="wide",
     initial_sidebar_state="collapsed",
 )
