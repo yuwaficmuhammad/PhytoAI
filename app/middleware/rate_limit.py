@@ -27,6 +27,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
     ROUTE_LIMITS: Dict[str, tuple] = {
         "/api/v1/crispr/find-targets":            (30, 60),
         "/api/v1/crispr/design-for-gene":         (20, 60),
+        "/api/v1/phytoai/dreb2a/deep-mutational-scan": (20, 60),
         "/api/v1/phytoai/dreb2a/dms-scan":        (20, 60),
         "/api/v1/phytoai/dreb2a/predict-mutation": (60, 60),
         "/api/v1/phytoai/assess-coordinates":     (60, 60),

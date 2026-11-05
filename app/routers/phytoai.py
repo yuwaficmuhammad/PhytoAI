@@ -247,14 +247,27 @@ async def design_base_editing_for_dreb2a(
 
     crispr_analysis = analyze_crispr_targets(sequence=window_seq, nuclease="SpCas9")
 
+    # Ambil cetak biru presisi nomor basa DNA jika tersedia
+    bp = None
+    try:
+        from app.services.variety_designer_service import get_nucleotide_edit_blueprint
+        bp = get_nucleotide_edit_blueprint(mut_str)
+    except Exception:
+        pass
+
     return {
         "target_mutation": mut_str,
         "mutation_profile": mut_result,
         "target_codon_index": mut_result.position,
         "wt_codon_ncbi": wt_codon,
+        "mutant_codon": bp.mutant_codon if bp else None,
+        "exact_base_number_edited": bp.exact_base_number_edited if bp else None,
+        "exact_base_change": bp.exact_base_change if bp else None,
+        "cas9_cut_site_bp": bp.cas9_cut_site_bp if bp else None,
+        "editing_technology": bp.editing_technology if bp else mut_result.crispr_base_editing_candidate,
         "flanking_window_60bp": window_seq,
         "candidate_sgRNAs": crispr_analysis.sites[:5],
-        "base_editor_recommendation": mut_result.crispr_base_editing_candidate or "Membutuhkan Prime Editing atau Homology-Directed Repair (HDR)",
+        "base_editor_recommendation": mut_result.crispr_base_editing_candidate or (bp.editing_technology if bp else "Membutuhkan Prime Editing atau Homology-Directed Repair (HDR)"),
         "protocol_summary": (
             f"Gunakan sgRNA di atas pada vektor pRGEB32/pCAMBIA yang mengekspresikan "
             f"Cas9 nickase (nCas9-D10A) terfusi dengan deaminase (ABE8e atau evoCDA1) "

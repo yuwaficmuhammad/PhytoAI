@@ -453,7 +453,7 @@ else:
         - **FastAPI Engine:** 🟢 Aktif (`:8000`)
         - **Streamlit Studio:** 🟢 Aktif (`:8501`)
         - **Lokus Utama:** *OsDREB2A* (Gene ID: `4324418`)
-        - **Unit Test:** `54 Tests (100% Passed)`
+        - **Unit Test:** `56 Tests (100% Passed)`
         """
         )
 
@@ -1552,9 +1552,9 @@ else:
     # 11. TAB PENGUJIAN PYTEST
     with tab_tests:
         st.markdown("### 🧪 Eksekusi Pengujian Otomatis (Pytest Test Suite)")
-        st.caption("54 unit tests otomatis memvalidasi keakuratan formula biofisika, endpoint REST API, database lokal SQLite, model AI Transformer, sintesis varietas baru, dan analisis grafik.")
+        st.caption("56 unit tests otomatis memvalidasi keakuratan formula biofisika, endpoint REST API, database lokal SQLite, model AI Transformer, sintesis varietas baru, dan analisis grafik.")
 
-        if st.button("▶️ Jalankan Test Suite Sekarang (54 Unit Tests)", use_container_width=True):
+        if st.button("▶️ Jalankan Test Suite Sekarang (56 Unit Tests)", use_container_width=True):
             with st.spinner("Menjalankan test suite dengan pytest..."):
                 proc = subprocess.run(["./.venv/bin/pytest", "tests/", "-v", "--tb=short"], capture_output=True, text=True, cwd=ROOT_DIR)
                 st.code(proc.stdout, language="bash")

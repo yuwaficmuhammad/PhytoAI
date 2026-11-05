@@ -112,3 +112,24 @@ def test_api_graphical_analysis_endpoint():
     assert "yield_normal" in data["yield_comparison"]
     assert "Hari 25" in data["rwc_kinetics"]["days"]
 
+
+def test_nucleotide_blueprint_e166k():
+    bp = get_nucleotide_edit_blueprint("E166K")
+    assert bp.gene_symbol == "OsDREB2A"
+    assert bp.amino_acid_position == 166
+    assert bp.exact_base_number_edited == 496
+    assert bp.wildtype_codon == "GAG"
+    assert bp.mutant_codon == "AAG"
+
+
+def test_api_design_base_editing_with_nucleotide_details():
+    resp = client.post("/api/v1/phytoai/dreb2a/design-base-editing?variant=P168L")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["target_mutation"] == "P168L"
+    assert data["exact_base_number_edited"] == 503
+    assert "Basa #503" in data["exact_base_change"]
+    assert data["cas9_cut_site_bp"] == 512
+    assert data["mutant_codon"] == "CTT"
+
+
