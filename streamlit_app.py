@@ -698,12 +698,21 @@ elif nav_choice.startswith("🧬"):
         
         # Tampilkan Tabel Formatted
         table_rows = []
-        for d in LANDRACE_DATA:
+        for d in VERIFIED_LANDRACES:
             table_rows.append({
                 "Nama Varietas": d["name"],
+                "Status Data": "✅ Tersekuensing Resmi GenBank",
                 "Aksesi GenBank": d["accession"],
                 "Agroekosistem / Asal": d["region"],
                 "Karakteristik Unggul": d["note"]
+            })
+        for w in WETLAB_LANDRACES:
+            table_rows.append({
+                "Nama Varietas": w["name"],
+                "Status Data": "🔍 Target Wet-Lab Amplicon",
+                "Aksesi GenBank": "[Belum Didepositkan]",
+                "Agroekosistem / Asal": w["region"],
+                "Karakteristik Unggul": w["note"]
             })
         df_display = pd.DataFrame(table_rows)
         st.dataframe(df_display, use_container_width=True, hide_index=True)
