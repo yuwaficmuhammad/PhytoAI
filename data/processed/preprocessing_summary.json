@@ -1,0 +1,13 @@
+[
+  {
+    "file": "Nipponbare_NM_001051515.2.fasta",
+    "header": ">NM_001051515.2 Oryza sativa Japonica Group OsDREB2A (LOC_Os01g07120) mRNA/CDS [length=825]",
+    "nt_length": 825,
+    "gc_percent": 49.09,
+    "has_valid_start_atg": true,
+    "has_valid_stop": true,
+    "protein_length": 275,
+    "ap2_domain_nt_length": 189,
+    "ap2_domain_aa": "GPENSNCAYRGVRQRTWGKWVAEIREPNRGRRLWLGSFPTALEAAHAYDEAARAMYGPTARVN"
+  }
+]
