@@ -198,7 +198,10 @@ elif nav_choice.startswith("2."):
             with c_k1:
                 st.dataframe(df_kmer.head(15), use_container_width=True, hide_index=True)
             with c_k2:
-                st.bar_chart(df_kmer.head(15).set_index("6-mer Token"))
+                try:
+                    st.bar_chart(df_kmer.head(15).set_index("6-mer Token"))
+                except Exception:
+                    st.dataframe(df_kmer.head(15), use_container_width=True, hide_index=True)
 
 # ==============================================================================
 # HALAMAN 3: MUTAGENESIS SATURASI IN SILICO
@@ -257,16 +260,22 @@ elif nav_choice.startswith("3."):
         with chart_col1:
             st.markdown("##### Komposisi Tipe Mutasi")
             type_counts = filtered_df["mutation_type"].value_counts()
-            st.bar_chart(type_counts)
+            try:
+                st.bar_chart(type_counts)
+            except Exception:
+                st.dataframe(pd.DataFrame(type_counts), use_container_width=True)
 
         with chart_col2:
             st.markdown("##### Sebaran Mutasi Sepanjang Koordinat Domain AP2")
-            st.scatter_chart(
-                filtered_df,
-                x="position_nt",
-                y="mutation_type",
-                color="mutation_type"
-            )
+            try:
+                st.scatter_chart(
+                    filtered_df,
+                    x="position_nt",
+                    y="mutation_type",
+                    color="mutation_type"
+                )
+            except Exception:
+                st.info("Visualisasi grafik interaktif memerlukan modul Altair yang kompatibel.")
 
         # Tabel Data
         st.dataframe(
