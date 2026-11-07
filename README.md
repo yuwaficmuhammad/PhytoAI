@@ -1,139 +1,158 @@
-# 🌾 PhytoAI-Genetics: Transformer Modeling of DREB2A Mutations and Drought Tolerance in Local Rice (Oryza sativa)
-### *Bioinformatics & Machine Learning Platform for DREB2A Mutation Modeling, CRISPR Base Editing, and Spatial InaRISK BNPB Integration across Indonesian Rice Agroecosystems consuming NCBI Datasets v2 REST API*
+# PhytoAI-Genetics
 
-> 🏛️ **Atribusi Riset**: Proyek penelitian, platform pemodelan genomik, dan AI PhytoAI ini adalah hasil karya orisinal **Periset MA Salafiyah Kajen Pati** (Madrasah Aliyah Salafiyah Kajen, Margoyoso, Kabupaten Pati, Jawa Tengah).
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688.svg)](https://fastapi.tiangolo.com)
+[![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-EE4C2C.svg)](https://pytorch.org/)
+[![HuggingFace](https://img.shields.io/badge/%F0%9F%A4%97-DNABERT--2--117M-yellow)](https://huggingface.co/zhihan1996/DNABERT-2-117M)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/yuwaficmuhammad/ncbi/blob/align-with-proposal/notebooks/phytoai_colab.ipynb)
 
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.128+-009688.svg?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
-[![NCBI Datasets](https://img.shields.io/badge/NCBI%20Datasets-v2%20API-0071bc.svg)](https://www.ncbi.nlm.nih.gov/datasets/docs/v2/api/)
-[![Python](https://img.shields.io/badge/Python-3.9%2B-blue.svg?logo=python&logoColor=white)](https://python.org)
-[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED.svg?logo=docker&logoColor=white)](https://docker.com)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-
-Platform ini mengintegrasikan pemodelan kecerdasan buatan berbasis **Protein Language Model (Transformer pLM)** dengan data resmi **NCBI Datasets v2 REST API** dan sistem spasial **BNPB InaRISK ImageServer 100m** untuk memodelkan mutasi titik pada **OsDREB2A** (NCBI Gene ID: `4324418`), merancang panduan *CRISPR Base Editing* (CBE/ABE), serta mengevaluasi adaptasi kultivar padi lokal (*Oryza sativa*) di seluruh agroekosistem terdampak kekeringan di Indonesia.
+> **PhytoAI-Genetics: Transformer Modeling of DREB2A Mutations and Drought Tolerance in Local Rice (*Oryza sativa*)**  
+> Penelitian Bioinformatika & Pemodelan Genomik MA Salafiyah Kajen Pati
 
 ---
 
-## 🎯 Fokus Utama Proyek
+## 1. Latar Belakang & Cakupan Riset
 
-1. **🤖 Pemodelan Transformer OsDREB2A (ΔLLR)**:
-   - Evaluasi efek mutasi titik pada faktor transkripsi kunci kekeringan (*Dehydration-Responsive Element-Binding Protein 2A*, 274 AA).
-   - Pemetaan 4 domain fungsional: **NLS** (13-22), **AP2/ERF DNA-Binding** (68-130), **NRD / Degron PEST** (136-192, proteasom 26S), dan **TAD** (200-274).
-   - Identifikasi mutasi konstitutif aktif **DREB2A-CA** (`P168L`) yang meniadakan degradasi proteasom, serta mutasi afinitas pengikatan promoter (`V79I`).
-2. **🗺️ Integrasi Spasial BNPB InaRISK & Sampling Koordinat Dinamis**:
-   - Seluruh data diambil dinamis dari endpoint API tanpa *hardcoded value*.
-   - **Sampling Koordinat Real-Time**: Pengguna dapat mengklik titik mana saja di seluruh kepulauan Indonesia pada peta Leaflet untuk mengambil skor risiko kekeringan BNPB secara instan (`/api/v1/phytoai/assess-coordinates`).
-   - Cakupan klaster nasional meliputi Jawa Tengah (Demak, Pati, Grobogan), Jawa Timur (Bojonegoro, Madura, Tapal Kuda), Jawa Barat & Banten, NTT (Timor, Sumba, Flores), NTB (Sistem GORA), D.I. Yogyakarta (Karst Gunungkidul), Bali, Sulawesi (Palu, Jeneponto, Wajo), Sumatera (Lampung, Ogan Ilir, Pidie), dan Kalimantan Selatan.
-3. **🌾 Basis Data Kultivar Padi Lokal Indonesia**:
-   - Profil alel alami dan keragaman haplotip DREB2A pada varietas lokal (*Inpari 32 HDB*, *Padi Gogo Merah NTT*, *Segreng Handayani*, *Salumpikit*, *Gogo Jatiluhur*, *Limboto*, *Situ Bagendit*, *Inpari 42 Agritan GSR*, *Padi Hitam Sumba*, *Rojolele*, *Mentik Wangi*, *IR64*).
-4. **✂️ Desain CRISPR Base Editing (CBE / ABE)**:
-   - Desain gRNA presisi untuk memasukkan mutasi transisi (C-ke-T via CBE atau A-ke-G via ABE) ke dalam sekuens coding *OsDREB2A* tanpa membuat *double-strand break* (DSB).
-   - Analisis PAM SpCas9 / Cas12a, kadar GC, dan eliminasi motif terminasi dini Pol III (`TTTT`).
-5. **📡 Konsumsi Langsung NCBI Datasets v2 REST API**:
-   - Mengambil sekuens genomik, CDS (825 bp), dan protein (274 AA) untuk gen target *OsDREB2A* dan jejaring regulon kekeringan secara otomatis dengan autentikasi API Key.
+Cekaman kekeringan merupakan tantangan abiotik utama pada budidaya padi sawah dan lahan kering di Indonesia. Faktor transkripsi **OsDREB2A** (*Dehydration-Responsive Element-Binding Protein 2A*; NCBI Gene ID: 4324418) memainkan peran sentral dalam mengaktivasi ekspresi gen-gen hilir toleransi dehidrasi melalui pengikatan elemen cis DRE/CRT (*A/GCCGAC*) pada promotor target.
+
+Proyek ini mengimplementasikan alur kerja komputasi ilmiah yang **selaras 100% dengan proposal riset**:
+1. **Data Genomik:** Pengambilan sekuens nukleotida gen *DREB2A* dari minimal 5 landrace padi lokal Indonesia + genom referensi (*Nipponbare*) dari NCBI GenBank.
+2. **Pra-Pemrosesan Sekuens:** Pembersihan FASTA, validasi reading frame CDS (ATG start, TAA/TAG/TGA stop), translasi asam amino, dan tokenisasi.
+3. **Model Genomik Transformer:** Pemanfaatan model pondasi DNA **DNABERT-2** (117M parameter; `zhihan1996/DNABERT-2-117M`) untuk mengekstraksi representasi embedding 768-dimensi via mean pooling pada hidden state terakhir encoder.
+4. **Mutagenesis Saturasi *In Silico*:** Penggantian sistematis nukleotida pada koordinat domain **AP2/ERF** pengikat DNA (koordinat CDS: bp 202 - 390; $189\text{ bp} \times 3\text{ alternatif} = 567\text{ varian}$).
+5. **Skor Pergeseran Pseudo-Log-Likelihood:** Evaluasi keselarasan varian mutan melalui pergeseran $\Delta\text{PLL} = \text{PLL}(S_{mut}) - \text{PLL}(S_{wt})$ dan *pseudo-perplexity*.
+6. **Dual-Prediction Head (MLP):** Arsitektur multi-task untuk klasifikasi varian (3 kelas: *Benign*, *Deleterious*, *Beneficial*) dan regresi *Leaf Rolling Index* (LRI, $0.0 - 1.0$) dengan **Scientific Data Gating** (hanya dilatih bila data fenotipe basah riil tersedia).
+7. **Cetak Biru Varian Rekayasa Genom:** Penyusunan kandidat varian berpeluang tinggi sebagai cetak biru rekomendasi rekayasa CRISPR-Cas9 **di masa depan**.
 
 ---
 
-## 🧬 Katalog Regulon Toleransi Kekeringan Padi Terkurasi
+## 2. Struktur Repositori
 
-Semua target difokuskan secara ketat pada jejaring transkripsi dan toleransi dehidrasi padi:
-
-| Simbol Gen | NCBI Gene ID | Kromosom | Kategori Sifat | Peran Biologis & Strategi Rekayasa |
-| :--- | :--- | :--- | :--- | :--- |
-| **OsDREB2A** | `4324418` | 1 | Master Regulator Cekaman | AP2/ERF TF; delesi NRD/P168L menghasilkan DREB2A-CA tahan kemarau ekstrem |
-| **OsDREB1A** | `4341490` | 6 | Toleransi Cekaman Suhu/Kering | Regulon DREB1/CBF aktivasi cepat penurunan potensial osmotik |
-| **OsDREB2B** | `4338981` | 5 | Alternative Splicing Regulator | Saklar transkrip aktif fungsional saat dehidrasi jaringan sel |
-| **OsLEA3-1** | `4337666` | 5 | Proteksi Membran Sel | Efektor hilir DREB2A penstabil protein & membran plasma |
-| **OsAREB1** | `4340578` | 6 | Sinyal ABA-Dependent | bZIP TF bekerja komplementer dengan DREB2A pada fase reproduktif |
-| **OsP5CS1** | `4338302` | 5 | Biosintesis Osmolit Prolin | Biosintesis asam amino prolin pencegah plasmolisis sel |
-| **OsSKIPa** | `4331776` | 2 | Viabilitas Seluler & ROS | Menekan akumulasi radikal bebas saat kekeringan perakaran |
-| **SNAC1** | `4334002` | 3 | Penutupan Stomata | Menekan laju transpirasi air daun saat kemarau |
-| **OsDST** | `4334341` | 3 | Kerapatan Stomata | Target knockout untuk menurunkan kerapatan stomata dan evaporasi daun |
-| **OsERF71** | `4330107` | 2 | Arsitektur Perakaran | Merombak akar padi lebih tebal dan dalam menembus lapisan akuifer tanah |
-
----
-
-## 🚀 Panduan Menjalankan
-
-### Menggunakan Virtual Environment Lokal
-
-1. **Masuk ke Direktori Proyek**:
-   ```bash
-   cd /Users/yuwaficmuhammad/Desktop/ncbi
-   ```
-
-2. **Aktifkan Virtual Environment**:
-   ```bash
-   source .venv/bin/activate
-   ```
-
-3. **Install Dependensi**:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. **Konfigurasi Lingkungan (`.env`)**:
-   ```env
-   NCBI_API_KEY=isi_kunci_anda
-   ```
-
-5. **Jalankan Server API**:
-   ```bash
-   uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
-   ```
-
-6. **Buka di Browser**:
-   - 🌾 **Studio Web UI Interaktif**: [http://localhost:8000](http://localhost:8000)
-   - 📖 **Dokumentasi Interaktif (Swagger UI)**: [http://localhost:8000/docs](http://localhost:8000/docs)
-   - 📑 **ReDoc Documentation**: [http://localhost:8000/redoc](http://localhost:8000/redoc)
-
----
-
-## 🧪 Pengujian Komprehensif
-
-Rangkaian 36 pengujian unit test dan live integration test:
-
-```bash
-# Menjalankan seluruh 36 tes
-pytest -v
-
-# Menjalankan unit test model PhytoAI & asesmen koordinat dinamis
-pytest tests/test_phytoai.py -v
-
-# Menjalankan pengujian koneksi live NCBI Datasets v2
-pytest tests/test_live_integration.py -v
+```
+ncbi/
+├── app/                      # Layanan REST API minimal (FastAPI)
+│   ├── core/                 # Konfigurasi aplikasi & konstanta koordinat AP2
+│   ├── data/                 # Database lokal SQLite (phytoai_local.db)
+│   ├── middleware/           # Rate limiting per-IP (sliding window)
+│   ├── models/               # Skema data Pydantic (varian, sekuens, respon)
+│   ├── routers/              # Endpoint minimal (/phytoai, /database, /sequences)
+│   ├── services/             # Klien NCBI Datasets & layanan database SQLite
+│   └── main.py               # Titik masuk aplikasi FastAPI
+├── data/
+│   ├── accessions.csv        # Tabel nomor aksesi landrace & referensi NCBI
+│   ├── raw/                  # Berkas FASTA asli unduhan NCBI
+│   └── processed/            # Sekuens FASTA bersih, summary JSON, & CSV saturasi
+├── notebooks/
+│   └── phytoai_colab.ipynb   # Notebook Google Colab 7 langkah end-to-end
+├── phytoai/                  # Modul inti komputasi ilmiah PhytoAI-Genetics
+│   ├── embedding.py          # Ekstraksi representasi 768-D via DNABERT-2
+│   ├── heads.py              # Arsitektur PyTorch DualPredictionHead MLP
+│   ├── scoring.py            # Analisis kodon biologis, delta PLL, & pseudo-perplexity
+│   └── tokenization.py       # Utilitas 6-mer & integrasi BPE AutoTokenizer
+├── scripts/
+│   ├── fetch_dreb2a_fasta.py # Unduh sekuens DREB2A dari NCBI E-utilities
+│   ├── preprocess.py         # Pembersihan FASTA & translasi CDS
+│   ├── run_saturation.py     # Mutagenesis saturasi AP2 & evaluasi PLL
+│   └── train_heads.py        # Pelatihan dual-head dengan Scientific Data Gating
+├── tests/                    # Pengujian unit otomatis (pytest)
+├── DEVIATIONS.md             # Dokumentasi deviasi ilmiah (D1, D2, D3)
+├── Dockerfile                # Lingkungan kontainer minimal
+├── docker-compose.yml        # Orkestrasi Docker lokal
+├── requirements.txt          # Dependensi server API inti
+├── requirements-dev.txt      # Dependensi pengujian pengembang
+└── requirements-ml.txt       # Dependensi pemodelan ML (PyTorch, Transformers)
 ```
 
 ---
 
-## 📡 Daftar Endpoint REST API Utama
+## 3. Cara Penggunaan
 
-### 1. 🤖 PhytoAI-Genetics & GIS Spasial BNPB InaRISK (`/api/v1/phytoai`)
-- `GET /api/v1/phytoai/dreb2a/domains`: Anotasi struktur domain OsDREB2A (NLS, AP2/ERF, NRD/Degron PEST, TAD).
-- `POST /api/v1/phytoai/dreb2a/predict-mutation`: Prediksi dampak mutasi titik (mis. `P168L`, `V79I`, `S167A`) terhadap toleransi kekeringan menggunakan model Transformer pLM (ΔLLR).
-- `GET /api/v1/phytoai/dreb2a/deep-mutational-scan`: In silico Deep Mutational Scanning (DMS) pada domain AP2 dan NRD untuk menemukan mutasi paling menguntungkan.
-- `GET /api/v1/phytoai/dreb2a/local-cultivars`: Database profil alel alami OsDREB2A pada varietas padi lokal Indonesia.
-- `POST /api/v1/phytoai/dreb2a/design-base-editing`: Desain gRNA CRISPR Base Editor (ABE/CBE) untuk memasukkan mutasi DREB2A-CA tanpa double-strand break.
-- `GET /api/v1/phytoai/drought-regions`: Katalog dinamis wilayah sentra padi terdampak kekeringan di Indonesia dengan filter `province`, `min_hazard`, dan `search`.
-- `GET /api/v1/phytoai/assess-coordinates?lat=...&lon=...`: **Sampling Spasial Titik Koordinat Dinamis Bebas** di seluruh Indonesia untuk mendeteksi indeks bahaya kekeringan InaRISK, agroekosistem, kultivar adaptif, dan strategi mutasi DREB2A.
-- `POST /api/v1/phytoai/assess-coordinates`: Versi POST penilaian titik koordinat untuk integrasi payload JSON.
-- `GET /api/v1/phytoai/inarisk/metadata`: Verifikasi koneksi metadata resmi ArcGIS ImageServer BNPB InaRISK (`inarisk/layer_risiko_kekeringan`).
+### Opsi A: Google Colab (Lingkungan Utama Proposal Butir 7)
 
-### 2. 🎯 Regulon Toleransi Kekeringan Padi (`/api/v1/targets`)
-- `GET /api/v1/targets`: Daftar gen regulon toleransi kekeringan padi (*OsDREB2A*, *OsDREB1A*, *OsDREB2B*, dll.).
-- `GET /api/v1/targets/{identifier}`: Detail gen target dengan penggabungan data live anotasi NCBI Datasets.
+Jalankan notebook interaktif lengkap dengan akselerasi GPU:
+1. Buka [notebooks/phytoai_colab.ipynb](notebooks/phytoai_colab.ipynb) atau klik tautan **Open In Colab** di atas.
+2. Pilih runtime GPU: **Runtime > Change runtime type > T4 GPU**.
+3. Jalankan sel berurutan dari Langkah 1 hingga Langkah 7.
 
-### 3. ✂️ Perancangan CRISPR Base Editing (`/api/v1/crispr`)
-- `POST /api/v1/crispr/find-targets`: Pemindaian situs target gRNA dari sekuens DNA dengan analisis PAM SpCas9/Cas12a, %GC, dan peringatan terminasi `TTTT`.
+### Opsi B: Pipeline CLI Lokal
 
-### 4. 📥 Ekstraksi Sekuens DNA/Protein NCBI (`/api/v1/sequences`)
-- `GET /api/v1/sequences/gene/{gene_id}`: Ekstraksi sekuens Genomik, CDS, dan Protein langsung dari arsip resmi NCBI secara in-memory.
-- `GET /api/v1/sequences/gene/{gene_id}/download-package`: Unduh arsip ZIP resmi NCBI Datasets.
+1. **Setup Virtual Environment & Dependensi:**
+   ```bash
+   python3 -m venv .venv
+   source .venv/bin/activate
+   pip install -r requirements.txt
+   pip install -r requirements-dev.txt
+   # Opsional (untuk inferensi lokal DNABERT-2 dengan PyTorch):
+   pip install -r requirements-ml.txt
+   ```
+
+2. **Konfigurasi Variabel Lingkungan (`.env`):**
+   ```env
+   NCBI_API_KEY=isi_kunci_anda
+   ```
+
+3. **Unduh Sekuens dari NCBI:**
+   ```bash
+   python scripts/fetch_dreb2a_fasta.py --csv-path data/accessions.csv
+   ```
+
+4. **Pra-Pemrosesan Sekuens:**
+   ```bash
+   python scripts/preprocess.py --input-dir data/raw --output-dir data/processed
+   ```
+
+5. **Jalankan Mutagenesis Saturasi In Silico:**
+   ```bash
+   # Modus dry-run (memetakan kodon & konsekuensi asam amino tanpa unduh bobot 400MB)
+   python scripts/run_saturation.py --dry-run
+
+   # Modus inferensi neural penuh (memerlukan PyTorch & transformers):
+   python scripts/run_saturation.py
+   ```
+
+6. **Pelatihan Dual-Prediction Head (Terproteksi Pintu Pengaman):**
+   ```bash
+   # Skrip ini akan menolak melatih jika data fenotipe riil belum disediakan
+   python scripts/train_heads.py
+   ```
 
 ---
 
-## 📜 Lisensi & Atribusi
+## 4. Layanan REST API Minimal
 
-- **Karya Orisinal**: Periset **MA Salafiyah Kajen Pati** (Pati, Jawa Tengah).
-- **Data Genomika**: Bersumber langsung dari **National Center for Biotechnology Information (NCBI) Datasets v2 REST API**.
-- **Data Spasial Kekeringan**: Bersumber dari **BNPB InaRISK Indonesia** (`gis.bnpb.go.id`).
-- Didedikasikan untuk mendukung riset bioteknologi, ketahanan pangan nasional, dan pemuliaan tanaman padi modern berketahanan iklim ekstrem di Indonesia.
+Jalankan server API FastAPI lokal:
+```bash
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+```
+
+Dokumentasi interaktif OpenAPI tersedia di:
+- **Swagger UI**: [http://localhost:8000/docs](http://localhost:8000/docs)
+- **ReDoc**: [http://localhost:8000/redoc](http://localhost:8000/redoc)
+
+### Endpoint Utama:
+- `GET /health`: Status server dan penegasan metodologi saintifik.
+- `GET /info`: Informasi organisme acuan (*Oryza sativa*) dan lokus gen acuan (*OsDREB2A*).
+- `GET /api/v1/phytoai/variants`: Membaca varian hasil mutagenesis saturasi dari database lokal SQLite.
+- `GET /api/v1/phytoai/methods`: Penjelasan transparansi model DNABERT-2 dan batas validitas ilmiah.
+- `GET /api/v1/db/status`: Status operasional dan statistik tabel database lokal.
+
+---
+
+## 5. Pengujian Unit Otomatis
+
+Jalankan seluruh rangkaian pengujian unit dengan pytest:
+```bash
+pytest tests/ -v
+```
+
+Semua pengujian dirancang deterministik, terisolasi dari jaringan eksternal, dan memverifikasi batas validitas biokimia serta integritas data gating.
+
+---
+
+## 6. Metode & Keterbatasan Saintifik (Integritas Akademik)
+
+Sesuai komitmen etika penelitian ilmiah:
+1. **Sifat Skor Zero-Shot:** Nilai pergeseran pseudo-log-likelihood ($\Delta\text{PLL}$) adalah ukuran keselarasan tata bahasa urutan menurut model representasi bahasa genomik DNABERT-2, **bukan bukti langsung fenotipe toleransi kekeringan di sawah/laboratorium**.
+2. **Pencegahan Fabrikasi Data (Data Gating):** Repositori ini tidak mengarang data latih sintetis. Regresi Leaf Rolling Index (LRI) dan klasifikasi varian menguntungkan (*Beneficial*) hanya akan dilatih apabila peneliti telah memasukkan data fenotipe empiris terukur.
+3. **Cakupan CRISPR:** Rekayasa penyuntingan genom CRISPR-Cas9 merupakan sasaran penelitian masa depan (*future work*) di laboratorium basah dan bukan bagian dari pekerjaan komputasi repositori saat ini.
+4. **Deviasi Proposal:** Seluruh perbedaan antara naskah awal proposal dan implementasi teknis terdokumentasi secara transparan di [DEVIATIONS.md](DEVIATIONS.md).
