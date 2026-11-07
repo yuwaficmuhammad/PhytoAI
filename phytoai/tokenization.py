@@ -53,14 +53,16 @@ def kmer_frequencies(kmers: List[str]) -> Dict[str, int]:
     return dict(collections.Counter(kmers))
 
 
-def get_dnabert2_tokenizer(model_name: str = "zhihan1996/DNABERT-2-117M"):
+def get_dnabert2_tokenizer(model_name: str = "zhihan1996/DNABERT-2-117M", token: Optional[str] = None):
     """
     Memuat tokenizer bawaan DNABERT-2 (BPE PreTrainedTokenizerFast).
     Memerlukan dependensi transformers dan opsi trust_remote_code=True.
     """
+    import os
+    hf_token = token or os.getenv("HF_TOKEN")
     try:
         from transformers import AutoTokenizer
-        return AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
+        return AutoTokenizer.from_pretrained(model_name, trust_remote_code=True, token=hf_token)
     except Exception as e:
         raise RuntimeError(
             f"Gagal memuat AutoTokenizer untuk {model_name}. Pastikan pustaka transformers terpasang "

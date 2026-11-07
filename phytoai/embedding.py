@@ -5,8 +5,10 @@ model DNABERT-2 (zhihan1996/DNABERT-2-117M) dengan mean pooling.
 Sesuai Proposal Butir 3.
 """
 
+import os
 from typing import Optional, Tuple, Any
 import logging
+from app.core.config import settings
 
 logger = logging.getLogger("phytoai.embedding")
 
@@ -33,7 +35,8 @@ def get_torch_device():
 
 def load_dnabert2_model_and_tokenizer(
     model_name: str = "zhihan1996/DNABERT-2-117M",
-    device: Optional[Any] = None
+    device: Optional[Any] = None,
+    token: Optional[str] = None
 ) -> Tuple[Any, Any]:
     """
     Memuat AutoTokenizer dan AutoModel untuk DNABERT-2.
@@ -51,9 +54,11 @@ def load_dnabert2_model_and_tokenizer(
     if device is None:
         device = get_torch_device()
 
+    hf_token = token or settings.HF_TOKEN or os.getenv("HF_TOKEN")
+
     logger.info(f"Memuat model {model_name} pada peranti: {device}...")
-    tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
-    model = AutoModel.from_pretrained(model_name, trust_remote_code=True)
+    tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True, token=hf_token)
+    model = AutoModel.from_pretrained(model_name, trust_remote_code=True, token=hf_token)
     model.to(device)
     model.eval()
 

@@ -17,6 +17,9 @@ class Settings(BaseSettings):
     # NCBI API Key (Opsional, meningkatkan rate limit)
     NCBI_API_KEY: Optional[str] = None
 
+    # Hugging Face Access Token (Opsional, untuk otentikasi Hub & bypass rate limit)
+    HF_TOKEN: Optional[str] = None
+
     # HTTP Client Configuration
     HTTP_TIMEOUT_SECONDS: float = 30.0
 

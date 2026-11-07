@@ -55,9 +55,10 @@ def run_saturation_mutagenesis(
             from phytoai.embedding import get_torch_device
 
             device = get_torch_device()
+            hf_token = settings.HF_TOKEN or os.getenv("HF_TOKEN")
             logger.info(f"Memuat DNABERT-2 MaskedLM ({model_name}) pada peranti {device}...")
-            tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
-            model = AutoModelForMaskedLM.from_pretrained(model_name, trust_remote_code=True)
+            tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True, token=hf_token)
+            model = AutoModelForMaskedLM.from_pretrained(model_name, trust_remote_code=True, token=hf_token)
             model.to(device)
             model.eval()
         except Exception as e:
