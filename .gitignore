@@ -49,3 +49,8 @@ Library/
 # Docker
 *.override.yml
 
+# Database Backups
+*_backup.db
+*.db.bak
+
+

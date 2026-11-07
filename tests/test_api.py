@@ -1,3 +1,8 @@
+"""
+Unit tests for core API endpoints
+(tests/test_api.py)
+"""
+
 import pytest
 from fastapi.testclient import TestClient
 from app.main import app
@@ -12,7 +17,8 @@ def test_health():
     assert data["status"] == "online"
     assert "PhytoAI-Genetics" in data["service"]
     assert "ncbi_api_key_configured" in data
-    assert "ncbi_rate_limit" in data
+    assert "method_note" in data
+    assert "DNABERT-2" in data["method_note"]
 
 
 def test_info():
@@ -20,51 +26,32 @@ def test_info():
     assert response.status_code == 200
     data = response.json()
     assert data["organism"] == "Oryza sativa (Padi)"
-    assert data["curated_targets_count"] >= 10
+    assert "OsDREB2A" in data["target_gene"]
+    assert "method_note" in data
 
 
-def test_list_targets():
-    response = client.get("/api/v1/targets")
+def test_phytoai_methods_endpoint():
+    response = client.get("/api/v1/phytoai/methods")
     assert response.status_code == 200
     data = response.json()
-    assert data["total"] >= 10
-    assert len(data["categories"]) > 0
+    assert "DNABERT-2" in data["model_name"]
+    assert data["embedding_dimension"] == 768
+    assert len(data["task_scope"]) == 7
+    assert len(data["limitations"]) >= 3
+    assert "method_note" in data
 
 
-def test_filter_targets_category():
-    response = client.get("/api/v1/targets?category=Kekeringan")
+
+def test_phytoai_variants_endpoint():
+    response = client.get("/api/v1/phytoai/variants")
     assert response.status_code == 200
     data = response.json()
-    assert len(data["targets"]) >= 1
-    symbols = [t["gene_symbol"] for t in data["targets"]]
-    assert "OsDREB2A" in symbols
-
-
-def test_crispr_find_targets_endpoint():
-    payload = {
-        "sequence": "CATCGTGGCTAATGGGCCAGCTGTGTTGTATCAGCCTGATAAGAAGGATGTGTTGGAACGTGTAGTCCCTGAGGTGCAGGATGTTAAAACAGAAGGGAGCAATGGCTTGAAACGTGTTTGTCAGGAGCGGAAG",
-        "nuclease": "SpCas9",
-        "min_gc": 35.0,
-        "max_gc": 70.0
-    }
-    response = client.post("/api/v1/crispr/find-targets", json=payload)
-    assert response.status_code == 200
-    data = response.json()
-    assert data["nuclease"] == "SpCas9"
-    assert data["total_sites_found"] > 0
-    assert len(data["sites"]) > 0
-
-
-def test_invalid_mutation_format():
-    """Format mutasi yang salah harus mengembalikan 400."""
-    payload = {"variant": "INVALID123", "cultivar": "Nipponbare"}
-    response = client.post("/api/v1/phytoai/dreb2a/predict-mutation", json=payload)
-    assert response.status_code == 400
-    assert "tidak valid" in response.json()["detail"].lower()
+    assert "variants" in data
+    assert "total" in data
+    assert "method_note" in data
 
 
 def test_cors_headers_present():
-    """Endpoint harus mengembalikan CORS header yang valid."""
-    response = client.options("/api/v1/targets", headers={"Origin": "http://localhost:3000"})
-    # Header CORS seharusnya ada di semua respons
+    """Verify CORS headers on public endpoints."""
+    response = client.options("/health", headers={"Origin": "http://localhost:3000"})
     assert response.status_code in (200, 405)

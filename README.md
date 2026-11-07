@@ -73,7 +73,7 @@ Semua target difokuskan secara ketat pada jejaring transkripsi dan toleransi deh
 
 4. **Konfigurasi Lingkungan (`.env`)**:
    ```env
-   NCBI_API_KEY=b1930592bae2f149001d2768b0faad3f0d08
+   NCBI_API_KEY=isi_kunci_anda
    ```
 
 5. **Jalankan Server API**:

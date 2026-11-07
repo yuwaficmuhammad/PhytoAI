@@ -6,8 +6,17 @@ import httpx
 
 from app.core.config import settings
 from app.core.exceptions import NCBIAPIException, GeneNotFoundException, AssemblyNotFoundException
-from app.models.crispr import SequenceData, GeneSequencesResponse
-from app.services.crispr_service import calculate_gc
+from app.models.gene import SequenceData, GeneSequencesResponse
+
+
+def calculate_gc(sequence: str) -> float:
+    """Menghitung persentase kandungan Guanin-Sitosin (GC%) dari sekuens nukleotida."""
+    seq = sequence.upper()
+    total = len(seq)
+    if total == 0:
+        return 0.0
+    gc = seq.count("G") + seq.count("C")
+    return round((gc / total) * 100, 2)
 
 
 class NCBIDatasetsClient:
@@ -15,7 +24,6 @@ class NCBIDatasetsClient:
         self.base_url = settings.NCBI_BASE_URL.rstrip("/")
         self.api_key = settings.NCBI_API_KEY
         self.timeout = settings.HTTP_TIMEOUT_SECONDS
-        # Shared AsyncClient untuk connection pooling (diinisialisasi oleh lifespan di main.py)
         self._shared_client: Optional[httpx.AsyncClient] = None
 
     def set_shared_client(self, client: httpx.AsyncClient) -> None:
@@ -29,7 +37,7 @@ class NCBIDatasetsClient:
     def _get_headers(self) -> Dict[str, str]:
         headers = {
             "Accept": "application/json",
-            "User-Agent": f"RiceGenomicsAPI/{settings.VERSION} (Genetic Engineering Research Suite)"
+            "User-Agent": f"RiceGenomicsAPI/{settings.VERSION} (Genetic Research Proposal Suite)"
         }
         if self.api_key:
             headers["api-key"] = self.api_key
@@ -72,78 +80,13 @@ class NCBIDatasetsClient:
                 return response.content
             return response.json()
 
-        # Gunakan shared client jika tersedia (connection pooling)
         if self._shared_client is not None:
             return await _do_request(self._shared_client)
 
-        # Fallback: buat per-request client (untuk testing / dev tanpa lifespan)
         async with httpx.AsyncClient(timeout=self.timeout) as client:
             return await _do_request(client)
 
-    # --- GENOME ENDPOINTS ---
-
-    async def get_genome_reports_by_taxon(
-        self,
-        taxon: Optional[str] = None,
-        reference_only: bool = False,
-        page_size: int = 20,
-        page_token: Optional[str] = None
-    ) -> Dict[str, Any]:
-        tax = taxon or settings.DEFAULT_RICE_TAXON
-        params: Dict[str, Any] = {"page_size": page_size}
-        if reference_only:
-            params["filters.reference_only"] = "true"
-        if page_token:
-            params["page_token"] = page_token
-
-        data = await self._request("GET", f"/genome/taxon/{tax}/dataset_report", params=params)
-        return data or {"reports": []}
-
-    async def get_genome_by_accession(self, accession: str) -> Dict[str, Any]:
-        data = await self._request("GET", f"/genome/accession/{accession}/dataset_report")
-        if not data or not data.get("reports"):
-            raise AssemblyNotFoundException(accession)
-        return data["reports"][0]
-
     # --- GENE ENDPOINTS ---
-
-    async def get_genes_by_taxon(
-        self,
-        taxon: Optional[str] = None,
-        page_size: int = 20,
-        page_token: Optional[str] = None
-    ) -> Dict[str, Any]:
-        tax = taxon or settings.DEFAULT_RICE_TAXON
-        params: Dict[str, Any] = {"page_size": page_size}
-        if page_token:
-            params["page_token"] = page_token
-
-        data = await self._request("GET", f"/gene/taxon/{tax}/dataset_report", params=params)
-        return data or {"reports": []}
-
-    async def get_genes_by_symbol(
-        self,
-        symbol: str,
-        taxon: Optional[str] = None
-    ) -> List[Dict[str, Any]]:
-        tax = taxon or settings.DEFAULT_RICE_TAXON
-        # First try given taxon (usually Japonica 39947)
-        data = await self._request("GET", f"/gene/symbol/{symbol}/taxon/{tax}/dataset_report")
-        reports = data.get("reports", []) if data else []
-
-        # If empty and taxon was Japonica, try general Oryza sativa (4530)
-        if not reports and tax == settings.DEFAULT_RICE_TAXON:
-            fallback = await self._request("GET", f"/gene/symbol/{symbol}/taxon/{settings.ORYZA_SATIVA_TAXON}/dataset_report")
-            if fallback and fallback.get("reports"):
-                reports = fallback.get("reports", [])
-
-        # If still empty, try Indica (39946)
-        if not reports and tax != settings.INDICA_TAXON:
-            fallback2 = await self._request("GET", f"/gene/symbol/{symbol}/taxon/{settings.INDICA_TAXON}/dataset_report")
-            if fallback2 and fallback2.get("reports"):
-                reports = fallback2.get("reports", [])
-
-        return reports
 
     async def get_gene_by_id(self, gene_id: int) -> Dict[str, Any]:
         data = await self._request("GET", f"/gene/id/{gene_id}/dataset_report")

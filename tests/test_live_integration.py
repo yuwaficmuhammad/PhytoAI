@@ -5,20 +5,6 @@ from app.core.exceptions import NCBIAPIException
 
 
 @pytest.mark.asyncio
-async def test_live_ncbi_genome_report():
-    try:
-        data = await ncbi_client.get_genome_reports_by_taxon(taxon="39947", page_size=2)
-    except NCBIAPIException as e:
-        if "nodename nor servname" in str(e) or "Koneksi ke NCBI" in str(e):
-            pytest.skip(f"Akses jaringan NCBI tidak tersedia (offline/sandbox): {e}")
-        raise
-    assert "reports" in data
-    assert len(data["reports"]) > 0
-    report = data["reports"][0]
-    assert "accession" in report or "assembly_info" in report
-
-
-@pytest.mark.asyncio
 async def test_live_ncbi_gene_dreb2a():
     try:
         rep = await ncbi_client.get_gene_by_id(4324418)

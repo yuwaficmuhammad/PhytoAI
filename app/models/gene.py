@@ -34,12 +34,19 @@ class RiceGeneSummary(BaseModel):
     trait_category: Optional[str] = Field(None, description="Kategori agronomi / rekayasa genetika jika terdaftar")
 
 
-class GeneDetailResponse(BaseModel):
-    gene: RiceGeneSummary
-    raw_report: Optional[Dict[str, Any]] = Field(None, description="Data mentah langsung dari NCBI Datasets")
+class SequenceData(BaseModel):
+    gene_id: int
+    symbol: Optional[str] = None
+    header: str
+    sequence: str
+    length: int
+    type: str = Field(..., description="Tipe sekuens: 'genomic', 'cds', atau 'protein'")
+    gc_percent: Optional[float] = None
 
 
-class GeneSearchResponse(BaseModel):
-    total_found: int
-    genes: List[RiceGeneSummary]
-
+class GeneSequencesResponse(BaseModel):
+    gene_id: int
+    symbol: Optional[str] = None
+    genomic_sequence: Optional[SequenceData] = None
+    cds_sequence: Optional[SequenceData] = None
+    protein_sequence: Optional[SequenceData] = None

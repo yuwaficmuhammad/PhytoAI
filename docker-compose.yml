@@ -1,12 +1,9 @@
-version: '3.8'
-
 services:
-  rice-api:
+  phytoai-api:
     build: .
-    container_name: rice_genomics_api
+    container_name: phytoai_genetics_api
     ports:
       - "8000:8000"
-    # Gunakan env_file untuk meneruskan SEMUA variabel dari .env termasuk NCBI_API_KEY
     env_file:
       - .env
     restart: unless-stopped
