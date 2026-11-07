@@ -1,0 +1,11 @@
+position_nt,ref,alt,mutation_type,wt_aa,mut_aa,delta_pll,status_saintifik,predicted_lri
+209,A,G,missense,E,G,7.7570,kandidat zero-shot (bukan Beneficial terverifikasi),[BELUM DILATIH: butuh data fenotipe]
+209,A,C,missense,E,A,7.7570,kandidat zero-shot (bukan Beneficial terverifikasi),[BELUM DILATIH: butuh data fenotipe]
+209,A,T,missense,E,V,7.7570,kandidat zero-shot (bukan Beneficial terverifikasi),[BELUM DILATIH: butuh data fenotipe]
+210,A,C,missense,E,D,6.0768,kandidat zero-shot (bukan Beneficial terverifikasi),[BELUM DILATIH: butuh data fenotipe]
+210,A,G,synonymous,E,E,6.0768,kandidat zero-shot (bukan Beneficial terverifikasi),[BELUM DILATIH: butuh data fenotipe]
+210,A,T,missense,E,D,6.0768,kandidat zero-shot (bukan Beneficial terverifikasi),[BELUM DILATIH: butuh data fenotipe]
+211,A,T,missense,N,Y,4.4190,kandidat zero-shot (bukan Beneficial terverifikasi),[BELUM DILATIH: butuh data fenotipe]
+211,A,G,missense,N,D,4.4190,kandidat zero-shot (bukan Beneficial terverifikasi),[BELUM DILATIH: butuh data fenotipe]
+211,A,C,missense,N,H,4.4190,kandidat zero-shot (bukan Beneficial terverifikasi),[BELUM DILATIH: butuh data fenotipe]
+212,A,C,missense,N,T,4.1320,kandidat zero-shot (bukan Beneficial terverifikasi),[BELUM DILATIH: butuh data fenotipe]

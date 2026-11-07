@@ -941,18 +941,46 @@ elif nav_choice.startswith("🎯"):
     </div>
     """, unsafe_allow_html=True)
 
-    df_sat = load_saturation_data()
-    if not df_sat.empty:
-        missense_df = df_sat[df_sat["mutation_type"] == "missense"].copy()
-        missense_df["status_saintifik"] = "kandidat zero-shot (bukan Beneficial terverifikasi)"
-        missense_df["predicted_lri"] = "[BELUM DILATIH: butuh data fenotipe basah]"
-
-        st.subheader("📋 Daftar Varian Kandidat Missense Domain AP2/ERF")
-        st.dataframe(
-            missense_df[["position_nt", "ref", "alt", "wt_codon", "mut_codon", "wt_aa", "mut_aa", "status_saintifik", "predicted_lri"]].head(30),
-            use_container_width=True,
-            hide_index=True
+    # 1. Fitur Unggah CSV Hasil Komputasi Colab
+    csv_blueprint_path = os.path.join(DATA_DIR, "processed", "kandidat_blueprint_dreb2a_ap2.csv")
+    
+    with st.expander("📤 Impor Berkas CSV Hasil Komputasi Google Colab (Opsional)", expanded=False):
+        uploaded_colab_csv = st.file_uploader(
+            "Pilih file CSV yang Anda unduh dari Google Colab:",
+            type=["csv"],
+            key="colab_csv_uploader",
+            help="Unggah file kandidat_blueprint_dreb2a_ap2.csv hasil Colab untuk memvisualisasikan data terbaru secara instan di sini."
         )
+
+    if uploaded_colab_csv is not None:
+        try:
+            df_active_candidates = pd.read_csv(uploaded_colab_csv)
+            st.success(f"✓ Berhasil mengimpor {len(df_active_candidates)} baris kandidat varian dari Google Colab!")
+        except Exception as e:
+            st.error(f"Gagal membaca file CSV: {e}")
+            df_active_candidates = None
+    elif os.path.exists(csv_blueprint_path):
+        df_active_candidates = pd.read_csv(csv_blueprint_path)
+    else:
+        df_active_candidates = None
+
+    if df_active_candidates is not None and not df_active_candidates.empty:
+        st.subheader("📋 Daftar Varian Kandidat Missense Terkomputasi (ΔPLL > 0)")
+        st.markdown("Varian di bawah ini memiliki pergeseran likelihood positif, menunjukkan probabilitas kesesuaian biologis yang tinggi menurut model DNABERT-2:")
+        st.dataframe(df_active_candidates, use_container_width=True, hide_index=True)
+    else:
+        df_sat = load_saturation_data()
+        if not df_sat.empty:
+            missense_df = df_sat[df_sat["mutation_type"] == "missense"].copy()
+            missense_df["status_saintifik"] = "kandidat zero-shot (bukan Beneficial terverifikasi)"
+            missense_df["predicted_lri"] = "[BELUM DILATIH: butuh data fenotipe basah]"
+
+            st.subheader("📋 Daftar Varian Kandidat Missense Domain AP2/ERF")
+            st.dataframe(
+                missense_df[["position_nt", "ref", "alt", "wt_codon", "mut_codon", "wt_aa", "mut_aa", "status_saintifik", "predicted_lri"]].head(30),
+                use_container_width=True,
+                hide_index=True
+            )
 
         st.markdown("""
         <div class="custom-info">
