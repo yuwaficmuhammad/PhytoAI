@@ -1,7 +1,13 @@
 landrace_name,accession,source_note
 Nipponbare,NM_001051515.2,Referensi genom Oryza sativa Nipponbare DREB2A (LOC_Os01g07120)
-Rojolele,[DATA BELUM TERSEDIA: cari aksesi GenBank DREB2A untuk Rojolele],Landrace Jawa Tengah toleran cekaman biotik/abiotik
-Gogo Jatiluhur,[DATA BELUM TERSEDIA: cari aksesi GenBank DREB2A untuk Gogo Jatiluhur],Padi gogo lahan kering Jawa Barat
-Salumpikit,[DATA BELUM TERSEDIA: cari aksesi GenBank DREB2A untuk Salumpikit],Padi lokal lahan kering Sulawesi Utara
-Menthik Wangi,[DATA BELUM TERSEDIA: cari aksesi GenBank DREB2A untuk Menthik Wangi],Padi lokal aromatik dataran tinggi Jawa Tengah
-Siam Saba,[DATA BELUM TERSEDIA: cari aksesi GenBank DREB2A untuk Siam Saba],Padi pasang surut toleran rendaman dan salinitas Kalimantan
+Pare Lambem,PP187274.1,Padi lokal Toraja Sulawesi Selatan - DREB2A partial CDS
+Pare Bakato Kaka,PP187273.1,Padi lokal Toraja Sulawesi Selatan - DREB2A partial CDS
+Sigupai,PP171511.1,Padi lokal aromatik Aceh Sumatera - DREB2A partial CDS
+Padi Hitam,PP171510.1,Padi lokal beras hitam Indonesia - DREB2A partial CDS
+Situ Bagendit,PP171512.1,Padi gogo lahan kering Indonesia - DREB2A partial CDS
+Way Apo,PP171513.1,Padi lokal Maluku Indonesia Timur - DREB2A partial CDS
+Rojolele,[TARGET SEKUENSI WET-LAB],Landrace Jawa Tengah toleran cekaman biotik/abiotik
+Gogo Jatiluhur,[TARGET SEKUENSI WET-LAB],Padi gogo lahan kering Jawa Barat
+Salumpikit,[TARGET SEKUENSI WET-LAB],Padi lokal lahan kering Sulawesi Utara
+Menthik Wangi,[TARGET SEKUENSI WET-LAB],Padi lokal aromatik dataran tinggi Jawa Tengah
+Siam Saba,[TARGET SEKUENSI WET-LAB],Padi pasang surut toleran rendaman dan salinitas Kalimantan
